@@ -2,6 +2,7 @@ package me.bimmr.bimmcore;
 
 import me.bimmr.bimmcore.messages.ActionBar;
 import me.bimmr.bimmcore.messages.Title;
+import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -9,7 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.logging.Level;
 
@@ -54,14 +54,11 @@ public class BimmCore extends JavaPlugin {
         } catch (NoSuchMethodError e) {
             // Try older way using reflection(This way it works for all other
             // versions)
-            Class<?> c = Bukkit.class;
-            Method method;
             try {
-                method = c.getDeclaredMethod("getOnlinePlayers");
-                Player[] players = (Player[]) method.invoke(null);
+                Player[] players = (Player[]) Reflection.getMethod(Bukkit.class, "getOnlinePlayers").invoke(null);
                 return players;
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-
+            } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+                e.printStackTrace();
                 return null;
             }
         }
