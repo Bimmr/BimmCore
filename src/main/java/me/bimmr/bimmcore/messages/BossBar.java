@@ -22,33 +22,66 @@ public class BossBar {
     private int                     time;
     private SecondEvent             secondEvent;
 
+    /**
+     * Create a BossBar
+     *
+     * @param text
+     * @param time
+     * @param barColor
+     * @param barStyle
+     * @param progress
+     */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, Double progress) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
         bar.setProgress(progress);
         this.time = time;
     }
 
+    /**
+     * Create a BossBar
+     * BarStyle defaults to solid
+     * Progress defaults to 1.0
+     *
+     * @param text
+     * @param time
+     * @param barColor
+     */
     public BossBar(String text, int time, BarColor barColor) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
-        bar.setProgress(1);
+        bar.setProgress(1.0);
         this.time = time;
     }
 
+    /**
+     * Create a BossBar
+     *
+     * @param text
+     * @param barColor
+     * @param barStyle
+     * @param progress
+     */
     public BossBar(String text, BarColor barColor, BarStyle barStyle, Double progress) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
         bar.setProgress(progress);
-        this.time = Integer.MAX_VALUE;
+        this.time = 2;
     }
 
     public BossBar(String text, BarColor barColor) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
         bar.setProgress(1);
-        this.time = Integer.MAX_VALUE;
+        this.time = 2;
     }
-    public BossBar(String text, int time){
+
+    public BossBar(String text, int time) {
         bar = Bukkit.createBossBar(text, BarColor.WHITE, BarStyle.SOLID);
         bar.setProgress(1);
         this.time = time;
+    }
+
+    public BossBar(String text) {
+        bar = Bukkit.createBossBar(text, BarColor.WHITE, BarStyle.SOLID);
+        bar.setProgress(1);
+        this.time = 2;
     }
 
     /**
@@ -106,8 +139,10 @@ public class BossBar {
      *
      * @param secondEvent
      */
-    public void setSecondEvent(SecondEvent secondEvent) {
+    public BossBar setSecondEvent(SecondEvent secondEvent) {
         this.secondEvent = secondEvent;
+        this.secondEvent.setBossBar(this);
+        return this;
     }
 
     /**
@@ -117,6 +152,7 @@ public class BossBar {
      */
     public void send(final Player player) {
         clear(player);
+        bar.addPlayer(player);
 
         bars.put(player.getName(), this);
         task.put(player.getName(),
