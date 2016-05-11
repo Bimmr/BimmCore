@@ -86,8 +86,10 @@ public class ActionBar {
      *
      * @param secondEvent
      */
-    public void setSecondEvent(SecondEvent secondEvent) {
+    public ActionBar setSecondEvent(SecondEvent secondEvent) {
         this.secondEvent = secondEvent;
+        this.secondEvent.setActionBar(this);
+        return this;
     }
 
     /**
