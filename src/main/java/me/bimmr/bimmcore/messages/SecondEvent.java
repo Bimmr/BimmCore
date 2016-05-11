@@ -7,14 +7,12 @@ public abstract class SecondEvent {
     private BossBar   bossBar;
     private ActionBar actionBar;
 
-    public SecondEvent(BossBar bossBar) {
+    public void setBossBar(BossBar bossBar){
         this.bossBar = bossBar;
     }
-
-    public SecondEvent(ActionBar actionBar) {
+    public void setActionBar(ActionBar actionBar){
         this.actionBar = actionBar;
     }
-
     public BossBar getBossBar() {
         return this.bossBar;
     }
