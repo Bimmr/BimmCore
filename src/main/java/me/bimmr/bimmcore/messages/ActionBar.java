@@ -17,9 +17,11 @@ import java.util.HashMap;
  */
 public class ActionBar {
 
-    private static HashMap<String, BukkitTask> running = new HashMap<>();
-    private String text;
-    private int    time;
+    private static HashMap<String, BukkitTask> tasks = new HashMap<>();
+    private static HashMap<String, ActionBar>  bars  = new HashMap<>();
+    private String      text;
+    private int         time;
+    private SecondEvent secondEvent;
 
     /**
      * Create an title defaulting to show for 2 seconds
@@ -43,24 +45,13 @@ public class ActionBar {
     }
 
     /**
-     * Stop showing an title
-     *
-     * @param player
-     */
-    private static void stop(Player player) {
-        if (isRunning(player)) {
-            running.get(player.getName()).cancel();
-        }
-    }
-
-    /**
      * Check if a title is being sent to the player
      *
      * @param player
      * @return
      */
     private static boolean isRunning(Player player) {
-        return running.containsKey(player.getName());
+        return tasks.containsKey(player.getName());
     }
 
     /**
@@ -69,8 +60,34 @@ public class ActionBar {
      * @param player
      */
     public static void clear(Player player) {
-        ActionBarAPI.sendActionBar(player, " ");
-        stop(player);
+        if (isRunning(player)) {
+            ActionBarAPI.sendActionBar(player, " ");
+            tasks.get(player.getName()).cancel();
+            tasks.remove(player.getName());
+            bars.remove(player.getName());
+        }
+    }
+
+    /**
+     * Get the actionbar that is being played for the player
+     *
+     * @param player
+     * @return
+     */
+    public static ActionBar getPlayingActionBar(Player player) {
+        if (isRunning(player))
+            return bars.get(player.getName());
+        else
+            return null;
+    }
+
+    /**
+     * A function that gets called every second that the BossBar is active for
+     *
+     * @param secondEvent
+     */
+    public void setSecondEvent(SecondEvent secondEvent) {
+        this.secondEvent = secondEvent;
     }
 
     /**
@@ -79,16 +96,19 @@ public class ActionBar {
      * @param player
      */
     public void send(final Player player) {
-        if (isRunning(player)) stop(player);
+        clear(player);
 
-        running.put(player.getName(), new BukkitRunnable() {
+        bars.put(player.getName(), this);
+        tasks.put(player.getName(), new BukkitRunnable() {
             int timeLeft = time;
 
             @Override
             public void run() {
+                if (secondEvent != null)
+                    secondEvent.run();
 
                 if (timeLeft <= 0)
-                    stop(player);
+                    clear(player);
                 else
                     ActionBarAPI.sendActionBar(player, text);
 
