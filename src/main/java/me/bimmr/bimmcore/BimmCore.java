@@ -1,5 +1,6 @@
 package me.bimmr.bimmcore;
 
+import me.bimmr.bimmcore.items.attributes.ItemModifier;
 import me.bimmr.bimmcore.messages.ActionBar;
 import me.bimmr.bimmcore.messages.Title;
 import me.bimmr.bimmcore.reflection.Reflection;
@@ -68,8 +69,10 @@ public class BimmCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        //Set the needed classes up for reflection usage
         ActionBar.ActionBarAPI.setup();
         Title.TitleAPI.setup();
+        ItemModifier.setup();
 
     }
 }
