@@ -89,6 +89,23 @@ public class Reflection {
     }
 
     /**
+     * Get a method from a class with specific parameter types
+     * @param c
+     * @param methodName
+     * @param paramaterTypes
+     * @return
+     */
+    public static Method getMethod(Class<?> c, String methodName, Class<?>... paramaterTypes) {
+        try {
+            return c.getMethod(methodName, paramaterTypes);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
      * Get the field from the class
      *
      * @param c
@@ -121,4 +138,5 @@ public class Reflection {
         }
         return null;
     }
+
 }
