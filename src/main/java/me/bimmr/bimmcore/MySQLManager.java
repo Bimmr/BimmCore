@@ -176,7 +176,7 @@ public class MySQLManager {
 
     /**
      * Set values into the MySQL Database, this method should not be used as the
-     * update method works for setting new and existing values
+     * update method as it always creates a new column
      *
      * @param tableName
      * @param columnName
@@ -189,6 +189,29 @@ public class MySQLManager {
 
         mysql.updateSQL("INSERT INTO " + tableName + " (`UUID`, `" + columnName + "`) VALUES ('" + uuid + "', '" + value + "');");
 
+    }
+    
+    /**
+     * Adds a new column into the database, used to add multiple columns of
+     * data for a single player
+     *
+     * @param tableName
+     * @param columnName
+     * @param value
+     * @param uuid
+     */
+    public void addColumn(String tableName, HashMap<String, Object> columns, UUID uuid) {
+        if (DEBUG)
+            System.out.println("Adding column into " + tableName + " - " + uuid);
+        
+        String querystr = "INSERT INTO " + tableName + " (`UUID`";
+        String querystr2 = ") VALUES ('" + uuid + "'";
+        for(String columnName : columns.keySet()) {
+            querystr = querystr + ", `" + columnName + "`";
+            querystr2 = querystr2 + ", '" + columns.get(columnName) + "'";
+        }
+        
+        mysql.updateSQL(querystr + querystr2 + ");");
     }
 
     /**
