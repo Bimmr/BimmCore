@@ -236,7 +236,7 @@ public class MySQLManager {
     }
 
     public static enum DataType {
-        INT, CHAR, VARCHAR, TINYINT, SMALLINT, BOOLEAN, MEDIUMINT, BIGINT, FLOAT, DOUBLE;
+        INT, CHAR, VARCHAR, TINYINT, SMALLINT, BOOLEAN, BIGINT, FLOAT, DOUBLE;
     }
 
     public static class Column {
