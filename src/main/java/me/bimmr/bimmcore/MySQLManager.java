@@ -12,6 +12,7 @@ public class MySQLManager {
     private final boolean DEBUG;
     private       MySQL   mysql;
     private       Plugin  plugin;
+
     /**
      * Create a mysql connection
      *
@@ -222,7 +223,26 @@ public class MySQLManager {
     }
 
     public static enum DataType {
-        INT, VARCHAR;
+        INT,
+        TINYINT,
+        SMALLINT,
+        MEDIUMINT,
+        BIGINT,
+        FLOAT,
+        DOUBLE,
+        DECIMAL,
+        DATE,
+        DATETYPE,
+        TIMESTAMP,
+        TIME,
+        YEAR,
+        CHAR,
+        VARCHAR,
+        TEXT,
+        TINYTEXT,
+        MEDIUMTEXT,
+        LONGTEXT,
+        ENUM;
     }
 
     public static class Column {
@@ -266,9 +286,9 @@ public class MySQLManager {
 
     public class MySQL {
 
-        private final String     hostname, port, database, username, password;
-        private       Plugin     plugin;
-        private       Connection connection;
+        private final String hostname, port, database, username, password;
+        private Plugin     plugin;
+        private Connection connection;
 
         public MySQL(Plugin plugin, String hostname, String port, String database, String username, String password) {
             this.plugin = plugin;
