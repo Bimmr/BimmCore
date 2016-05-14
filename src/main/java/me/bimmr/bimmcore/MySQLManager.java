@@ -12,6 +12,7 @@ public class MySQLManager {
     private final boolean DEBUG;
     private       MySQL   mysql;
     private       Plugin  plugin;
+
     /**
      * Create a mysql connection
      *
@@ -59,27 +60,27 @@ public class MySQLManager {
         }
         mysql.updateSQL("CREATE TABLE IF NOT EXISTS " + tableName + " (UUID VARCHAR(40), " + mySQLData + ");");
     }
-    
+
     /**
      * Queries the database for a ResultSet object
      *
-     * @param tableName  - The tables name
+     * @param tableName - The tables name
      * @param uuid
      * @return A raw ResultSet object
      * @throws SQLException
      */
-    public ResultSet get(String tablename, UUID uuid) {
+    public ResultSet get(String tableName, UUID uuid) {
         Object obj = 0;
         if (DEBUG)
-            System.out.println("Getting value from " + tableName + " - " + uuid + "- " + columnName);
+            System.out.println("Getting value from " + tableName + " - " + uuid);
 
         if (!mysql.hasOpenConnection())
             mysql.openConnection();
 
         Connection con = mysql.getConnection();
 
-        ResultSet set = mysql.querySQL(con, "SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
-    
+        ResultSet set = mysql.querySQL(con, "SELECT * FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
+
         mysql.closeConnection();
         return set;
     }
@@ -95,6 +96,7 @@ public class MySQLManager {
      */
     public Object get(String tableName, String columnName, UUID uuid) {
         ResultSet set = get(tableName, uuid);
+        Object obj = 0;
         if (set != null) {
             try {
                 if (set.next())
@@ -108,7 +110,9 @@ public class MySQLManager {
         }
         if (obj == null)
             obj = 0;
-            
+
+        mysql.closeConnection();
+
         return obj;
 
     }
@@ -190,27 +194,26 @@ public class MySQLManager {
         mysql.updateSQL("INSERT INTO " + tableName + " (`UUID`, `" + columnName + "`) VALUES ('" + uuid + "', '" + value + "');");
 
     }
-    
+
     /**
      * Adds a new column into the database, used to add multiple columns of
      * data for a single player
      *
      * @param tableName
-     * @param columnName
-     * @param value
+     * @param columns
      * @param uuid
      */
     public void addColumn(String tableName, HashMap<String, Object> columns, UUID uuid) {
         if (DEBUG)
             System.out.println("Adding column into " + tableName + " - " + uuid);
-        
+
         String querystr = "INSERT INTO " + tableName + " (`UUID`";
         String querystr2 = ") VALUES ('" + uuid + "'";
-        for(String columnName : columns.keySet()) {
+        for (String columnName : columns.keySet()) {
             querystr = querystr + ", `" + columnName + "`";
             querystr2 = querystr2 + ", '" + columns.get(columnName) + "'";
         }
-        
+
         mysql.updateSQL(querystr + querystr2 + ");");
     }
 
@@ -297,16 +300,16 @@ public class MySQLManager {
 
         @Override
         public String toString() {
-            if(length == null) return name + " " + type.toString();
+            if (length == null) return name + " " + type.toString();
             return name + " " + type.toString() + "(" + length + ")";
         }
     }
 
     public class MySQL {
 
-        private final String     hostname, port, database, username, password;
-        private       Plugin     plugin;
-        private       Connection connection;
+        private final String hostname, port, database, username, password;
+        private Plugin     plugin;
+        private Connection connection;
 
         public MySQL(Plugin plugin, String hostname, String port, String database, String username, String password) {
             this.plugin = plugin;
