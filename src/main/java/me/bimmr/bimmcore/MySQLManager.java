@@ -59,6 +59,30 @@ public class MySQLManager {
         }
         mysql.updateSQL("CREATE TABLE IF NOT EXISTS " + tableName + " (UUID VARCHAR(40), " + mySQLData + ");");
     }
+    
+    /**
+     * Queries the database for a ResultSet object
+     *
+     * @param tableName  - The tables name
+     * @param uuid
+     * @return A raw ResultSet object
+     * @throws SQLException
+     */
+    public ResultSet get(String tablename, UUID uuid) {
+        Object obj = 0;
+        if (DEBUG)
+            System.out.println("Getting value from " + tableName + " - " + uuid + "- " + columnName);
+
+        if (!mysql.hasOpenConnection())
+            mysql.openConnection();
+
+        Connection con = mysql.getConnection();
+
+        ResultSet set = mysql.querySQL(con, "SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
+    
+        mysql.closeConnection();
+        return set;
+    }
 
     /**
      * Get the value of the column
@@ -70,16 +94,7 @@ public class MySQLManager {
      * @throws SQLException
      */
     public Object get(String tableName, String columnName, UUID uuid) {
-        Object obj = 0;
-        if (DEBUG)
-            System.out.println("Getting value from " + tableName + " - " + uuid + "- " + columnName);
-
-        if (!mysql.hasOpenConnection())
-            mysql.openConnection();
-
-        Connection con = mysql.getConnection();
-
-        ResultSet set = mysql.querySQL(con, "SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
+        ResultSet set = get(tableName, uuid);
         if (set != null) {
             try {
                 if (set.next())
@@ -93,8 +108,7 @@ public class MySQLManager {
         }
         if (obj == null)
             obj = 0;
-
-        mysql.closeConnection();
+            
         return obj;
 
     }
@@ -162,7 +176,7 @@ public class MySQLManager {
 
     /**
      * Set values into the MySQL Database, this method should not be used as the
-     * update method works for setting new and existing values
+     * update method as it always creates a new column
      *
      * @param tableName
      * @param columnName
@@ -175,6 +189,29 @@ public class MySQLManager {
 
         mysql.updateSQL("INSERT INTO " + tableName + " (`UUID`, `" + columnName + "`) VALUES ('" + uuid + "', '" + value + "');");
 
+    }
+    
+    /**
+     * Adds a new column into the database, used to add multiple columns of
+     * data for a single player
+     *
+     * @param tableName
+     * @param columnName
+     * @param value
+     * @param uuid
+     */
+    public void addColumn(String tableName, HashMap<String, Object> columns, UUID uuid) {
+        if (DEBUG)
+            System.out.println("Adding column into " + tableName + " - " + uuid);
+        
+        String querystr = "INSERT INTO " + tableName + " (`UUID`";
+        String querystr2 = ") VALUES ('" + uuid + "'";
+        for(String columnName : columns.keySet()) {
+            querystr = querystr + ", `" + columnName + "`";
+            querystr2 = querystr2 + ", '" + columns.get(columnName) + "'";
+        }
+        
+        mysql.updateSQL(querystr + querystr2 + ");");
     }
 
     /**
@@ -222,16 +259,16 @@ public class MySQLManager {
     }
 
     public static enum DataType {
-        INT, VARCHAR;
+        INT, CHAR, VARCHAR, TINYINT, SMALLINT, BOOLEAN, BIGINT, FLOAT, DOUBLE;
     }
 
     public static class Column {
 
-        private int      length;
+        private Integer  length;
         private DataType type;
         private String   name;
 
-        public Column(String name, DataType type, int length) {
+        public Column(String name, DataType type, Integer length) {
             this.name = name;
             this.type = type;
             this.length = length;
@@ -247,7 +284,7 @@ public class MySQLManager {
         /**
          * @return the length
          */
-        public int getLength() {
+        public Integer getLength() {
             return length;
         }
 
@@ -260,6 +297,7 @@ public class MySQLManager {
 
         @Override
         public String toString() {
+            if(length == null) return name + " " + type.toString();
             return name + " " + type.toString() + "(" + length + ")";
         }
     }
