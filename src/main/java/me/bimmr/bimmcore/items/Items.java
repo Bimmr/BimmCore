@@ -91,7 +91,7 @@ public class Items {
             if (isPotion()) {
                 PotionMeta pm = (PotionMeta) getItem().getItemMeta();
                 for (PotionEffect p : pm.getCustomEffects())
-                    string += " potion:" + p.getType().getName() + "," + p.getDuration() / 20 + "," + p.getAmplifier();
+                    string += " potion:" + p.getType().getName() + "," + p.getDuration() / 20 + "," + (p.getAmplifier() + 1);
             }
 
             //Leather colors
@@ -136,14 +136,14 @@ public class Items {
                 for (String data : line)
 
                     if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (data.startsWith("crackshot") || data.startsWith("gun"))) {
-                        String name = data.split(":")[1];
+                        String name = data.split(":", 2)[1];
                         item = Items_Crackshot.getGunItemStack(name);
                     } else {
                         // Item Variables
                         if (data.startsWith("id") || data.startsWith("item")) {
 
                             Material mat = null;
-                            String itemName = data.split(":")[1];
+                            String itemName = data.split(":", 2)[1];
                             try {
                                 mat = Material.getMaterial(Integer.valueOf(itemName));
                             } catch (NumberFormatException e) {
@@ -162,15 +162,15 @@ public class Items {
 
                         // Amount Variables
                         else if (data.startsWith("amount") || data.startsWith("quantity"))
-                            setAmount(Integer.parseInt(data.split(":")[1]));
+                            setAmount(Integer.parseInt(data.split(":", 2)[1]));
 
                             // Durability Variables
                         else if (data.startsWith("data") || data.startsWith("durability") || data.startsWith("damage"))
-                            setDurability(Short.parseShort(data.split(":")[1]));
+                            setDurability(Short.parseShort(data.split(":", 2)[1]));
 
                             // Enchantment variables
                         else if (data.startsWith("enchantment") || data.startsWith("enchant")) {
-                            String s = data.split(":")[1];
+                            String s = data.split(":", 2)[1];
                             Enchantment enchantment;
                             try {
                                 enchantment = Enchantment.getById(Integer.parseInt(s.split("-")[0]));
@@ -190,16 +190,16 @@ public class Items {
 
                             // Name Variables
                         else if (data.startsWith("name") || data.startsWith("title"))
-                            setDisplayName(StringUtil.addColor(data.split(":")[1]).replaceAll("_", " "));
+                            setDisplayName(StringUtil.addColor(data.split(":", 2)[1]).replaceAll("_", " "));
 
                             // Owner Variables
                         else if (data.startsWith("owner") || data.startsWith("player"))
-                            setSkullOwner(data.split(":")[1]);
+                            setSkullOwner(data.split(":", 2)[1]);
 
                             // Color Variables(Leather Only)
                         else if (data.startsWith("color") || data.startsWith("colour"))
                             try {
-                                String[] s = data.replaceAll("color:", "").replaceAll("colour", "").split(",");
+                                String[] s = data.replaceAll("color:", "").replaceAll("colour:", "").split(",");
                                 setLeatherColor(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                             } catch (ClassCastException notLeather) {
                                 Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: " + string);
@@ -229,20 +229,20 @@ public class Items {
                                         item.setType(Material.SPLASH_POTION);
                                     }
                                 int time = Integer.parseInt(s[1]) * 20;
-                                int level = Integer.parseInt(s[2]);
+                                int level = Integer.parseInt(s[2]) - 1;
                                 addPotionEffect(new PotionEffect(type, time, level));
                             }
                         }
 
                         // Lore Variables
                         else if (data.startsWith("lore") || data.startsWith("desc") || data.startsWith("description")) {
-                            String s = data.split(":")[1];
+                            String s = data.split(":", 2)[1];
                             for (String lore : s.split("\\|"))
                                 addLore(StringUtil.addColor(lore.replaceAll("_", " ")));
                         }
                         // Page Variables
                         else if (data.startsWith("page") || data.startsWith("pages")) {
-                            String s = data.split(":")[1];
+                            String s = data.split(":", 2)[1];
                             List<String> pages = new ArrayList<String>();
                             for (String lore : s.split("\\|"))
                                 pages.add(StringUtil.addColor(lore.replaceAll("_", " ")));
@@ -254,11 +254,11 @@ public class Items {
 
                         // Author Variables
                         else if (data.startsWith("author") || data.startsWith("writter"))
-                            setBookAuthor(StringUtil.addColor(data.split(":")[1]));
+                            setBookAuthor(StringUtil.addColor(data.split(":", 2)[1]));
 
                             // Title Variables
                         else if (data.startsWith("title"))
-                            setBookTitle(StringUtil.addColor(data.split(":")[1]));
+                            setBookTitle(StringUtil.addColor(data.split(":", 2)[1]));
 
                             // Unbreakable Variables
                         else if (data.startsWith("unbreakable"))
@@ -271,7 +271,7 @@ public class Items {
                                 Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
                             }
                         else if (data.startsWith("attribute")) {
-                            String[] elements = data.split(":")[1].split("-");
+                            String[] elements = data.split(":", 2)[1].split("-");
                             String elementName = elements[0];
                             String slot = elements[1];
                             Double value = Double.parseDouble(elements[2]);
@@ -287,7 +287,7 @@ public class Items {
             else if (string.startsWith("id") || string.startsWith("item")) {
 
                 Material mat;
-                String itemName = string.split(":")[1];
+                String itemName = string.split(":", 2)[1];
                 try {
                     mat = Material.getMaterial(Integer.valueOf(itemName));
                 } catch (NumberFormatException e) {
@@ -301,7 +301,7 @@ public class Items {
 
             // Crackshot Variables else if (itemCode.startsWith("crackshot") ||
             else if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (string.startsWith("crackshot") || string.startsWith("gun"))) {
-                String name = string.split(":")[1];
+                String name = string.split(":", 2)[1];
                 item = Items_Crackshot.getGunItemStack(name);
             }
 
