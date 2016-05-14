@@ -184,7 +184,27 @@ public class MySQLManager {
         mysql.closeConnection();
         return players;
     }
+    /**
+     * Adds a new column into the database, used to add multiple columns of
+     * data for a single player
+     *
+     * @param tableName
+     * @param columns
+     * @param uuid
+     */
+    public void addColumn(String tableName, HashMap<String, Object> columns, UUID uuid) {
+        if (DEBUG)
+            System.out.println("Adding column into " + tableName + " - " + uuid);
 
+        String querystr = "INSERT INTO " + tableName + " (`UUID`";
+        String querystr2 = ") VALUES ('" + uuid + "'";
+        for (String columnName : columns.keySet()) {
+            querystr = querystr + ", `" + columnName + "`";
+            querystr2 = querystr2 + ", '" + columns.get(columnName) + "'";
+        }
+
+        mysql.updateSQL(querystr + querystr2 + ");");
+    }
     /**
      * Set values into the MySQL Database, this method should not be used as the
      * update method as it always creates a new column
