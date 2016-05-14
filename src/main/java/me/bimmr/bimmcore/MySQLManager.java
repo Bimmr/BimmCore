@@ -95,8 +95,16 @@ public class MySQLManager {
      * @throws SQLException
      */
     public Object get(String tableName, String columnName, UUID uuid) {
-        ResultSet set = get(tableName, uuid);
         Object obj = 0;
+        if (DEBUG)
+            System.out.println("Getting value from " + tableName + " - " + uuid + "- " + columnName);
+
+        if (!mysql.hasOpenConnection())
+            mysql.openConnection();
+
+        Connection con = mysql.getConnection();
+
+        ResultSet set = mysql.querySQL(con, "SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
         if (set != null) {
             try {
                 if (set.next())
@@ -112,7 +120,6 @@ public class MySQLManager {
             obj = 0;
 
         mysql.closeConnection();
-
         return obj;
 
     }
