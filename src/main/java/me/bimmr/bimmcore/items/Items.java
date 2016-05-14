@@ -91,7 +91,7 @@ public class Items {
             if (isPotion()) {
                 PotionMeta pm = (PotionMeta) getItem().getItemMeta();
                 for (PotionEffect p : pm.getCustomEffects())
-                    string += " potion:" + p.getType().getName() + "," + p.getDuration() / 20 + "," + (p.getAmplifier() - 1);
+                    string += " potion:" + p.getType().getName() + "," + p.getDuration() / 20 + "," + (p.getAmplifier() + 1);
             }
 
             //Leather colors
@@ -229,7 +229,7 @@ public class Items {
                                         item.setType(Material.SPLASH_POTION);
                                     }
                                 int time = Integer.parseInt(s[1]) * 20;
-                                int level = Integer.parseInt(s[2]) + 1;
+                                int level = Integer.parseInt(s[2]) - 1;
                                 addPotionEffect(new PotionEffect(type, time, level));
                             }
                         }
