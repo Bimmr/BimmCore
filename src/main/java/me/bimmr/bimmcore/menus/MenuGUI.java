@@ -21,14 +21,11 @@ public class MenuGUI {
     private int         size;
     private Player      player;
     private ItemStack[] items;
-    private Inventory   inventory;
-
+    private Inventory inventory;
     private boolean centered = false;
     private int     slot     = 18;
-    private int numOfItems;
-
+    private int        numOfItems;
     private ClickEvent clickEvent;
-
     public MenuGUI(MenuGUIManager menuGUIManager, String name, int numOfItems, ClickEvent clickEvent, ItemStack cornerItem, ItemStack sideItem) {
         this.menuGUIManager = menuGUIManager;
         this.name = name;
@@ -42,6 +39,10 @@ public class MenuGUI {
 
         outline(this, cornerItem, sideItem);
         menuGUIManager.menus.add(this);
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 
     /**
