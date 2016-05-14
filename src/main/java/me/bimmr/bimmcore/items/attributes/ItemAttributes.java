@@ -39,6 +39,15 @@ public class ItemAttributes {
     }
 
     /**
+     * Set an itemstack
+     *
+     * @param itemStack
+     */
+    public void setItemStack(ItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
+
+    /**
      * Get all the Attributes
      *
      * @return
@@ -49,6 +58,7 @@ public class ItemAttributes {
 
     /**
      * Add an Attribute
+     *
      * @param attribute
      * @return
      */
@@ -59,6 +69,7 @@ public class ItemAttributes {
 
     /**
      * Build the ItemStack with the attributes
+     *
      * @return
      */
     public ItemStack build() {

@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.items;
 
 import me.bimmr.bimmcore.StringUtil;
+import me.bimmr.bimmcore.items.attributes.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class Items {
 
     private ItemStack item = new ItemStack(Material.AIR);
+    private ItemAttributes itemAttributes;
 
     public Items(ItemStack stack) {
         this.item = stack;
@@ -200,7 +202,7 @@ public class Items {
                                 String[] s = data.replaceAll("color:", "").replaceAll("colour", "").split(",");
                                 setLeatherColor(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
                             } catch (ClassCastException notLeather) {
-                                Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: "+string);
+                                Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: " + string);
                             }
                             // Potion Effect Variables(Potions Only)
                         else if (data.startsWith("potion")) {
@@ -223,7 +225,7 @@ public class Items {
                                     } catch (Exception e) {
 
                                         //Looks like they're using 1.9 and still have the splash tag
-                                        Bukkit.getLogger().severe("Spigot 1.9 and newer doesn't support the splash tag in the item: "+string);
+                                        Bukkit.getLogger().severe("Spigot 1.9 and newer doesn't support the splash tag in the item: " + string);
                                         item.setType(Material.SPLASH_POTION);
                                     }
                                 int time = Integer.parseInt(s[1]) * 20;
@@ -266,8 +268,17 @@ public class Items {
                             try {
                                 addFlag(ItemFlag.valueOf(data.split(":")[1].toUpperCase()));
                             } catch (IllegalArgumentException notflag) {
-                                Bukkit.getLogger().severe("An invalid flag name has been entered in the item: "+string);
+                                Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
                             }
+                        else if (data.startsWith("attribute")) {
+                            String[] elements = data.split(":")[1].split("-");
+                            String elementName = elements[0];
+                            String slot = elements[1];
+                            Double value = Double.parseDouble(elements[2]);
+                            String operation = elements[3];
+
+                            addAttribute(elementName, slot, value, operation);
+                        }
                     }
 
             }
@@ -303,6 +314,10 @@ public class Items {
      * @return
      */
     public ItemStack getItem() {
+        if (itemAttributes != null) {
+            itemAttributes.setItemStack(this.item);
+            this.item = itemAttributes.build();
+        }
         return this.item;
     }
 
@@ -490,6 +505,18 @@ public class Items {
         return this;
     }
 
+    public void addAttribute(String attribute, String slot, double value, String operation) {
+        if (itemAttributes == null)
+            itemAttributes = new ItemAttributes(getItem());
+
+        try {
+            itemAttributes.addAttribute(new Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value, Operation.valueOf(operation)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * Makes the item glow
      *
@@ -605,6 +632,7 @@ public class Items {
         public int getStartLevel() {
             return 1;
         }
-
     }
+
+
 }
