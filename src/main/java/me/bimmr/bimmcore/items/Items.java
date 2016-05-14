@@ -25,6 +25,13 @@ import java.util.Map;
 /**
  * Created by Randy on 9/23/2015.
  */
+class Example{
+    public Example(){
+        String itemCode = "id:Leather_Sword data:100 name:&5Sword lore:This|Is|Sparta color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
+        Items item = new Items(itemCode);
+        ItemStack itemStack = item.getItem();
+    }
+}
 public class Items {
 
     private ItemStack item = new ItemStack(Material.AIR);
@@ -271,13 +278,13 @@ public class Items {
                                 Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
                             }
                         else if (data.startsWith("attribute")) {
-                            String[] elements = data.split(":", 2)[1].split("-");
-                            String elementName = elements[0];
+                            String[] elements = data.split(":", 2)[1].split(",");
+                            String attribute = elements[0];
                             String slot = elements[1];
                             Double value = Double.parseDouble(elements[2]);
                             String operation = elements[3];
 
-                            addAttribute(elementName, slot, value, operation);
+                            addAttribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value, Operation.valueOf(operation));
                         }
                     }
 
@@ -505,15 +512,11 @@ public class Items {
         return this;
     }
 
-    public void addAttribute(String attribute, String slot, double value, String operation) {
+    public void addAttribute(AttributeType attribute, Slot slot, double value, Operation operation) {
         if (itemAttributes == null)
             itemAttributes = new ItemAttributes(getItem());
 
-        try {
-            itemAttributes.addAttribute(new Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value, Operation.valueOf(operation)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            itemAttributes.addAttribute(new Attribute(attribute, slot, value, operation));
     }
 
 
