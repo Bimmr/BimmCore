@@ -141,7 +141,7 @@ public class MySQLManager {
             ResultSet set = this.mysql.querySQL(con, "SELECT * FROM `" + tableName + "` ORDER BY `" + columnName + "` DESC");
 
             int i = 0;
-            while (set.next() || i < 10) {
+            while (set.next() && i < 10) {
                 map.put(UUID.fromString(set.getString("UUID")), set.getInt(columnName));
                 i++;
             }
@@ -174,9 +174,9 @@ public class MySQLManager {
 
             ResultSet set = mysql.querySQL(con, "SELECT * FROM `" + tableName + "` ");
 
-            while (set.next())
+            while (set.next()) {
                 players.add(UUID.fromString(set.getString("UUID")));
-
+            }
         } catch (SQLException e) {
             this.plugin.getLogger().log(Level.SEVERE, "Error getting uuids from table " + tableName);
             e.printStackTrace();
@@ -200,28 +200,6 @@ public class MySQLManager {
 
         mysql.updateSQL("INSERT INTO " + tableName + " (`UUID`, `" + columnName + "`) VALUES ('" + uuid + "', '" + value + "');");
 
-    }
-
-    /**
-     * Adds a new column into the database, used to add multiple columns of
-     * data for a single player
-     *
-     * @param tableName
-     * @param columns
-     * @param uuid
-     */
-    public void addColumn(String tableName, HashMap<String, Object> columns, UUID uuid) {
-        if (DEBUG)
-            System.out.println("Adding column into " + tableName + " - " + uuid);
-
-        String querystr = "INSERT INTO " + tableName + " (`UUID`";
-        String querystr2 = ") VALUES ('" + uuid + "'";
-        for (String columnName : columns.keySet()) {
-            querystr = querystr + ", `" + columnName + "`";
-            querystr2 = querystr2 + ", '" + columns.get(columnName) + "'";
-        }
-
-        mysql.updateSQL(querystr + querystr2 + ");");
     }
 
     /**
@@ -282,6 +260,12 @@ public class MySQLManager {
             this.name = name;
             this.type = type;
             this.length = length;
+        }
+
+        public Column(String name, DataType type, int length) {
+            this.name = name;
+            this.type = type;
+            this.length = Integer.valueOf(length);
         }
 
         /**
