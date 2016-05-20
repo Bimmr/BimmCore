@@ -130,6 +130,32 @@ public class MySQLManager {
     }
 
     /**
+     * Add multiple columns to the table at a single time
+     *
+     * @param table
+     * @param uuid
+     * @param set
+     */
+    public void addColumns(String table, UUID uuid, Map<String, Object> set) {
+        String columns = "UUID";
+        String value = "?";
+        Object[] values = new Object[set.size()];
+        int i = 0;
+
+        for (Map.Entry<String, Object> entry : set.entrySet()) {
+            columns += ", " + entry.getKey();
+            values[i] = entry.getValue();
+            value += ", ?";
+        }
+        try {
+            updateSQL("INSERT INTO " + table + "(" + columns + ") VALUES (" + value + ")", values);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
      * Alter the table to add a column
      *
      * @param table
