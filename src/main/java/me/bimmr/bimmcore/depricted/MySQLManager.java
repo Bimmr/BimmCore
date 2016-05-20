@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore;
+package me.bimmr.bimmcore.depricted;
 
 
 import org.bukkit.plugin.Plugin;
@@ -7,10 +7,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
-//TODO: Connection Pooling, Async MySQL Queries are not happy... Who woulda thought
+@Deprecated
 public class MySQLManager {
 
-    public boolean DEBUG;
+    public  boolean DEBUG;
     private MySQL   mysql;
     private Plugin  plugin;
 
@@ -176,7 +176,7 @@ public class MySQLManager {
             ResultSet set = mysql.querySQL("SELECT UUID FROM `" + tableName + "`");
 
             while (set.next()) {
-                if(set.getString(1) != null)
+                if (set.getString(1) != null)
                     players.add(UUID.fromString(set.getString(1)));
             }
         } catch (SQLException e) {
