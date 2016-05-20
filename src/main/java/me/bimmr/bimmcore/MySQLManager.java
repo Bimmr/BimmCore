@@ -7,11 +7,12 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+//TODO: Connection Pooling, Async MySQL Queries are not happy... Who woulda thought
 public class MySQLManager {
 
-    private final boolean DEBUG;
-    private       MySQL   mysql;
-    private       Plugin  plugin;
+    public boolean DEBUG;
+    private MySQL   mysql;
+    private Plugin  plugin;
 
     /**
      * Create a mysql connection
@@ -79,9 +80,9 @@ public class MySQLManager {
 
         Connection con = mysql.getConnection();
 
-        ResultSet set = mysql.querySQL(con, "SELECT * FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
+        ResultSet set = mysql.querySQL("SELECT * FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
 
-        mysql.closeConnection();
+        //mysql.closeConnection();
         return set;
     }
 
@@ -104,7 +105,7 @@ public class MySQLManager {
 
         Connection con = mysql.getConnection();
 
-        ResultSet set = mysql.querySQL(con, "SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
+        ResultSet set = mysql.querySQL("SELECT " + columnName + " FROM " + tableName + " WHERE UUID = '" + uuid.toString() + "';");
         if (set != null) {
             try {
                 if (set.next())
@@ -138,7 +139,7 @@ public class MySQLManager {
             System.out.println("Getting top 10 uuids from column " + columnName);
 
         try {
-            ResultSet set = this.mysql.querySQL(con, "SELECT * FROM `" + tableName + "` ORDER BY `" + columnName + "` DESC");
+            ResultSet set = this.mysql.querySQL("SELECT * FROM `" + tableName + "` ORDER BY `" + columnName + "` DESC");
 
             int i = 0;
             while (set.next() && i < 10) {
@@ -172,18 +173,20 @@ public class MySQLManager {
 
         try {
 
-            ResultSet set = mysql.querySQL(con, "SELECT * FROM `" + tableName + "` ");
+            ResultSet set = mysql.querySQL("SELECT UUID FROM `" + tableName + "`");
 
             while (set.next()) {
-                players.add(UUID.fromString(set.getString("UUID")));
+                if(set.getString(1) != null)
+                    players.add(UUID.fromString(set.getString(1)));
             }
         } catch (SQLException e) {
             this.plugin.getLogger().log(Level.SEVERE, "Error getting uuids from table " + tableName);
             e.printStackTrace();
         }
-        mysql.closeConnection();
+        //mysql.closeConnection();
         return players;
     }
+
     /**
      * Adds a new column into the database, used to add multiple columns of
      * data for a single player
@@ -205,9 +208,10 @@ public class MySQLManager {
 
         mysql.updateSQL(querystr + querystr2 + ");");
     }
+
     /**
      * Set values into the MySQL Database, this method should not be used as the
-     * update method as it always creates a new column
+     * update method as it always creates a new row
      *
      * @param tableName
      * @param columnName
@@ -219,7 +223,6 @@ public class MySQLManager {
             System.out.println("Setting value into " + tableName + " - " + uuid + "- " + columnName + " - " + value);
 
         mysql.updateSQL("INSERT INTO " + tableName + " (`UUID`, `" + columnName + "`) VALUES ('" + uuid + "', '" + value + "');");
-
     }
 
     /**
@@ -260,9 +263,10 @@ public class MySQLManager {
         c = mysql.getConnection();
 
         s = c.prepareStatement("ALTER TABLE " + table + " ADD " + column.getName() + " " + column.getDataType().toString() + "(" + column.getLength() + ");");
+
         s.executeUpdate();
 
-        mysql.closeConnection();
+        //mysql.closeConnection();
 
     }
 
@@ -393,12 +397,19 @@ public class MySQLManager {
          * @param query
          * @return
          */
-        public ResultSet querySQL(Connection con, String query) {
+        public ResultSet querySQL(String query) {
+
+            Connection c = null;
             PreparedStatement state = null;
             ResultSet set = null;
 
+            if (!hasOpenConnection())
+                openConnection();
+
+            c = getConnection();
+
             try {
-                state = con.prepareStatement(query);
+                state = c.prepareStatement(query);
             } catch (SQLException e) {
                 this.plugin.getLogger().log(Level.SEVERE, "Error creating the query statement!");
                 e.printStackTrace();
@@ -439,7 +450,7 @@ public class MySQLManager {
                 this.plugin.getLogger().log(Level.SEVERE, "Error executing the update statement!");
                 e.printStackTrace();
             }
-            closeConnection();
+            //closeConnection();
         }
     }
 
