@@ -53,7 +53,9 @@ public class MySQLManager {
             Column column = columns[i];
             mySQLData += column.toString() + (i + 1 != columns.length ? ", " : "");
         }
-        updateSQL("CREATE TABLE IF NOT EXISTS " + table + " (" + mySQLData + ")");
+        //updateSQL("CREATE TABLE IF NOT EXISTS " + table + " (" + mySQLData + ")");
+        updateSQL("CREATE TABLE IF NOT EXISTS " + table + " (" + mySQLData + ", PRIMARY KEY (UUID))");
+        updateSQL("ALTER TABLE " + table + " ADD PRIMARY KEY (uuid)");
     }
 
     /**
@@ -80,18 +82,6 @@ public class MySQLManager {
     }
 
     /**
-     * Get the amount of columns in the table
-     *
-     * @param table
-     * @return
-     */
-    public int getColumnCount(String table) {
-        int columnCount = 0;
-        List<?> result = querySQL("SELECT Count(*) FROM " + table);
-        return result.size();
-    }
-
-    /**
      * Get a value from the table
      *
      * @param table
@@ -100,7 +90,7 @@ public class MySQLManager {
      * @return
      */
     public Object get(String table, final String column, UUID uuid) {
-        List<HashMap<String, Object>> result = querySQL("SELECT " + column + " FROM " + table + " WHERE UUID='" + uuid.toString()+"'");
+        List<HashMap<String, Object>> result = querySQL("SELECT " + column + " FROM " + table + " WHERE UUID=?", uuid.toString());
         if (result.isEmpty())
             return 0;
 
@@ -113,6 +103,17 @@ public class MySQLManager {
     }
 
     /**
+     * Check if a UUID is in a table
+     *
+     * @param uuid
+     * @return
+     */
+    public boolean isInTable(String table, UUID uuid) {
+        List<?> result = querySQL("SELECT UUID FROM " + table + " WHERE UUID=?", uuid.toString());
+        return !result.isEmpty();
+    }
+
+    /**
      * Put a value into the table using the uuid as a key
      *
      * @param table
@@ -122,7 +123,7 @@ public class MySQLManager {
      */
     public void set(String table, String column, UUID uuid, Object value) {
         try {
-            updateSQL("INSERT INTO " + table + "VALUES(UUID, " + column + ") ON DUPLICATE KEY UPDATE UUID='" + uuid.toString()+"'");
+            updateSQL("INSERT INTO " + table + "(UUID, " + column + ") VALUES (?, ?) ON DUPLICATE KEY UPDATE " + column + "=?", uuid.toString(), value, value);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -148,7 +149,7 @@ public class MySQLManager {
      * @param query
      * @return
      */
-    private List<HashMap<String, Object>> handleSQL(final boolean update, final String query) throws SQLException {
+    private List<HashMap<String, Object>> handleSQL(final boolean update, final String query, final Object... values) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -157,6 +158,9 @@ public class MySQLManager {
         try {
             connection = hikari.getConnection();
             statement = connection.prepareStatement(query);
+
+            for (int i = 1; i <= values.length; i++)
+                statement.setObject(i, values[i - 1]);
 
             if (update)
                 statement.executeUpdate();
@@ -190,8 +194,8 @@ public class MySQLManager {
      *
      * @param query
      */
-    private void updateSQL(String query) throws SQLException {
-        handleSQL(true, query);
+    private void updateSQL(String query, Object... values) throws SQLException {
+        handleSQL(true, query, values);
     }
 
     /**
@@ -200,9 +204,9 @@ public class MySQLManager {
      * @param query
      * @return
      */
-    private List<HashMap<String, Object>> querySQL(String query) {
+    private List<HashMap<String, Object>> querySQL(String query, Object... values) {
         try {
-            return handleSQL(false, query);
+            return handleSQL(false, query, values);
         } catch (SQLException e) {
             e.printStackTrace();
         }
