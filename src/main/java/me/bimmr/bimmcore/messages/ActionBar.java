@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.events.timing.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.entity.Player;
@@ -15,13 +16,10 @@ import java.util.HashMap;
 /**
  * Created by Randy on 05/09/16.
  */
-public class ActionBar {
+public class ActionBar extends MessageDisplay {
 
     private static HashMap<String, BukkitTask> tasks = new HashMap<>();
     private static HashMap<String, ActionBar>  bars  = new HashMap<>();
-    private String      text;
-    private int         time;
-    private SecondEvent secondEvent;
 
     /**
      * Create an title defaulting to show for 2 seconds
@@ -33,8 +31,14 @@ public class ActionBar {
         this.time = 2;
     }
 
+    public ActionBar(String text, TimedEvent timedEvent) {
+        this.text = text;
+        this.time = 2;
+        setTimedEvent(timedEvent);
+    }
+
     /**
-     * Create an title
+     * Create a title
      *
      * @param text
      * @param time
@@ -42,6 +46,19 @@ public class ActionBar {
     public ActionBar(String text, int time) {
         this.text = text;
         this.time = time;
+    }
+
+    /**
+     * Create a title
+     *
+     * @param text
+     * @param time
+     * @param timedEvent
+     */
+    public ActionBar(String text, int time, TimedEvent timedEvent) {
+        this.text = text;
+        this.time = time;
+        setTimedEvent(timedEvent);
     }
 
     /**
@@ -81,15 +98,41 @@ public class ActionBar {
             return null;
     }
 
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public int getTime() {
+        return time;
+    }
+
+
+    @Override
+    public TimedEvent getTimedEvent() {
+        return timedEvent;
+    }
+
     /**
      * A function that gets called every second that the BossBar is active for
      *
-     * @param secondEvent
+     * @param timedEvent
      */
-    public ActionBar setSecondEvent(SecondEvent secondEvent) {
-        this.secondEvent = secondEvent;
-        this.secondEvent.setActionBar(this);
-        return this;
+    @Override
+    public void setTimedEvent(TimedEvent timedEvent) {
+        this.timedEvent = timedEvent;
+        this.timedEvent.setAttachedObject(this);
+    }
+
+    @Override
+    public void stop(Player player) {
+        clear(player);
     }
 
     /**
@@ -97,27 +140,29 @@ public class ActionBar {
      *
      * @param player
      */
+    @Override
     public void send(final Player player) {
         clear(player);
-
         bars.put(player.getName(), this);
         tasks.put(player.getName(), new BukkitRunnable() {
-            int timeLeft = time;
+            int timeLeft = time * 20;
 
             @Override
             public void run() {
-                if (secondEvent != null)
-                    secondEvent.run();
+                if (timedEvent != null && timeLeft % timedEvent.getTicks() == 0)
+                    timedEvent.run();
 
                 if (timeLeft <= 0)
                     clear(player);
-                else
+
+                else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
                     ActionBarAPI.sendActionBar(player, text);
 
                 timeLeft--;
             }
-        }.runTaskTimer(BimmCore.getInstance(), 0L, 20L));
+        }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
+
 
     public static class ActionBarAPI {
 
@@ -126,10 +171,7 @@ public class ActionBar {
         private static Method         serializer;
         private static Constructor<?> chatConstructor;
 
-        /**
-         * Load everything needed
-         */
-        public static void setup() {
+        static {
             chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
             chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
 

@@ -52,7 +52,7 @@ public class Message {
     }
 
     public static void sendBossBar(Player player, String text, BarColor barColor, BarStyle barStyle, Double progress) {
-        new BossBar(text, 2).send(player);
+        new BossBar(text, 2, barColor, barStyle, progress).send(player);
     }
 
     public enum MessageType {TITLE, SUBTITLE, ACTIONBAR, CHAT, TITLE_AND_SUBTITLE, BOSSBAR}
