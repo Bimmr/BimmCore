@@ -40,7 +40,7 @@ public class ItemModifier {
         this.itemAttributes = itemAttributes;
     }
 
-    public static void setup() {
+    static {
         craftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
         asNMSCopy = Reflection.getMethod(craftItemStack, "asNMSCopy", ItemStack.class);
         nbtTagCompound = Reflection.getNMSClass("NBTTagCompound");
