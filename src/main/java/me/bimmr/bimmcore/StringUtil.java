@@ -178,6 +178,7 @@ public class StringUtil {
         private int    width;
         private int    spaceBetween;
         private ChatColor chatColor = ChatColor.RESET;
+        private String last;
 
         private int          position;
         private List<String> positions;
@@ -194,13 +195,17 @@ public class StringUtil {
             originalMessage += originalMessage;
 
 
-            while(width > originalMessage.length())
-                originalMessage +=originalMessage;
+            while (width > originalMessage.length())
+                originalMessage += originalMessage;
 
             //Add all positions to list
-            positions.add(originalMessage.substring(0, width));
             for (int i = 0; i < originalMessage.length() - width; i++)
-                positions.add(originalMessage.substring(i, i + width));
+                if (i > 0 && originalMessage.substring(i - 1, i).charAt(0) != ChatColor.COLOR_CHAR)
+                    positions.add(originalMessage.substring(i, i + width));
+        }
+
+        public String current() {
+            return last;
         }
 
         /**
@@ -218,7 +223,7 @@ public class StringUtil {
                 line = new StringBuilder(getNext());
                 line.setCharAt(0, ' ');
             }
-            return chatColor + line.toString();
+            return last = chatColor + line.toString();
         }
 
         /**
@@ -229,7 +234,7 @@ public class StringUtil {
         private String getNext() {
             position++;
             if (position == originalMessage.length() / 2)
-                position = 0;
+                position = 1;
             return positions.get(position);
         }
     }
