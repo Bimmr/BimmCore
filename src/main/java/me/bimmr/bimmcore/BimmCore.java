@@ -1,9 +1,13 @@
 package me.bimmr.bimmcore;
 
-import me.bimmr.bimmcore.items.attributes.ItemModifier;
+import me.bimmr.bimmcore.events.timing.TimedEvent;
 import me.bimmr.bimmcore.messages.ActionBar;
+import me.bimmr.bimmcore.messages.BossBar;
+import me.bimmr.bimmcore.messages.MessageDisplay;
 import me.bimmr.bimmcore.messages.Title;
 import me.bimmr.bimmcore.reflection.Reflection;
+import me.bimmr.bimmcore.scoreboard.Board;
+import me.bimmr.bimmcore.scoreboard.BoardLine;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -69,10 +73,41 @@ public class BimmCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        //Set the needed classes up for reflection usage
-        ActionBar.ActionBarAPI.setup();
-        Title.TitleAPI.setup();
-        ItemModifier.setup();
+        final StringUtil.Scroller scroller = new StringUtil.Scroller("&3Tes&4ting &2Things", 15,5);
+        final StringUtil.Scroller scroller2 = new StringUtil.Scroller("&3Tes&4ting &2Things", 10,5);
+
+        TimedEvent timedEvent = new TimedEvent(3) {
+            @Override
+            public void run() {
+                MessageDisplay bar = (MessageDisplay)this.getAttachedObject();
+                bar.setText(scroller.next());
+            }
+        };
+        TimedEvent timedEvent2 = new TimedEvent(3) {
+            @Override
+            public void run() {
+                BoardLine board = (BoardLine)getAttachedObject();
+                board.setText(scroller2.next());
+            }
+        };
+
+        Board board = new Board("Test");
+        board.add(new BoardLine(scroller2.next(), timedEvent2));
+        board.add(new BoardLine("Test2          "));
+        board.add(new BoardLine("Test3"));
+        board.startTask();
+
+
+        Title title = new Title("Test", "", 0, 20, timedEvent);
+        ActionBar actionBar = new ActionBar("Test", 20, timedEvent.clone());
+        BossBar bossBar = new BossBar("Test", 20, timedEvent.clone());
+        for(Player player : Bukkit.getOnlinePlayers()){
+            title.send(player);
+            actionBar.send(player);
+            bossBar.send(player);
+            board.addPlayer(player);
+
+        }
 
     }
 }
