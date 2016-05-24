@@ -7,6 +7,9 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+/**
+ * Does not use ConnectionPooling
+ */
 @Deprecated
 public class MySQLManager {
 
