@@ -3,14 +3,14 @@ package me.bimmr.bimmcore.events.timing;
 /**
  * Created by Randy on 05/23/16.
  */
-public abstract class TimedEvent {
+public abstract class TimedEvent implements Cloneable{
 
-    private Object attatchedObject;
+    private Object attachedObject;
     private int    ticks;
 
-    public TimedEvent(int ticks, Object attatchedObject) {
+    public TimedEvent(int ticks, Object attachedObject) {
         this.ticks = ticks;
-        this.attatchedObject = attatchedObject;
+        this.attachedObject = attachedObject;
     }
 
     public TimedEvent(int ticks) {
@@ -23,16 +23,16 @@ public abstract class TimedEvent {
      * @return
      */
     public Object getAttachedObject() {
-        return this.attatchedObject;
+        return this.attachedObject;
     }
 
     /**
      * Set the attached object
      *
-     * @param attatchedObject
+     * @param attachedObject
      */
-    public void setAttachedObject(Object attatchedObject) {
-        this.attatchedObject = attatchedObject;
+    public void setAttachedObject(Object attachedObject) {
+        this.attachedObject = attachedObject;
     }
 
     /**
@@ -54,4 +54,14 @@ public abstract class TimedEvent {
     }
 
     public abstract void run();
+
+
+    public TimedEvent clone(){
+        try {
+            return (TimedEvent)super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
