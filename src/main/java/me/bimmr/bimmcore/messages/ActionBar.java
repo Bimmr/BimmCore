@@ -22,34 +22,36 @@ public class ActionBar extends MessageDisplay {
     private static HashMap<String, ActionBar>  bars  = new HashMap<>();
 
     /**
-     * Create an title defaulting to show for 2 seconds
+     * Create an actionbar
      *
      * @param text
      */
     public ActionBar(String text) {
-        this.text = text;
-        this.time = 2;
-    }
-
-    public ActionBar(String text, TimedEvent timedEvent) {
-        this.text = text;
-        this.time = 2;
-        setTimedEvent(timedEvent);
+        this(text, 2, null);
     }
 
     /**
-     * Create a title
+     * Create an actionbar
      *
      * @param text
      * @param time
      */
     public ActionBar(String text, int time) {
-        this.text = text;
-        this.time = time;
+        this(text, time, null);
     }
 
     /**
-     * Create a title
+     * Create an actionbar
+     *
+     * @param text
+     * @param timedEvent
+     */
+    public ActionBar(String text, TimedEvent timedEvent) {
+        this(text, 2, timedEvent);
+    }
+
+    /**
+     * Create an actionbar
      *
      * @param text
      * @param time
@@ -98,22 +100,41 @@ public class ActionBar extends MessageDisplay {
             return null;
     }
 
+    /**
+     * Get the text
+     *
+     * @return
+     */
     @Override
     public String getText() {
         return text;
     }
 
+    /**
+     * Set the text
+     *
+     * @param text
+     */
     @Override
     public void setText(String text) {
         this.text = text;
     }
 
+    /**
+     * Get the time
+     *
+     * @return
+     */
     @Override
     public int getTime() {
         return time;
     }
 
-
+    /**
+     * Get the TimedEvent
+     *
+     * @return
+     */
     @Override
     public TimedEvent getTimedEvent() {
         return timedEvent;
@@ -126,10 +147,17 @@ public class ActionBar extends MessageDisplay {
      */
     @Override
     public void setTimedEvent(TimedEvent timedEvent) {
-        this.timedEvent = timedEvent;
-        this.timedEvent.setAttachedObject(this);
+        if (timedEvent != null) {
+            this.timedEvent = timedEvent;
+            this.timedEvent.setAttachedObject(this);
+        }
     }
 
+    /**
+     * Stop showing the actionbar
+     *
+     * @param player
+     */
     @Override
     public void stop(Player player) {
         clear(player);
@@ -162,7 +190,6 @@ public class ActionBar extends MessageDisplay {
             }
         }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
-
 
     public static class ActionBarAPI {
 

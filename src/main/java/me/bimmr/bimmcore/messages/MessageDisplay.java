@@ -10,6 +10,7 @@ public abstract class MessageDisplay {
 
     public String     text;
     public int        time;
+
     public TimedEvent timedEvent;
 
     public abstract String getText();
