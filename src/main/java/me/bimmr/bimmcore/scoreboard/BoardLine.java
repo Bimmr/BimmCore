@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.scoreboard;
 
 import com.google.common.base.Splitter;
+import me.bimmr.bimmcore.StringUtil;
 import me.bimmr.bimmcore.events.timing.TimedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Score;
@@ -63,7 +64,7 @@ public class BoardLine {
      * @param timedEvent
      */
     public BoardLine(String text, int value, TimedEvent timedEvent) {
-        this.text = text;
+        this.text = text.substring(0, Math.min(30, text.length()));
         this.value = value;
         setTimedEvent(timedEvent);
     }
@@ -151,19 +152,35 @@ public class BoardLine {
      * Build the BoardLine
      */
     public void build() {
+        text = StringUtil.addColor(text);
 
-        Iterator<String> splitText;
-        if (text.length() > 16)
-            splitText = Splitter.fixedLength(16).split(text).iterator();
+        Iterator<String> splitText = Splitter.fixedLength(text.length() > 16 ? 16 : text.length()).split(text).iterator();
+
+        String prefix = splitText.next();
+        String suffix = splitText.hasNext() ? splitText.next() : null;
+
+        //If the text is "&4Something &|2Like This"
+        if (splitText.hasNext() && prefix.charAt(15) == ChatColor.COLOR_CHAR)
+            team.setPrefix(prefix.substring(0, 15));
+
+            //If the text is "&4Something &2|Like This"
+        else if (splitText.hasNext() && prefix.charAt(14) == ChatColor.COLOR_CHAR)
+            team.setPrefix(prefix.substring(0, 14));
         else
-            splitText = Splitter.fixedLength(text.length()).split(text).iterator();
+            team.setPrefix(prefix);
 
-        team.setPrefix(splitText.next());
-        if (splitText.hasNext())
-            team.setSuffix(splitText.next());
+        if (suffix != null) {
 
+            //If the text is "&4Something &|2Like This"
+            if (prefix.charAt(15) == ChatColor.COLOR_CHAR)
+                team.setSuffix(ChatColor.COLOR_CHAR + suffix);
+
+            else
+                team.setSuffix(ChatColor.getLastColors(prefix) + suffix);
+        }
         if (!team.getEntries().contains(key))
             team.addEntry(key);
+
         if (score == null)
             score = board.getObjective().getScore(key);
 
