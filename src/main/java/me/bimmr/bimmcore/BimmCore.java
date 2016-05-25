@@ -1,9 +1,13 @@
 package me.bimmr.bimmcore;
 
-import me.bimmr.bimmcore.items.attributes.ItemModifier;
+import me.bimmr.bimmcore.events.timing.TimedEvent;
 import me.bimmr.bimmcore.messages.ActionBar;
+import me.bimmr.bimmcore.messages.BossBar;
+import me.bimmr.bimmcore.messages.MessageDisplay;
 import me.bimmr.bimmcore.messages.Title;
 import me.bimmr.bimmcore.reflection.Reflection;
+import me.bimmr.bimmcore.scoreboard.Board;
+import me.bimmr.bimmcore.scoreboard.BoardLine;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -69,10 +73,85 @@ public class BimmCore extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        //Set the needed classes up for reflection usage
-        ActionBar.ActionBarAPI.setup();
-        Title.TitleAPI.setup();
-        ItemModifier.setup();
+        /*
+          Create all the Scrollers
+         */
+        String message = "&3Welcome &eTo &6My &4Test Server!";
+        final StringUtil.Scroller scroller = new StringUtil.Scroller(message, 15, 5);
+        final StringUtil.Scroller scroller2 = new StringUtil.Scroller(message, 10, 5);
+        final StringUtil.Scroller scroller3 = new StringUtil.Scroller(message, 10, 5);
+
+        /*
+         Create the TimedEvent that will run all of the MessageDisplays
+         */
+        TimedEvent timedEvent = new TimedEvent(3) {
+            @Override
+            public void run() {
+                MessageDisplay bar = (MessageDisplay) this.getAttachedObject();
+                bar.setText(scroller.next());
+            }
+        };
+        /*
+        Create the TimedEvent that will run the scoreboard
+         */
+        TimedEvent timedEvent3 = new TimedEvent(1) {
+            int i = 0;
+
+            @Override
+            public void run() {
+                Board board = (Board) getAttachedObject();
+                board.setTitle(scroller3.next());
+                if (i % 2 == 0)
+                    board.setText(0, scroller2.next());
+                if (i % 5 == 0)
+                    board.setText(9, scroller2.current());
+                board.getBoardLine(11).setValue(board.getBoardLine(11).getValue() + 1);
+
+                if (i == Integer.MAX_VALUE)
+                    i = 0;
+                i++;
+            }
+        };
+
+        /*
+         Create the Board
+         */
+        Board board = new Board("Test", timedEvent3);
+        board.add(new BoardLine(scroller2.next()));
+        board.add(new BoardLine("Test2          "));
+        board.add(new BoardLine("Test3"));
+        board.add(new BoardLine("Test4"));
+        board.add(new BoardLine("Test5"));
+        board.add(new BoardLine("Test6"));
+        board.add(new BoardLine("Test7"));
+        board.add(new BoardLine("Test8"));
+        board.add(new BoardLine("Test9"));
+        board.add(new BoardLine("Test10"));
+        board.add(new BoardLine("Test12"));
+        board.add(new BoardLine("Test13"));
+        board.add(new BoardLine("Test14"));
+
+        //Start the Board's timedTask(Not active by default to prevent un-needed lag
+        board.startTask();
+
+
+        /*
+        Create all the MessageDisplays
+         */
+        Title title = new Title("Test", "", 0, 30, timedEvent);
+        ActionBar actionBar = new ActionBar("Test", 30, timedEvent.clone());
+        BossBar bossBar = new BossBar("Test", 30, timedEvent.clone());
+
+        /*
+        Send it to all players online
+         */
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            title.send(player);
+            actionBar.send(player);
+            bossBar.send(player);
+            board.addPlayer(player);
+
+        }
 
     }
 }

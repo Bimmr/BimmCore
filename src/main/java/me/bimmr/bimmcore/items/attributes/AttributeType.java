@@ -3,7 +3,8 @@ package me.bimmr.bimmcore.items.attributes;
 /**
  * Created by Randy on 05/12/16.
  */
-public enum AttributeType { MAX_HEALTH("generic.maxHealth"),
+public enum AttributeType {
+    MAX_HEALTH("generic.maxHealth"),
     FOLLOW_RANGE("generic.followRange"),
     KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
     MOVEMENT_SPEED("generic.movementSpeed"),

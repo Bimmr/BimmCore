@@ -43,7 +43,7 @@ public class PotionUtil {
                 }
 
         }
-        PotionEffect p = new PotionEffect(type, dur * 20, amp);
+        PotionEffect p = new PotionEffect(type, dur * 20, amp-1);
         return p;
     }
 

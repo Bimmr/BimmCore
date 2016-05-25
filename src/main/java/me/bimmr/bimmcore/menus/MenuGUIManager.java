@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -57,7 +58,7 @@ public abstract class MenuGUIManager implements Listener {
     }
 
     /**
-     * Gets the MenuGUI that has the same name
+     * Gets the MenuGUI that has that name
      *
      * @param name
      * @return
@@ -68,10 +69,17 @@ public abstract class MenuGUIManager implements Listener {
                 return menuGUI;
         return null;
     }
+    public MenuGUI getMenuGUI(Inventory inventory) {
+        for (MenuGUI menuGUI : menus)
+            if (menuGUI.getInventory().equals(inventory))
+                return menuGUI;
+        return null;
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        MenuGUI menu = getMenuGUI(event.getInventory().getTitle());
+        MenuGUI menu = getMenuGUI(event.getInventory());
         if (menu != null) {
             if (menu.getPlayer() == null || menu.getPlayer() == event.getWhoClicked()) {
                 event.setCancelled(true);

@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.events.timing.TimedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -13,14 +14,54 @@ import java.util.HashMap;
 /**
  * Created by Randy on 05/10/16.
  */
-public class BossBar {
+public class BossBar extends MessageDisplay {
 
     private static HashMap<String, BossBar>    bars = new HashMap<>();
     private static HashMap<String, BukkitTask> task = new HashMap<>();
 
     private org.bukkit.boss.BossBar bar;
-    private int                     time;
-    private SecondEvent             secondEvent;
+
+
+    /**
+     * Create a Bossbar
+     * <p>
+     * time = 2
+     * color = white
+     * style = solid
+     * progress = 1.0
+     *
+     * @param text
+     */
+    public BossBar(String text) {
+        this(text, 2, BarColor.WHITE, BarStyle.SOLID, 1.0, null);
+    }
+
+    /**
+     * Create a BossBar
+     * <p>
+     * color = white
+     * style = solid
+     * progress = 1.0
+     *
+     * @param text
+     * @param time
+     */
+    public BossBar(String text, int time) {
+        this(text, time, BarColor.WHITE, BarStyle.SOLID, 1.0, null);
+    }
+
+    /**
+     * Create a BossBar
+     * progress = 1.0
+     *
+     * @param text
+     * @param time
+     * @param barColor
+     * @param barStyle
+     */
+    public BossBar(String text, int time, BarColor barColor, BarStyle barStyle) {
+        this(text, time, barColor, barStyle, 1.0, null);
+    }
 
     /**
      * Create a BossBar
@@ -32,56 +73,68 @@ public class BossBar {
      * @param progress
      */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, Double progress) {
-        bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
-        bar.setProgress(progress);
-        this.time = time;
+        this(text, time, barColor, barStyle, progress, null);
+    }
+
+    /**
+     * Create a Bossbar
+     * <p>
+     * time = 2
+     * color = white
+     * style = solid
+     * progress = 1.0
+     *
+     * @param text
+     * @param timedEvent
+     */
+    public BossBar(String text, TimedEvent timedEvent) {
+        this(text, 2, BarColor.WHITE, BarStyle.SOLID, 1.0, timedEvent);
     }
 
     /**
      * Create a BossBar
-     * BarStyle defaults to solid
-     * Progress defaults to 1.0
+     * <p>
+     * color = white
+     * style = solid
+     * progress = 1.0
+     *
+     * @param text
+     * @param time
+     * @param timedEvent
+     */
+    public BossBar(String text, int time, TimedEvent timedEvent) {
+        this(text, time, BarColor.WHITE, BarStyle.SOLID, 1.0, timedEvent);
+    }
+
+    /**
+     * Create a BossBar
+     * progress = 1.0
      *
      * @param text
      * @param time
      * @param barColor
+     * @param barStyle
+     * @param timedEvent
      */
-    public BossBar(String text, int time, BarColor barColor) {
-        bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
-        bar.setProgress(1.0);
-        this.time = time;
+    public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, TimedEvent timedEvent) {
+        this(text, time, barColor, barStyle, 1.0, timedEvent);
     }
 
     /**
      * Create a BossBar
      *
      * @param text
+     * @param time
      * @param barColor
      * @param barStyle
      * @param progress
+     * @param timedEvent
      */
-    public BossBar(String text, BarColor barColor, BarStyle barStyle, Double progress) {
+    public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, Double progress, TimedEvent timedEvent) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
         bar.setProgress(progress);
-        this.time = 2;
-    }
-
-    public BossBar(String text, BarColor barColor) {
-        bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
-        bar.setProgress(1);
-        this.time = 2;
-    }
-
-    public BossBar(String text, int time) {
-        bar = Bukkit.createBossBar(text, BarColor.WHITE, BarStyle.SOLID);
-        bar.setProgress(1);
         this.time = time;
-    }
-
-    public BossBar(String text) {
-        bar = Bukkit.createBossBar(text, BarColor.WHITE, BarStyle.SOLID);
-        bar.setProgress(1);
-        this.time = 2;
+        setTimedEvent(timedEvent);
     }
 
     /**
@@ -91,20 +144,12 @@ public class BossBar {
      */
     public static void clear(Player player) {
         if (isRunning(player)) {
+            getBossBar(player).getBukkitBar().removePlayer(player);
             bars.get(player.getName()).getBukkitBar().removePlayer(player);
-            stop(player);
+            task.get(player.getName()).cancel();
             bars.remove(player.getName());
             task.remove(player.getName());
         }
-    }
-
-    /**
-     * Stop showing an title
-     *
-     * @param player
-     */
-    private static void stop(Player player) {
-        task.get(player.getName()).cancel();
     }
 
     /**
@@ -130,19 +175,76 @@ public class BossBar {
         return bars.containsKey(player.getName());
     }
 
+    /**
+     * Get the time
+     *
+     * @return
+     */
+    @Override
+    public int getTime() {
+        return time;
+    }
+
+    /**
+     * Clear the bossbar off the players screen
+     *
+     * @param player
+     */
+    @Override
+    public void stop(Player player) {
+        clear(player);
+    }
+
+    /**
+     * Get the BukkitBossBar
+     *
+     * @return
+     */
     public org.bukkit.boss.BossBar getBukkitBar() {
         return this.bar;
     }
 
     /**
-     * A function that gets called every second that the BossBar is active for
+     * Get the TimedEvent
      *
-     * @param secondEvent
+     * @return
      */
-    public BossBar setSecondEvent(SecondEvent secondEvent) {
-        this.secondEvent = secondEvent;
-        this.secondEvent.setBossBar(this);
-        return this;
+    @Override
+    public TimedEvent getTimedEvent() {
+        return this.timedEvent;
+    }
+
+    /**
+     * Set the TimedEvent
+     *
+     * @param timedEvent
+     */
+    @Override
+    public void setTimedEvent(TimedEvent timedEvent) {
+        if (timedEvent != null) {
+            this.timedEvent = timedEvent;
+            this.timedEvent.setAttachedObject(this);
+        }
+    }
+
+    /**
+     * Get the text
+     *
+     * @return
+     */
+    @Override
+    public String getText() {
+        return getBukkitBar().getTitle();
+    }
+
+    /**
+     * Get the text
+     *
+     * @param text
+     */
+    @Override
+    public void setText(String text) {
+        getBukkitBar().setTitle(text);
     }
 
     /**
@@ -150,6 +252,7 @@ public class BossBar {
      *
      * @param player
      */
+    @Override
     public void send(final Player player) {
         clear(player);
         bar.addPlayer(player);
@@ -157,18 +260,18 @@ public class BossBar {
         bars.put(player.getName(), this);
         task.put(player.getName(),
                 new BukkitRunnable() {
-                    int timeLeft = time;
+                    int timeLeft = time * 20;
 
                     @Override
                     public void run() {
-                        if (secondEvent != null)
-                            secondEvent.run();
+                        if (timedEvent != null && timeLeft % timedEvent.getTicks() == 0)
+                            timedEvent.run();
 
                         if (timeLeft <= 0)
                             clear(player);
-                        else
-                            timeLeft--;
+
+                        timeLeft--;
                     }
-                }.runTaskTimer(BimmCore.getInstance(), 0L, 20L));
+                }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
 }
