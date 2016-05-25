@@ -187,6 +187,8 @@ public class StringUtil {
             this.positions = new ArrayList<>();
             this.originalMessage = addColor(message);
 
+            width -= 2;
+
             //Add Spaces
             for (int i = 0; i < spaceBetween; i++)
                 originalMessage += " ";
@@ -220,8 +222,6 @@ public class StringUtil {
 
             if (line.charAt(0) == ChatColor.COLOR_CHAR) {
                 chatColor = ChatColor.getByChar(line.charAt(1));
-                line = new StringBuilder(getNext());
-                line.setCharAt(0, ' ');
             }
             return last = chatColor + line.toString();
         }
