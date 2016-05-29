@@ -86,7 +86,7 @@ public abstract class MenuGUIManager implements Listener {
                 int position = event.getRawSlot();
                 if (menu.getItems().length > position && position >= 0) {
                     if (menu.getItems()[position] != null) {
-                        menu.getClickEvent().setup((Player) event.getWhoClicked(), position, menu.getItems()[position]);
+                        menu.getClickEvent().setup((Player) event.getWhoClicked(), position, menu.getItems()[position], event);
                         final Player player = (Player) event.getWhoClicked();
                         menu.getClickEvent().click();
                         player.updateInventory();
