@@ -78,7 +78,7 @@ public class BimmCore extends JavaPlugin {
          */
         String message = "&3Welcome &eTo &6My &4Test Server!";
         final StringUtil.Scroller scroller = new StringUtil.Scroller(message, 15, 5);
-        final StringUtil.Scroller scroller2 = new StringUtil.Scroller(message, 10, 5);
+        final StringUtil.Scroller scroller2 = new StringUtil.Scroller(message, 30, 5);
         final StringUtil.Scroller scroller3 = new StringUtil.Scroller(message, 10, 5);
 
         /*
@@ -129,7 +129,9 @@ public class BimmCore extends JavaPlugin {
         board.add(new BoardLine("Test10"));
         board.add(new BoardLine("Test12"));
         board.add(new BoardLine("Test13"));
-        board.add(new BoardLine("Test14"));
+        board.add(new BoardLine("&4abcdefghijklm&3nopqrstuvwxyz"));
+        board.add(new BoardLine("&4abcdefghijklmnopqrstuvwxyz"));
+        board.add(new BoardLine("abcdefghijklmnopqrstuvwxyz"));
 
         //Start the Board's timedTask(Not active by default to prevent un-needed lag
         board.startTask();
@@ -149,7 +151,7 @@ public class BimmCore extends JavaPlugin {
             title.send(player);
             actionBar.send(player);
             bossBar.send(player);
-            board.addPlayer(player);
+            board.send(player);
 
         }
 
