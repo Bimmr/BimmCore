@@ -23,6 +23,7 @@ public class Board {
     private Objective       objective;
     private BukkitTask      task;
     private TimedEvent      timedEvent;
+    private String          name;
 
     /**
      * Create a Board
@@ -30,7 +31,17 @@ public class Board {
      * @param title
      */
     public Board(String title) {
-        this(title, null);
+        this(title, -1, null);
+    }
+
+    /**
+     * Create a Board
+     *
+     * @param title
+     * @param size
+     */
+    public Board(String title, int size) {
+        this(title, size, null);
     }
 
     /**
@@ -40,12 +51,26 @@ public class Board {
      * @param timedEvent
      */
     public Board(String title, TimedEvent timedEvent) {
+        this(title, -1, timedEvent);
+    }
+
+    /**
+     * Create a Board
+     *
+     * @param name
+     * @param timedEvent
+     */
+    public Board(String name, int size, TimedEvent timedEvent) {
 
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.objective = this.scoreboard.registerNewObjective("BC" + title, "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + name, "dummy");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        this.objective.setDisplayName(title);
+        this.objective.setDisplayName(name);
         setTimedEvent(timedEvent);
+        this.name = name;
+        if (size > 0)
+            for (int i = 0; i < size; i++)
+                addBlankLine();
 
         this.lines = new ArrayList<>();
     }
@@ -87,7 +112,15 @@ public class Board {
      * @param text
      */
     public void setText(int lineNo, String text) {
-        getBoardLine(lineNo).setText(text);
+
+        BoardLine line;
+        if ((line = getBoardLine(lineNo)) != null)
+            line.setText(text);
+        else {
+            for (int i = lines.size(); i < lineNo; i++)
+                addBlankLine();
+            add(text);
+        }
     }
 
     /**
@@ -106,7 +139,42 @@ public class Board {
      * @param line
      */
     public void add(String line) {
-        BoardLine boardLine = new BoardLine(line);
+        add(line, -1);
+    }
+
+    /**
+     * Add a line at a specific index
+     *
+     * @param index
+     * @param line
+     */
+    public void add(int index, String line) {
+        add(index, line, -1);
+    }
+
+    /**
+     * Add a Boardline
+     *
+     * @param index
+     * @param line
+     * @param value
+     */
+    public void add(int index, String line, int value) {
+        BoardLine boardLine = new BoardLine(line, value);
+        boardLine.setBoard(this);
+        if (index >= lines.size())
+            index = lines.size() - 1;
+        lines.add(index, boardLine);
+    }
+
+    /**
+     * Add a Boardline
+     *
+     * @param line
+     * @param value
+     */
+    public void add(String line, int value) {
+        BoardLine boardLine = new BoardLine(line, value);
         boardLine.setBoard(this);
         lines.add(boardLine);
     }
@@ -116,7 +184,7 @@ public class Board {
      *
      * @return
      */
-    public List<?> getLines() {
+    public List<BoardLine> getLines() {
         return this.lines;
     }
 
@@ -127,7 +195,9 @@ public class Board {
      * @return
      */
     public BoardLine getBoardLine(int lineNo) {
-        return lines.get(lineNo);
+        if (lines.size() > lineNo)
+            return lines.get(lineNo);
+        return null;
     }
 
     /**
@@ -153,7 +223,7 @@ public class Board {
      *
      * @param player
      */
-    public void addPlayer(Player player) {
+    public void send(Player player) {
         player.setScoreboard(this.scoreboard);
     }
 
@@ -186,6 +256,16 @@ public class Board {
      */
     public void stopTask() {
         task.cancel();
+        task = null;
+    }
+
+    /**
+     * Is the task running
+     *
+     * @return
+     */
+    public boolean isTaskRunning() {
+        return task != null;
     }
 
     /**
@@ -193,8 +273,9 @@ public class Board {
      *
      * @return
      */
-    public String getTitle() {
-        return this.objective.getDisplayName();
+    public String getName() {
+
+        return this.name;
     }
 
     /**
@@ -205,4 +286,46 @@ public class Board {
     public void setTitle(String title) {
         this.objective.setDisplayName(title);
     }
+
+    /**
+     * Reset the board
+     */
+    public void reset() {
+
+        if (this.objective != null) {
+            for (BoardLine line : lines)
+                if (line.getTeam() != null) {
+                    line.getTeam().unregister();
+                    line.setTeam(null);
+                }
+            this.objective.unregister();
+            this.objective = null;
+        }
+        this.lines.clear();
+        this.objective = this.scoreboard.registerNewObjective("BC" + getName(), "dummy");
+        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.objective.setDisplayName(getName());
+    }
+
+    /**
+     * Add a blank line
+     */
+    public void addBlankLine() {
+        add("");
+    }
+
+    /**
+     * Remove a BoardLine
+     *
+     * @param line
+     */
+    public void remove(BoardLine line) {
+        lines.remove(line);
+    }
+
+
+    public void setDisplayName(String name) {
+        this.objective.setDisplayName(name);
+    }
+
 }

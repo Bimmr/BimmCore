@@ -78,13 +78,16 @@ public class BoardLine {
         this.board = board;
 
         this.lineNo = board.getLines().size();
-        team = board.getScoreboard().registerNewTeam("" + lineNo);
-        if (lineNo > 9) {
-            this.key = "" + ChatColor.COLOR_CHAR + (lineNo - 9) + ChatColor.RESET + ChatColor.RESET;
-        } else
-            this.key = "" + ChatColor.COLOR_CHAR + lineNo + ChatColor.RESET;
+        if (lineNo < 16) {
+            team = board.getScoreboard().registerNewTeam("" + lineNo);
+            if (lineNo > 9) {
+                this.key = "" + ChatColor.COLOR_CHAR + (lineNo - 9) + ChatColor.RESET + ChatColor.RESET;
+            } else
+                this.key = "" + ChatColor.COLOR_CHAR + lineNo + ChatColor.RESET;
 
-        build();
+            build();
+        }
+
     }
 
     /**
@@ -153,34 +156,36 @@ public class BoardLine {
      */
     public void build() {
         text = StringUtil.addColor(text);
+        if (text.length() >= 1) {
 
-        Iterator<String> splitText = Splitter.fixedLength(text.length() > 16 ? 16 : text.length()).split(text).iterator();
+            Iterator<String> splitText = Splitter.fixedLength(text.length() > 16 ? 16 : text.length()).split(text).iterator();
 
-        String prefix = splitText.next();
-        String suffix = splitText.hasNext() ? splitText.next() : null;
-
-        //If the text is "&4Something &|2Like This"
-        if (splitText.hasNext() && prefix.charAt(15) == ChatColor.COLOR_CHAR)
-            team.setPrefix(prefix.substring(0, 15));
-
-            //If the text is "&4Something &2|Like This"
-        else if (splitText.hasNext() && prefix.charAt(14) == ChatColor.COLOR_CHAR)
-            team.setPrefix(prefix.substring(0, 14));
-        else
-            team.setPrefix(prefix);
-
-        if (suffix != null) {
+            String prefix = splitText.next();
+            String suffix = splitText.hasNext() ? splitText.next() : null;
 
             //If the text is "&4Something &|2Like This"
-            if (prefix.charAt(15) == ChatColor.COLOR_CHAR)
-                team.setSuffix(ChatColor.COLOR_CHAR + suffix);
+            if (suffix != null && prefix.charAt(15) == ChatColor.COLOR_CHAR)
+                team.setPrefix(prefix.substring(0, 14));
 
+                //If the text is "&4Something &2|Like This"
+            else if (suffix != null && prefix.charAt(14) == ChatColor.COLOR_CHAR)
+                team.setPrefix(prefix.substring(0, 14));
             else
-                team.setSuffix(ChatColor.getLastColors(prefix) + suffix);
-        }
-        if (!team.getEntries().contains(key))
-            team.addEntry(key);
+                team.setPrefix(prefix);
 
+            if (suffix != null) {
+
+                //If the text is "&4Something &|2Like This"
+                if (prefix.charAt(15) == ChatColor.COLOR_CHAR)
+                    team.setSuffix(ChatColor.COLOR_CHAR + suffix);
+
+                else
+                    team.setSuffix(ChatColor.getLastColors(prefix) + suffix);
+            }
+            if (!team.getEntries().contains(key))
+                team.addEntry(key);
+
+        }
         if (score == null)
             score = board.getObjective().getScore(key);
 
@@ -191,5 +196,22 @@ public class BoardLine {
 
     }
 
+    /**
+     * Get the team
+     *
+     * @return
+     */
+    public Team getTeam() {
+        return this.team;
+    }
+
+    /**
+     * Set the Line's team
+     *
+     * @param team
+     */
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 
 }
