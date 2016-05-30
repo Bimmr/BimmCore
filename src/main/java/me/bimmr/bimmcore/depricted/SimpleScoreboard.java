@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore;
+package me.bimmr.bimmcore.depricted;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
