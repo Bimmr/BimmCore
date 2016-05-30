@@ -5,15 +5,16 @@ package me.bimmr.bimmcore.menus;
  */
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class ClickEvent {
 
-    private Player    player;
-    private int       position;
-    private boolean   close;
-    private boolean   destroy;
-    private ItemStack item;
+    private Player              player;
+    private int                 position;
+    private boolean             close;
+    private boolean             destroy;
+    private ItemStack           item;
     private InventoryClickEvent event;
 
     public void setup(Player player, int position, ItemStack item, InventoryClickEvent event) {
@@ -52,16 +53,19 @@ public abstract class ClickEvent {
     public ItemStack getItem() {
         return item;
     }
-    
+
     /**
      * Gets the InventoryClickEvent involved in the GUI click.
+     *
      * @return the event
      */
     public InventoryClickEvent getEvent() {
         return event;
     }
 
-    public String getClickedName(){return getItem().getItemMeta().hasDisplayName() ? getItem().getItemMeta().getDisplayName() : getItem().getType().name();}
+    public String getClickedName() {
+        return getItem().getItemMeta().hasDisplayName() ? getItem().getItemMeta().getDisplayName() : getItem().getType().name();
+    }
 
     public abstract void click();
 }
