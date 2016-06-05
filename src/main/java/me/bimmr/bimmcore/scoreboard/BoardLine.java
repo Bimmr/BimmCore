@@ -14,12 +14,15 @@ import java.util.Iterator;
  */
 public class BoardLine {
 
-    private Team       team;
-    private String     key;
-    private int        lineNo;
-    private int        value;
-    private String     text;
-    private Score      score;
+    private Team   team;
+    private String key;
+    private int    lineNo;
+
+    private String text;
+
+    private Score score;
+    private int   value;
+
     private Board      board;
     private TimedEvent timedEvent;
 
@@ -105,7 +108,7 @@ public class BoardLine {
      * @param text
      */
     public void setText(String text) {
-        this.text = text;
+        this.text = text.substring(0, Math.min(30, text.length()));
         build();
     }
 
@@ -151,41 +154,21 @@ public class BoardLine {
         }
     }
 
+
     /**
      * Build the BoardLine
      */
     public void build() {
         text = StringUtil.addColor(text);
-        if (text.length() >= 1) {
 
-            Iterator<String> splitText = Splitter.fixedLength(text.length() > 16 ? 16 : text.length()).split(text).iterator();
+        Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
+        String prefix = iterator.next();
 
-            String prefix = splitText.next();
-            String suffix = splitText.hasNext() ? splitText.next() : null;
+        team.setPrefix(prefix);
 
-            //If the text is "&4Something &|2Like This"
-            if (suffix != null && prefix.charAt(15) == ChatColor.COLOR_CHAR)
-                team.setPrefix(prefix.substring(0, 14));
+        if (!team.hasEntry(key))
+            team.addEntry(key);
 
-                //If the text is "&4Something &2|Like This"
-            else if (suffix != null && prefix.charAt(14) == ChatColor.COLOR_CHAR)
-                team.setPrefix(prefix.substring(0, 14));
-            else
-                team.setPrefix(prefix);
-
-            if (suffix != null) {
-
-                //If the text is "&4Something &|2Like This"
-                if (prefix.charAt(15) == ChatColor.COLOR_CHAR)
-                    team.setSuffix(ChatColor.COLOR_CHAR + suffix);
-
-                else
-                    team.setSuffix(ChatColor.getLastColors(prefix) + suffix);
-            }
-            if (!team.getEntries().contains(key))
-                team.addEntry(key);
-
-        }
         if (score == null)
             score = board.getObjective().getScore(key);
 
@@ -194,6 +177,22 @@ public class BoardLine {
         else
             score.setScore(value);
 
+
+        if (text.length() > 16) {
+            String prefixColor = ChatColor.getLastColors(prefix);
+            String suffix = iterator.next();
+
+            if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                team.setPrefix(prefix);
+                prefixColor = ChatColor.getByChar(suffix.charAt(0)).toString();
+                suffix = suffix.substring(1);
+            }
+
+            team.setSuffix((prefixColor == null ? ChatColor.RESET : prefixColor) + suffix);
+
+            //System.out.println(team.getPrefix() + "|" + team.getSuffix() + "[" + team.getPrefix().length() + "-" + team.getSuffix().length() + "]");
+        }
     }
 
     /**
