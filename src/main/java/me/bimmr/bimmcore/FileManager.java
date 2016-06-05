@@ -292,8 +292,18 @@ public class FileManager {
 
         /**
          * Get the name of the config file
+         *
          * @return
          */
-        public String getName(){return this.name;}
+        public String getName() {
+            return this.name;
+        }
+
+        /**
+         * Method to copy from the resources and save, use this in onEnable
+         */
+        public void setup() {
+            this.copyDefaults(true).save();
+        }
     }
 }
