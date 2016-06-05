@@ -105,52 +105,6 @@ public class StringUtil {
     }
 
     /**
-     * Gets the time in a nicely formatted string from the seconds
-     * '#D:#H:#M:#S
-     *
-     * @param seconds
-     * @return
-     */
-    public static String getTime(int seconds) {
-        long minutes = seconds / 60;
-        seconds %= 60;
-        long hours = minutes / 60;
-        minutes %= 60;
-        long days = hours / 24;
-        hours %= 24;
-        String times = days + "D:" + hours + "H:" + minutes + "M:" + seconds + "S";
-        return times;
-    }
-
-    /**
-     * Gets the time in a nicely format string from the seconds
-     * '# Minutes and # Seconds.'
-     *
-     * @param seconds
-     * @return
-     */
-    public static String getTime(long seconds) {
-        String times = null;
-        long minutes = seconds / 60;
-        seconds %= 60;
-        if (seconds == 0) {
-            if (minutes == 0)
-                times = "N/A";
-            else if (minutes == 1)
-                times = minutes + " " + "Minute";
-            else
-                times = minutes + " " + "Minutes";
-        } else if (minutes == 0) {
-            if (seconds == 1)
-                times = seconds + " " + "Second";
-            else
-                times = seconds + " " + "Seconds";
-        } else
-            times = minutes + " Minutes and " + seconds + " Seconds.";
-        return times;
-    }
-
-    /**
      * Get a string with every char having a different color
      *
      * @param string
@@ -170,5 +124,19 @@ public class StringUtil {
 
         }
         return newMessage;
+    }
+
+    /**
+     * Make a string a specific length, filling with white spaces
+     *
+     * @param string
+     * @param length
+     * @return
+     */
+    public static String fixedLengthString(String string, int length) {
+        if (length <= string.length())
+            return string.substring(0, string.length());
+        else
+            return String.format("%1$" + length + "s", string);
     }
 }
