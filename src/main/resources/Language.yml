@@ -1,0 +1,25 @@
+Time:
+  Year:
+    Plural: "Years"
+    Single: "Year"
+    Short: "Y"
+  Month:
+    Plural: "Months"
+    Single: "Month"
+    Short: "M"
+  Day:
+    Plural: "Days"
+    Single: "Day"
+    Short: "D"
+  Hour:
+    Plural: "Hours"
+    Single: "Hour"
+    Short: "h"
+  Minute:
+    Plural: "Minutes"
+    Single: "Minute"
+    Short: "m"
+  Second:
+    Plural: "Seconds"
+    Single: "Second"
+    Short: "s"
