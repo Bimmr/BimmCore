@@ -41,6 +41,7 @@ public class Scroller {
         for (int i = 0; i < originalMessage.length() - width; i++)
             if (i > 0 && originalMessage.substring(i - 1, i).charAt(0) != ChatColor.COLOR_CHAR)
                 positions.add(originalMessage.substring(i, i + width));
+
     }
 
     public String current() {
@@ -57,9 +58,10 @@ public class Scroller {
         if (line.charAt(line.length() - 1) == ChatColor.COLOR_CHAR)
             line.setCharAt(line.length() - 1, ' ');
 
-        if (line.charAt(0) == ChatColor.COLOR_CHAR) {
+        if (line.charAt(0) == ChatColor.COLOR_CHAR)
             chatColor = ChatColor.getByChar(line.charAt(1));
-        }
+
+
         return last = chatColor + line.toString();
     }
 
