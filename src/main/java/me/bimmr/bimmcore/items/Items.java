@@ -25,13 +25,14 @@ import java.util.Map;
 /**
  * Created by Randy on 9/23/2015.
  */
-class Example{
-    public Example(){
+class Example {
+    public Example() {
         String itemCode = "id:Leather_Sword data:100 name:&5Sword lore:This|Is|Sparta color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
         Items item = new Items(itemCode);
         ItemStack itemStack = item.getItem();
     }
 }
+
 public class Items {
 
     private ItemStack item = new ItemStack(Material.AIR);
@@ -53,7 +54,7 @@ public class Items {
     public String toString() {
         //Default the string to just air
         String string = "item:AIR";
-        if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && Items_Crackshot.getGunName(getItem()) != null) {
             return Items_Crackshot.getGunName(getItem());
         }
         if (getItem().getType() != Material.AIR) {
@@ -516,7 +517,7 @@ public class Items {
         if (itemAttributes == null)
             itemAttributes = new ItemAttributes(getItem());
 
-            itemAttributes.addAttribute(new Attribute(attribute, slot, value, operation));
+        itemAttributes.addAttribute(new Attribute(attribute, slot, value, operation));
     }
 
 
