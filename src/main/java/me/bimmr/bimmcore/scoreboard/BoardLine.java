@@ -82,11 +82,11 @@ public class BoardLine {
 
         this.lineNo = board.getLines().size();
         if (lineNo < 16) {
-            team = board.getScoreboard().registerNewTeam("" + lineNo);
             if (lineNo > 9) {
                 this.key = "" + ChatColor.COLOR_CHAR + (lineNo - 9) + ChatColor.RESET + ChatColor.RESET;
             } else
                 this.key = "" + ChatColor.COLOR_CHAR + lineNo + ChatColor.RESET;
+            team = board.getScoreboard().registerNewTeam("" + key);
 
             build();
         }
@@ -211,6 +211,14 @@ public class BoardLine {
      */
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    /**
+     * Remove a line from a Board
+     */
+    public void remove() {
+        this.board.getScoreboard().resetScores(this.key);
+        this.team.unregister();
     }
 
 }

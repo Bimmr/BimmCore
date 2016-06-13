@@ -321,6 +321,7 @@ public class Board {
      */
     public void remove(BoardLine line) {
         lines.remove(line);
+        line.remove();
     }
 
 
