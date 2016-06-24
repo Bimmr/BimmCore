@@ -8,6 +8,15 @@ import org.bukkit.entity.Player;
  * Created by Randy on 05/09/16.
  */
 public class Message {
+
+    /**
+     * Send a Message using the messagetype
+     *
+     * @param messageType
+     * @param player
+     * @param message
+     * @param extra
+     */
     public static void sendMessage(MessageType messageType, Player player, String message, Object... extra) {
         switch (messageType) {
             case TITLE:
@@ -31,26 +40,66 @@ public class Message {
         }
     }
 
+    /**
+     * Send a Title and a subTitle
+     *
+     * @param player
+     * @param title
+     * @param subTitle
+     */
     public static void sendTitleAndSubTitle(Player player, String title, String subTitle) {
         new Title(title, subTitle, 1, 2, 1).send(player);
     }
 
+    /**
+     * Send a title
+     *
+     * @param player
+     * @param message
+     */
     public static void sendTitle(Player player, String message) {
         new Title(message, " ", 1, 2, 1).send(player);
     }
 
+    /**
+     * Send a subtitle
+     *
+     * @param player
+     * @param message
+     */
     public static void sendSubTitle(Player player, String message) {
         new Title(" ", message, 1, 2, 1).send(player);
     }
 
+    /**
+     * Send an actionbar
+     *
+     * @param player
+     * @param message
+     */
     public static void sendActionBar(Player player, String message) {
         new ActionBar(message, 2).send(player);
     }
 
+    /**
+     * Send a regular chat message
+     *
+     * @param player
+     * @param message
+     */
     public static void sendChatMessage(Player player, String message) {
         player.sendMessage(message);
     }
 
+    /**
+     * Send a BossBar
+     *
+     * @param player
+     * @param text
+     * @param barColor
+     * @param barStyle
+     * @param progress
+     */
     public static void sendBossBar(Player player, String text, BarColor barColor, BarStyle barStyle, Double progress) {
         new BossBar(text, 2, barColor, barStyle, progress).send(player);
     }
