@@ -18,9 +18,9 @@ import java.util.ArrayList;
  */
 
 
-class Example extends MenuGUIManager {
+class MenuGUIManagerExample extends MenuGUIManager {
 
-    public Example(Plugin plugin) {
+    public MenuGUIManagerExample(Plugin plugin) {
         super(plugin);
 
         //Create a new menu
@@ -69,6 +69,7 @@ public abstract class MenuGUIManager implements Listener {
                 return menuGUI;
         return null;
     }
+
     public MenuGUI getMenuGUI(Inventory inventory) {
         for (MenuGUI menuGUI : menus)
             if (menuGUI.getInventory().equals(inventory))
