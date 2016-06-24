@@ -55,7 +55,10 @@ public class MySQLManager {
         }
         //updateSQL("CREATE TABLE IF NOT EXISTS " + table + " (" + mySQLData + ")");
         updateSQL("CREATE TABLE IF NOT EXISTS " + table + " (" + mySQLData + ", PRIMARY KEY (UUID))");
-        updateSQL("ALTER TABLE " + table + " ADD PRIMARY KEY (uuid)");
+        try {
+            updateSQL("ALTER TABLE " + table + " ADD PRIMARY KEY (uuid)");
+        } catch (SQLException e) {
+        }
     }
 
     /**
