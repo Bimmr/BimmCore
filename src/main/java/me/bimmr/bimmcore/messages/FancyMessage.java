@@ -11,6 +11,19 @@ import org.bukkit.entity.Player;
 /**
  * Created by Randy on 9/23/2015.
  */
+class FancyMessageExample {
+    public FancyMessageExample() {
+        Player player = null;
+
+        //Create the fancy message
+        FancyMessage fancy = new FancyMessage("!").then("Click Here").suggest("Clicked");
+        fancy.then(" Hover Here").tooltip("Hovered");
+
+        //Send the fancy message
+        fancy.send(player);
+    }
+}
+
 public class FancyMessage {
 
     private TextComponent text;

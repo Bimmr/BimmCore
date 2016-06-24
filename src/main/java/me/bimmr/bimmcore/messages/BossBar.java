@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.Scroller;
 import me.bimmr.bimmcore.events.timing.TimedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -14,13 +15,36 @@ import java.util.HashMap;
 /**
  * Created by Randy on 05/10/16.
  */
+
+class BossBarExample {
+
+    public BossBarExample() {
+
+        //Create a scroller so the timed event has something to do
+        final Scroller scroller = new Scroller("Testing Bossbar", 10, 3);
+
+        //Create the timed event
+        TimedEvent timedEvent = new TimedEvent(1) {
+            @Override
+            public void run() {
+                MessageDisplay display = (MessageDisplay) getAttachedObject();
+                display.setText(scroller.next());
+            }
+        };
+
+        //Create the title
+        MessageDisplay display = new BossBar(scroller.current(), 10, timedEvent);
+
+        //Send the title
+        display.send(null);
+    }
+
+}
 public class BossBar extends MessageDisplay {
 
     private static HashMap<String, BossBar>    bars = new HashMap<>();
     private static HashMap<String, BukkitTask> task = new HashMap<>();
-
     private org.bukkit.boss.BossBar bar;
-
 
     /**
      * Create a Bossbar
@@ -35,6 +59,7 @@ public class BossBar extends MessageDisplay {
     public BossBar(String text) {
         this(text, 2, BarColor.WHITE, BarStyle.SOLID, 1.0, null);
     }
+
 
     /**
      * Create a BossBar
@@ -274,4 +299,5 @@ public class BossBar extends MessageDisplay {
                     }
                 }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
+
 }
