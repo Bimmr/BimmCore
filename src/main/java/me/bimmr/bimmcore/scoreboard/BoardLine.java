@@ -68,7 +68,7 @@ public class BoardLine {
      */
     public BoardLine(String text, int value, TimedEvent timedEvent) {
         this.text = text.substring(0, Math.min(30, text.length()));
-        this.value = value;
+        setValue(value);
         setTimedEvent(timedEvent);
     }
 
