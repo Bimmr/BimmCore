@@ -127,6 +127,24 @@ public class FancyMessage {
     }
 
     /**
+     * Append a FancyMessage to the end of a FancyMessage
+     *
+     * @param fancyMessage
+     */
+    public void append(FancyMessage fancyMessage) {
+        this.all.addExtra(fancyMessage.getTextComponent());
+    }
+
+    /**
+     * Get the TextComponent that the FancyMessage uses
+     *
+     * @return
+     */
+    public TextComponent getTextComponent() {
+        return this.all;
+    }
+
+    /**
      * Sends the fancy messages in the form of plain text to the console
      *
      * @param sender
