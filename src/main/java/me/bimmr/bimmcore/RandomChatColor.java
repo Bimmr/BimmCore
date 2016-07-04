@@ -17,7 +17,7 @@ public class RandomChatColor {
      * @return
      */
     public static ChatColor getColor(ChatColor... validChatcolors) {
-        Random r = new Random(System.currentTimeMillis());
+        Random r = new Random(System.nanoTime());
         ChatColor[] colors;
         if (validChatcolors.length == 0)
             colors = ChatColor.values();
@@ -38,7 +38,7 @@ public class RandomChatColor {
      * @return
      */
     public static ChatColor getFormat(ChatColor... chatFormats) {
-        Random r = new Random(System.currentTimeMillis());
+        Random r = new Random(System.nanoTime());
         ChatColor[] colors;
         if (chatFormats.length == 0)
             colors = ChatColor.values();
