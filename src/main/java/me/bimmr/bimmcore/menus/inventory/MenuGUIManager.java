@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.menus;
+package me.bimmr.bimmcore.menus.inventory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

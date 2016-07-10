@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.menus;
+package me.bimmr.bimmcore.menus.inventory;
 
 /**
  * Created by Randy on 3/5/2016.
