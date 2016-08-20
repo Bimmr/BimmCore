@@ -13,6 +13,7 @@ public class MySQLManager {
 
     private Plugin plugin;
 
+    private boolean          debug;
     private HikariDataSource hikari;
 
     public MySQLManager(Plugin plugin, String host, String port, String database, String username, String password) {
@@ -30,6 +31,15 @@ public class MySQLManager {
     }
 
     /**
+     * Set if MySQL should debug or not
+     *
+     * @param debug
+     */
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    /**
      * Close the connection
      */
     public void unload() {
@@ -44,6 +54,9 @@ public class MySQLManager {
      * @throws SQLException
      */
     public void loadTable(String table, Column... columns) throws SQLException {
+        if (debug)
+            System.out.println("Loading Table: " + table + "; Columns:" + columns);
+
         String mySQLData = "";
 
         if (!columns[0].getName().toLowerCase().contains("uuid"))
@@ -70,6 +83,9 @@ public class MySQLManager {
      * @return
      */
     public TreeMap<UUID, Integer> getTop(String table, String column, int positions) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Getting Top " + positions + " " + column);
+
         int playerCount = 0;
         Map<UUID, Integer> map = new HashMap<UUID, Integer>();
         ValueComparator bvc = new ValueComparator(map);
@@ -93,6 +109,8 @@ public class MySQLManager {
      * @return
      */
     public Object get(String table, final String column, UUID uuid) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Getting  " + uuid + " - " + column);
         List<HashMap<String, Object>> result = querySQL("SELECT " + column + " FROM " + table + " WHERE UUID=?", uuid.toString());
         if (result.isEmpty())
             return 0;
@@ -112,6 +130,8 @@ public class MySQLManager {
      * @return
      */
     public boolean isInTable(String table, UUID uuid) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Checking for  " + uuid);
         List<?> result = querySQL("SELECT UUID FROM " + table + " WHERE UUID=?", uuid.toString());
         return !result.isEmpty();
     }
@@ -125,6 +145,8 @@ public class MySQLManager {
      * @param value
      */
     public void set(String table, String column, UUID uuid, Object value) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Setting  " + uuid + " - " + column);
         try {
             updateSQL("INSERT INTO " + table + "(UUID, " + column + ") VALUES (?, ?) ON DUPLICATE KEY UPDATE " + column + "=?", uuid.toString(), value, value);
         } catch (SQLException e) {
@@ -140,6 +162,8 @@ public class MySQLManager {
      * @param set
      */
     public void addColumns(String table, UUID uuid, Map<String, Object> set) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Adding  " + uuid + " - " + set);
         String columns = "UUID";
         String value = "?";
         Object[] values = new Object[set.size()];
@@ -165,6 +189,8 @@ public class MySQLManager {
      * @param column
      */
     public void addColumn(String table, Column column) {
+        if (debug)
+            System.out.println("Using Table: " + table + "; Adding column" + column);
         try {
             updateSQL("ALTER TABLE " + table + " ADD " + column.getName() + " " + column.getDataType().toString() + "(" + column.getLength() + ");");
         } catch (SQLException e) {
