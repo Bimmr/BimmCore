@@ -1,9 +1,9 @@
 package me.bimmr.bimmcore.messages;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,15 +26,14 @@ class FancyMessageExample {
 
 public class FancyMessage {
 
-    private TextComponent text;
-    private TextComponent all = new TextComponent("");
+    private ComponentBuilder builder;
 
     public FancyMessage() {
-        text = new TextComponent("");
+        builder = new ComponentBuilder("");
     }
 
     public FancyMessage(String string) {
-        text = new TextComponent(string);
+        builder = new ComponentBuilder(string);
     }
 
     /**
@@ -45,8 +44,7 @@ public class FancyMessage {
      * @return
      */
     public FancyMessage then(String string) {
-        all.addExtra(text);
-        text = new TextComponent(string);
+        builder.append(string);
         return this;
     }
 
@@ -62,7 +60,7 @@ public class FancyMessage {
             component.append("\n");
             component.append(strings[i]);
         }
-        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
+        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
         return this;
     }
 
@@ -75,7 +73,7 @@ public class FancyMessage {
      * @return
      */
     public FancyMessage command(String string) {
-        text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, string));
+        builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, string));
         return this;
     }
 
@@ -86,7 +84,7 @@ public class FancyMessage {
      * @return
      */
     public FancyMessage suggest(String string) {
-        text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string));
+        builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string));
         return this;
     }
 
@@ -97,7 +95,7 @@ public class FancyMessage {
      * @return
      */
     public FancyMessage link(String string) {
-        text.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, string));
+        builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, string));
         return this;
     }
 
@@ -107,10 +105,7 @@ public class FancyMessage {
      * @param player
      */
     public void send(Player player) {
-        if (text != null) all.addExtra(text);
-        text = null;
-
-        player.spigot().sendMessage(all);
+        player.spigot().sendMessage(builder.create());
     }
 
     /**
@@ -119,30 +114,16 @@ public class FancyMessage {
      * @param players
      */
     public void send(Player[] players) {
-        if (text != null) all.addExtra(text);
-
+        BaseComponent[] components = builder.create();
         for (Player player : players)
-            player.spigot().sendMessage(all);
+            player.spigot().sendMessage(components);
 
     }
 
-    /**
-     * Append a FancyMessage to the end of a FancyMessage
-     *
-     * @param fancyMessage
-     */
-    public void append(FancyMessage fancyMessage) {
-        this.all.addExtra(fancyMessage.getTextComponent());
+    public BaseComponent[] getBaseComponents() {
+        return this.builder.create();
     }
 
-    /**
-     * Get the TextComponent that the FancyMessage uses
-     *
-     * @return
-     */
-    public TextComponent getTextComponent() {
-        return this.all;
-    }
 
     /**
      * Sends the fancy messages in the form of plain text to the console
@@ -150,6 +131,7 @@ public class FancyMessage {
      * @param sender
      */
     public void sendToConsole(CommandSender sender) {
-        Bukkit.getConsoleSender().sendMessage(all.toPlainText());
+        for (BaseComponent component : builder.create())
+            Bukkit.getConsoleSender().sendMessage(component.toPlainText());
     }
 }
