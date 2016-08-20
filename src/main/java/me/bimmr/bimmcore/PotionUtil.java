@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * And easy way to save/load potion effects in a config
+ */
 public class PotionUtil {
 
     public static PotionEffect getPotionEffect(String potionCode) {

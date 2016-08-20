@@ -1,7 +1,7 @@
 package me.bimmr.bimmcore;
 
 /**
- * Created by Randy on 05/27/16.
+ * A Utilities class to manage time
  */
 public class TimeUtil {
 
@@ -23,12 +23,12 @@ public class TimeUtil {
 
     public static long getInterval(TimeInterval timeInterval, long time) {
 
-        long minutes = time / 60;
-        time %= 60;
-        long hours = minutes / 60;
-        minutes %= 60;
-        long days = hours / 24;
-        hours %= 24;
+            long minutes = time / 60;
+            time %= 60;
+            long hours = minutes / 60;
+            minutes %= 60;
+            long days = hours / 24;
+            hours %= 24;
         long months = days / 30;
         days %= 24;
         long years = months / 12;
@@ -121,6 +121,9 @@ public class TimeUtil {
     public static enum TimeFormat {SHORT, LONG}
 
 
+    /**
+     * A single type of time
+     */
     public static enum TimeInterval {YEAR, MONTH, DAY, HOUR, MINUTE, SECOND}
 
     public static class Interval {

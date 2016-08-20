@@ -64,7 +64,7 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
                     information.sendToConsole(sender);
             } else {
                 for (SubCommand subCommand : this.commands)
-                    if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
+                    if (subCommand.getName().equalsIgnoreCase(args[0]) || (subCommand.getAliases() != null && subCommand.getAliases().contains(args[0].toLowerCase()))) {
                         subCommand.execute(sender, args);
                         return true;
                     }

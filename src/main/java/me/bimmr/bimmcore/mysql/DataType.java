@@ -1,7 +1,7 @@
 package me.bimmr.bimmcore.mysql;
 
 /**
- * Created by Randy on 05/20/16.
+ * A DataType for MySQLManager
  */
 public enum DataType {
     INT,

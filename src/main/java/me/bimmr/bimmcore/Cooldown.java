@@ -2,6 +2,9 @@ package me.bimmr.bimmcore;
 
 import java.util.HashMap;
 
+/**
+ * An easy to use Cooldown class
+ */
 public class Cooldown {
 
     private HashMap<String, Long> cooldowns = new HashMap<String, Long>();

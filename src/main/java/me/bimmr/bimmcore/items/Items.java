@@ -123,6 +123,24 @@ public class Items {
 
                     string = string.substring(0, string.length() - 1);
                 }
+
+                //Unbreakable
+                if (im.spigot().isUnbreakable())
+                    string += " unbreakable";
+
+                //Flags
+                if (!im.getItemFlags().isEmpty()) {
+                    string += " flags:";
+                    for (ItemFlag flag : im.getItemFlags())
+                        string += flag.name();
+                }
+
+                //Item Attributes
+                if (itemAttributes != null) {
+                    for (Attribute attribute : itemAttributes.getAttributes()) {
+                        string += attribute.getAttribute().toString() + "," + attribute.getSlot().toString() + "," + attribute.getValue() + "," + attribute.getOperation().toString();
+                    }
+                }
             }
         }
         return string;

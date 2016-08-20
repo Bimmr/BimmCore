@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 
+/**
+ * An easy way to handle vault api
+ */
 public class VaultAPI {
 
     /**

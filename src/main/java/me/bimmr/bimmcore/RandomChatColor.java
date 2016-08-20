@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 import java.util.Random;
 
 /**
- * Created by Randy on 05/27/16.
+ * Utilities class to get a random color/format
  */
 public class RandomChatColor {
 

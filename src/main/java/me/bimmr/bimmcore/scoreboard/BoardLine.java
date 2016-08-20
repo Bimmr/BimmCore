@@ -10,7 +10,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.Iterator;
 
 /**
- * Created by Randy on 05/23/16.
+ * A Line on a Board
  */
 public class BoardLine {
 

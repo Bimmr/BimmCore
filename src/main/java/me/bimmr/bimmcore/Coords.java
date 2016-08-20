@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Bimmr
+ * A simple way to save/load a location
  */
 public class Coords {
 

@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Created by Randy on 05/09/16.
+ * A Utilities class to handle packets
  */
 public class Packets {
 

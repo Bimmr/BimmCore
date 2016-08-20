@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 
 /**
- * Created by Randy on 04/24/16.
+ * Collection of methods relating to Inventory management
  */
 public class InventoryUtil {
 

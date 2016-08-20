@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Random;
 
 
+/**
+ * A Utilities class to manage strings
+ */
 public class StringUtil {
 
     /**

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Randy on 05/27/16.
+ * A Utilities class to create a scrolling message
  */
 
 public class Scroller {

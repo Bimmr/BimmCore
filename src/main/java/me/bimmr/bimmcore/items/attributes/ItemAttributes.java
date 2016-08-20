@@ -39,6 +39,13 @@ public class ItemAttributes {
     }
 
     /**
+     * Load the attributes that are already on the ItemStack
+     */
+    public void loadAttributes(){
+
+    }
+
+    /**
      * Set an itemstack
      *
      * @param itemStack

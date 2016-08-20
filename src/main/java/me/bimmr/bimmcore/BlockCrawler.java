@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 
 /**
- * @author Unkown
+ * Collects all adjacent blocks of the same material
  */
 public class BlockCrawler {
 

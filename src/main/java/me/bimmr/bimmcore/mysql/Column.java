@@ -2,7 +2,7 @@ package me.bimmr.bimmcore.mysql;
 
 
 /**
- * Created by Randy on 05/20/16.
+ * A Column for MySQLManager
  */
 public class Column {
     private Integer               length;

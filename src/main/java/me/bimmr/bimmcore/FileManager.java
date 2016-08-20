@@ -8,6 +8,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+/**
+ * Easy way to handle config files
+ */
 public class FileManager {
 
     private final JavaPlugin plugin;

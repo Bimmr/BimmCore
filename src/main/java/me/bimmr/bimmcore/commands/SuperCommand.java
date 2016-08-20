@@ -28,9 +28,9 @@ public abstract class SuperCommand extends SubCommand {
             } else
                 sender.sendMessage(getInvalidSubCommandMessage());
         } else if (sender instanceof Player)
-            getFancyMessage().send((Player) sender);
+            sendAllSubFancyMessage(sender);
         else
-            sender.sendMessage(getCommandExample());
+            sender.sendMessage(getAllSubCommandExample());
     }
 
     public abstract String getInvalidSubCommandMessage();
@@ -40,8 +40,7 @@ public abstract class SuperCommand extends SubCommand {
 
     public abstract String getCommandExampleHeader();
 
-    @Override
-    public String getCommandExample() {
+    public String getAllSubCommandExample() {
         String example = "";
 
         for (int i = 0; i < subCommands.size(); i++) {
@@ -54,19 +53,18 @@ public abstract class SuperCommand extends SubCommand {
         return getCommandExampleHeader() + "\n" + example;
     }
 
-    @Override
-    public FancyMessage getFancyMessage() {
-        FancyMessage fancyMessage = new FancyMessage(getCommandExampleHeader() + "\n");
+    public void sendAllSubFancyMessage(CommandSender sender) {
+        sender.sendMessage(getCommandExampleHeader());
 
-        for (int i = 0; i < subCommands.size(); i++) {
-            SubCommand subCommand = subCommands.get(i);
-            if (i != 0 && i != subCommands.size() - 1)
-                fancyMessage.then("\n");
-            fancyMessage.append(subCommand.getFancyMessage());
-        }
-
-        return fancyMessage;
+        for (int i = 0; i < subCommands.size(); i++)
+            subCommands.get(i).getFancyMessage().send((Player) sender);
     }
+
+    @Override
+    public abstract FancyMessage getFancyMessage();
+
+    @Override
+    public abstract String getCommandExample();
 
     @Override
     public abstract String getPermission();
@@ -94,7 +92,7 @@ public abstract class SuperCommand extends SubCommand {
      */
     public SubCommand getSubCommand(String command) {
         for (SubCommand subCommand : subCommands)
-            if (subCommand.getName().equals(command))
+            if (subCommand.getName().equalsIgnoreCase(command))
                 return subCommand;
         return null;
     }
