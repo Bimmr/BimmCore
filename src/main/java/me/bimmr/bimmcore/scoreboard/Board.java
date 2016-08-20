@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Randy on 05/23/16.
+ *
+ * The Board
+ *
  */
 public class Board {
 
@@ -61,9 +63,8 @@ public class Board {
      * @param timedEvent
      */
     public Board(String name, int size, TimedEvent timedEvent) {
-
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.objective = this.scoreboard.registerNewObjective("BC" + name, "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(name);
         setTimedEvent(timedEvent);
@@ -302,7 +303,7 @@ public class Board {
             this.objective = null;
         }
         this.lines.clear();
-        this.objective = this.scoreboard.registerNewObjective("BC" + getName(), "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(getName());
     }
