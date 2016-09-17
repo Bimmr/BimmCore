@@ -6,7 +6,7 @@
     <name>BimmCore</name>
     <groupId>me.bimmr</groupId>
     <artifactId>bimmcore</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>LATEST</version>
+            <version>1.9.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--HikariCP-->
