@@ -26,6 +26,7 @@ public class MenuGUI {
     private int     slot     = 18;
     private int        numOfItems;
     private ClickEvent clickEvent;
+    
 
     public MenuGUI(MenuGUIManager menuGUIManager, String name, int numOfItems, ClickEvent clickEvent, ItemStack cornerItem, ItemStack sideItem) {
         this.menuGUIManager = menuGUIManager;
