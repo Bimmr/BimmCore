@@ -199,7 +199,7 @@ public class ActionBar extends MessageDisplay {
         clear(player);
         bars.put(player.getName(), this);
         tasks.put(player.getName(), new BukkitRunnable() {
-            int timeLeft = time * 20;
+            int timeLeft = time * (time == Integer.MAX_VALUE ? 1 : 20);
 
             @Override
             public void run() {
@@ -220,42 +220,41 @@ public class ActionBar extends MessageDisplay {
     public static class ActionBarAPI {
 
         private static Class<?>       chatSerializer;
-        private static Class<?>       chatBaseComponent;
         private static Method         serializer;
+        private static Class<?>       chatBaseComponent;
         private static Constructor<?> chatConstructor;
+        private static Class<?>       titleAction;
+        private static Object         actionEnum;
 
         static {
             chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
             chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
+            titleAction = Reflection.getNMSClass("PacketPlayOutTitle$EnumTitleAction");
 
             try {
                 serializer = chatSerializer.getMethod("a", String.class);
 
-                Class<?> packetType = Reflection.getNMSClass("PacketPlayOutChat");
-                chatConstructor = packetType.getConstructor(chatBaseComponent, byte.class);
+                Class<?> packetType = Reflection.getNMSClass("PacketPlayOutTitle");
+                chatConstructor = packetType.getConstructor(titleAction, chatBaseComponent);
+
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
+
+            actionEnum = titleAction.getEnumConstants()[2];
         }
 
-        /**
-         * Send the title
-         *
-         * @param player
-         * @param msg
-         */
-        private static void sendActionBar(Player player, String msg) {
+        public static void sendActionBar(Player player, String text) {
             try {
-                Object serialized = serializer.invoke(null, "{\"text\":\"" + msg + "\"}");
+                Object actionSerialized = serializer.invoke(null, "{\"text\":\"" + text + "\"}");
+                Object actionPack = chatConstructor.newInstance(actionEnum, actionSerialized);
+                Packets.sendPacket(player, actionPack);
 
-                Object packet = chatConstructor.newInstance(serialized, (byte) 2);
-                Packets.sendPacket(player, packet);
-
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
-
         }
+
 
     }
 }
