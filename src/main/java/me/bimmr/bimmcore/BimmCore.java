@@ -95,8 +95,8 @@ public class BimmCore extends JavaPlugin {
         instance = this;
 
         loadTimeUtil();
-
-
+// CTRL + /
+//
 //        /*
 //          Create all the Scrollers
 //         */
