@@ -5,7 +5,6 @@ import me.bimmr.bimmcore.Scroller;
 import me.bimmr.bimmcore.events.timing.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -296,7 +295,7 @@ public class Title extends MessageDisplay {
         clear(player);
         titles.put(player.getName(), this);
         tasks.put(player.getName(), new BukkitRunnable() {
-            int timeLeft = time * 20;
+            int timeLeft = time * (time == Integer.MAX_VALUE ? 1 : 20);
 
             @Override
             public void run() {
@@ -307,7 +306,7 @@ public class Title extends MessageDisplay {
                     clear(player);
 
                 else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    TitleAPI.sendTitle(player, text, subTitle, fadeIn * 20, 20, fadeOut * 20);
+                    TitleAPI.sendTitle(player, text, subTitle, timeLeft == time *20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20: 0);
 
                 timeLeft--;
             }
@@ -355,7 +354,7 @@ public class Title extends MessageDisplay {
     public void clear(Player player) {
 
         if (isRunning(player)) {
-            TitleAPI.sendTitle(player, " ", " ", 0, 0, 0);
+            TitleAPI.reset(player);
             tasks.get(player.getName()).cancel();
             tasks.remove(player.getName());
             titles.remove(player.getName());
@@ -370,7 +369,7 @@ public class Title extends MessageDisplay {
         private static Constructor<?> chatConstructor;
         private static Constructor<?> timeConstructor;
         private static Class<?>       titleAction;
-        private static Object         timeEnum, titleEnum, subEnum;
+        private static Object         timeEnum, titleEnum, subEnum, resetEnum;
 
         static {
             chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
@@ -390,7 +389,8 @@ public class Title extends MessageDisplay {
 
             titleEnum = titleAction.getEnumConstants()[0];
             subEnum = titleAction.getEnumConstants()[1];
-            timeEnum = titleAction.getEnumConstants()[2];
+            timeEnum = titleAction.getEnumConstants()[3];
+            resetEnum = titleAction.getEnumConstants()[5];
         }
 
         public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int show, int fadeOut) {
@@ -403,10 +403,20 @@ public class Title extends MessageDisplay {
                 Packets.sendPacket(player, titlePacket);
 
                 if (subTitle != "") {
-                    Object subSerialized = serializer.invoke(null, "{\"text\":\"" + ChatColor.translateAlternateColorCodes('&', subTitle) + "\"}");
+                    Object subSerialized = serializer.invoke(null, "{\"text\":\"" + subTitle + "\"}");
                     Object subPacket = chatConstructor.newInstance(subEnum, subSerialized);
                     Packets.sendPacket(player, subPacket);
                 }
+
+            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static void reset(Player player){
+            try {
+                Object titlePacket = chatConstructor.newInstance(resetEnum, null);
+                Packets.sendPacket(player, titlePacket);
 
             } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
