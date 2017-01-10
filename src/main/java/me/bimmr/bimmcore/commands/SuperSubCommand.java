@@ -11,8 +11,11 @@ import java.util.List;
  */
 public abstract class SuperSubCommand extends SubCommand {
 
-    public SuperSubCommand(String name) {
+    public SuperCommand superCommand;
+
+    public SuperSubCommand(SuperCommand superCommand, String name) {
         super(name);
+        this.superCommand = superCommand;
     }
 
     @Override
