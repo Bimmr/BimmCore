@@ -34,7 +34,7 @@ public abstract class SuperSubCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return null;
+        return superCommand.getPermission();
     }
 
     @Override
