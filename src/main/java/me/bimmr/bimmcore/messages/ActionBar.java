@@ -44,6 +44,8 @@ class ActionBarExample {
 
 public class ActionBar extends MessageDisplay {
 
+    private static boolean useOld;
+
     private static HashMap<String, BukkitTask> tasks = new HashMap<>();
     private static HashMap<String, ActionBar>  bars  = new HashMap<>();
 
@@ -86,6 +88,10 @@ public class ActionBar extends MessageDisplay {
     public ActionBar(String text, int time, TimedEvent timedEvent) {
         this.text = text;
         this.time = time;
+
+        if (Reflection.getVersion().startsWith("v1_7_") || Reflection.getVersion().startsWith("v1_8_") || Reflection.getVersion().startsWith("v1_9_") || Reflection.getVersion().startsWith("v1_10_"))
+            useOld = true;
+
         setTimedEvent(timedEvent);
     }
 
@@ -106,7 +112,11 @@ public class ActionBar extends MessageDisplay {
      */
     public static void clear(Player player) {
         if (isRunning(player)) {
-            ActionBarAPI.sendActionBar(player, " ");
+            if (useOld)
+                ActionBarAPIOld.sendActionBar(player, "");
+            else
+                ActionBarAPI.sendActionBar(player, "");
+
             tasks.get(player.getName()).cancel();
             tasks.remove(player.getName());
             bars.remove(player.getName());
@@ -210,13 +220,18 @@ public class ActionBar extends MessageDisplay {
                     clear(player);
 
                 else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    ActionBarAPI.sendActionBar(player, text);
-
+                    if (useOld)
+                        ActionBarAPIOld.sendActionBar(player, text);
+                    else
+                        ActionBarAPI.sendActionBar(player, text);
                 timeLeft--;
             }
         }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
 
+    /**
+     * Actionbar for 1.11 and newer
+     */
     public static class ActionBarAPI {
 
         private static Class<?>       chatSerializer;
@@ -254,7 +269,50 @@ public class ActionBar extends MessageDisplay {
                 e.printStackTrace();
             }
         }
+    }
 
+    /**
+     * Actionbar for 1.7, 1.8, 1.9, 1.10 (Minecraft versions are odd)
+     */
+    public static class ActionBarAPIOld {
+
+        private static Class<?>       chatSerializer;
+        private static Class<?>       chatBaseComponent;
+        private static Method         serializer;
+        private static Constructor<?> chatConstructor;
+
+        static {
+            chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
+            chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
+
+            try {
+                serializer = chatSerializer.getMethod("a", String.class);
+
+                Class<?> packetType = Reflection.getNMSClass("PacketPlayOutChat");
+                chatConstructor = packetType.getConstructor(chatBaseComponent, byte.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+
+        /**
+         * Send the title
+         *
+         * @param player
+         * @param msg
+         */
+        private static void sendActionBar(Player player, String msg) {
+            try {
+                Object serialized = serializer.invoke(null, "{\"text\":\"" + msg + "\"}");
+
+                Object packet = chatConstructor.newInstance(serialized, (byte) 2);
+                Packets.sendPacket(player, packet);
+
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 }

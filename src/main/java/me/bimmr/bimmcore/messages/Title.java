@@ -306,7 +306,7 @@ public class Title extends MessageDisplay {
                     clear(player);
 
                 else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    TitleAPI.sendTitle(player, text, subTitle, timeLeft == time *20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20: 0);
+                    TitleAPI.sendTitle(player, text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
 
                 timeLeft--;
             }
@@ -389,8 +389,14 @@ public class Title extends MessageDisplay {
 
             titleEnum = titleAction.getEnumConstants()[0];
             subEnum = titleAction.getEnumConstants()[1];
-            timeEnum = titleAction.getEnumConstants()[3];
-            resetEnum = titleAction.getEnumConstants()[5];
+
+            if (Reflection.getVersion().startsWith("v1_7_") || Reflection.getVersion().startsWith("v1_8_") || Reflection.getVersion().startsWith("v1_9_") || Reflection.getVersion().startsWith("v1_10_"))
+                timeEnum = titleAction.getEnumConstants()[2];
+            else{
+                timeEnum = titleAction.getEnumConstants()[3];
+                resetEnum = titleAction.getEnumConstants()[5];
+            }
+
         }
 
         public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int show, int fadeOut) {
@@ -413,11 +419,14 @@ public class Title extends MessageDisplay {
             }
         }
 
-        public static void reset(Player player){
+        public static void reset(Player player) {
             try {
-                Object titlePacket = chatConstructor.newInstance(resetEnum, null);
-                Packets.sendPacket(player, titlePacket);
-
+                if (resetEnum == null)
+                    sendTitle(player, "", "", 0, 0, 0);
+                else {
+                    Object titlePacket = chatConstructor.newInstance(resetEnum, null);
+                    Packets.sendPacket(player, titlePacket);
+                }
             } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
