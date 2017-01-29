@@ -88,8 +88,8 @@ public class TimeUtil {
             exactTime += hours + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, hour, hours) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
         if (minutes != 0)
             exactTime += minutes + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, minute, minutes) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-
-        exactTime += time + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, second, time);
+        if(time != 0)
+            exactTime += time + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, second, time);
 
         return exactTime;
     }
