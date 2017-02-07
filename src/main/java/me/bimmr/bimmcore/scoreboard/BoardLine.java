@@ -90,8 +90,8 @@ public class BoardLine {
 
             build();
         }
-
     }
+
 
     /**
      * Get the text
@@ -164,6 +164,10 @@ public class BoardLine {
         Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
         String prefix = iterator.next();
 
+        if (team == null) {
+            if ((team = board.getScoreboard().getTeam("" + key)) == null)
+                team = board.getScoreboard().registerNewTeam("" + key);
+        }
         team.setPrefix(prefix);
 
         if (!team.hasEntry(key))
