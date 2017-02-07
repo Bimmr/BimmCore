@@ -1,5 +1,6 @@
 package me.bimmr.bimmcore;
 
+import me.bimmr.bimmcore.messages.FancyMessage;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -87,6 +88,8 @@ public class BimmCore extends JavaPlugin {
                 new TimeUtil.Interval(minuteConfig.getString("Single"), minuteConfig.getString("Plural"), minuteConfig.getString("Short")),
                 new TimeUtil.Interval(secondConfig.getString("Single"), secondConfig.getString("Plural"), secondConfig.getString("Short"))
         );
+
+        Bukkit.getPluginManager().registerEvents(new FancyMessage.FancyMessageListener(), this);
 
     }
 
