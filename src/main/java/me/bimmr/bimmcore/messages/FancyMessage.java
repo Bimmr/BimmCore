@@ -1,12 +1,20 @@
 package me.bimmr.bimmcore.messages;
 
+import me.bimmr.bimmcore.events.message.FancyClickEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Randy on 9/23/2015.
@@ -27,6 +35,7 @@ class FancyMessageExample {
 public class FancyMessage {
 
     private ComponentBuilder builder;
+
 
     public FancyMessage() {
         builder = new ComponentBuilder("");
@@ -65,7 +74,7 @@ public class FancyMessage {
     }
 
     /**
-     * The command/Message the player will use/say when they click the messages
+     * The command/Message the player will use/say when they message the messages
      * <p/>
      * To make it a command, don't forget to have a "/"
      *
@@ -78,7 +87,29 @@ public class FancyMessage {
     }
 
     /**
-     * Autotypes a messages into their chatbar when they click the messages
+     * Change the page in a book
+     * @param page
+     * @return
+     */
+    public FancyMessage changePage(String page) {
+        builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, page));
+        return this;
+    }
+
+    /**
+     * Add a callback for an onClick
+     *
+     * CallBack self deletes after 5 minutes from first message, unless told otherwise
+     * @param fce
+     * @return
+     */
+    public FancyMessage onClick(FancyClickEvent fce) {
+        FancyMessageListener.chats.add(fce);
+        return command("/BimmCore " + fce.getUUID());
+    }
+
+    /**
+     * Autotypes a messages into their chatbar when they message the messages
      *
      * @param string
      * @return
@@ -89,7 +120,7 @@ public class FancyMessage {
     }
 
     /**
-     * Opens the link for the player when they click the messages
+     * Opens the link for the player when they message the messages
      *
      * @param string
      * @return
@@ -120,8 +151,20 @@ public class FancyMessage {
 
     }
 
+    /**
+     * Get all the BaseComponents
+     * @return
+     */
     public BaseComponent[] getBaseComponents() {
         return this.builder.create();
+    }
+
+    /**
+     * Get the FancyMessage as JSON
+     * @return
+     */
+    public String toJSON() {
+        return ComponentSerializer.toString(getBaseComponents());
     }
 
 
@@ -134,4 +177,33 @@ public class FancyMessage {
         for (BaseComponent component : builder.create())
             Bukkit.getConsoleSender().sendMessage(component.toPlainText());
     }
+
+    /**
+     * Listener for the Click Callbacks
+     */
+    public static class FancyMessageListener implements Listener {
+        public static List<FancyClickEvent> chats   = new ArrayList<>();
+
+        /**
+         * Event
+         * @param event
+         */
+        @EventHandler
+        public void chatClick(PlayerCommandPreprocessEvent event){
+            if(event.getMessage().startsWith("/BimmCore ")){
+                String uuid = event.getMessage().split(" ")[1];
+
+                for(FancyClickEvent chatClickEvent : chats)
+                    if(chatClickEvent.getUUID().toString().equals(uuid))
+                    {
+                        event.setCancelled(true);
+                        chatClickEvent.onClick();
+                        chatClickEvent.startRemoval();
+                        break;
+                    }
+            }
+        }
+
+    }
+
 }
