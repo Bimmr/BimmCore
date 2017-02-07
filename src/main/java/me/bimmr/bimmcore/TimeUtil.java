@@ -23,12 +23,12 @@ public class TimeUtil {
 
     public static long getInterval(TimeInterval timeInterval, long time) {
 
-            long minutes = time / 60;
-            time %= 60;
-            long hours = minutes / 60;
-            minutes %= 60;
-            long days = hours / 24;
-            hours %= 24;
+        long minutes = time / 60;
+        time %= 60;
+        long hours = minutes / 60;
+        minutes %= 60;
+        long days = hours / 24;
+        hours %= 24;
         long months = days / 30;
         days %= 24;
         long years = months / 12;
@@ -77,19 +77,21 @@ public class TimeUtil {
         long years = months / 12;
         months %= 24;
 
+        String spaceFormat = timeFormat == TimeFormat.SHORT ? "" : " ";
         String exactTime = "";
+
         if (years != 0)
-            exactTime += years + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, year, years) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
+            exactTime += (exactTime == "" ? "" : " ") + years + spaceFormat + getIntervalText(timeFormat, year, years);
         if (months != 0)
-            exactTime += months + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, month, months) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
+            exactTime += (exactTime == "" ? "" : " ") + months + spaceFormat + getIntervalText(timeFormat, month, months);
         if (days != 0)
-            exactTime += days + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, day, days) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
+            exactTime += (exactTime == "" ? "" : " ") + days + spaceFormat + getIntervalText(timeFormat, day, days);
         if (hours != 0)
-            exactTime += hours + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, hour, hours) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
+            exactTime += (exactTime == "" ? "" : " ") + hours + spaceFormat + getIntervalText(timeFormat, hour, hours);
         if (minutes != 0)
-            exactTime += minutes + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, minute, minutes) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        if(time != 0)
-            exactTime += time + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, second, time);
+            exactTime += (exactTime == "" ? "" : " ") + minutes + spaceFormat + getIntervalText(timeFormat, minute, minutes);
+        if (time != 0)
+            exactTime += (exactTime == "" ? "" : " ") + time + spaceFormat + getIntervalText(timeFormat, second, time);
 
         return exactTime;
     }
@@ -108,12 +110,14 @@ public class TimeUtil {
         months %= 24;
 
         String timeString = "";
-        timeString += years + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, year, years) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        timeString += months + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, month, months) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        timeString += days + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, day, days) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        timeString += hours + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, hour, hours) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        timeString += minutes + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, minute, minutes) + (timeFormat == TimeFormat.SHORT ? " " : ", ");
-        timeString += time + (timeFormat == TimeFormat.SHORT ? "" : " ") + getIntervalText(timeFormat, second, time);
+        String spaceFormat = timeFormat == TimeFormat.SHORT ? "" : " ";
+
+        timeString += years + spaceFormat + getIntervalText(timeFormat, year, years);
+        timeString += " " + months + spaceFormat + getIntervalText(timeFormat, month, months);
+        timeString += " " + days + spaceFormat + getIntervalText(timeFormat, day, days);
+        timeString += " " + hours + spaceFormat + getIntervalText(timeFormat, hour, hours);
+        timeString += " " + minutes + spaceFormat + getIntervalText(timeFormat, minute, minutes);
+        timeString += " " + time + spaceFormat + getIntervalText(timeFormat, second, time);
 
         return timeString;
     }
@@ -124,7 +128,9 @@ public class TimeUtil {
     /**
      * A single type of time
      */
-    public static enum TimeInterval {YEAR, MONTH, DAY, HOUR, MINUTE, SECOND}
+    public static enum TimeInterval {
+        YEAR, MONTH, DAY, HOUR, MINUTE, SECOND
+    }
 
     public static class Interval {
         private String single, plural;
