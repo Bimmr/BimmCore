@@ -95,7 +95,18 @@ public class StringUtil {
      * @return
      */
     public static String getMidMessage(String line) {
-        int le = (62 - line.length()) / 2;
+        return getMidMessage(62, line);
+    }
+
+    /**
+     * Center a string into any length of message
+     * @param size
+     * @param line
+     * @return
+     */
+    public static String getMidMessage(int size, String line){
+
+        int le = (size - line.length()) / 2;
         String newLine = "";
         for (int i = 0; i < le; i++) {
             newLine += ChatColor.GOLD + "*";
