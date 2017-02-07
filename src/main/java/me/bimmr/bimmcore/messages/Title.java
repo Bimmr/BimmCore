@@ -392,7 +392,7 @@ public class Title extends MessageDisplay {
 
             if (Reflection.getVersion().startsWith("v1_7_") || Reflection.getVersion().startsWith("v1_8_") || Reflection.getVersion().startsWith("v1_9_") || Reflection.getVersion().startsWith("v1_10_"))
                 timeEnum = titleAction.getEnumConstants()[2];
-            else{
+            else {
                 timeEnum = titleAction.getEnumConstants()[3];
                 resetEnum = titleAction.getEnumConstants()[5];
             }

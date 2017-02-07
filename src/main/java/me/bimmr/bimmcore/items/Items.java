@@ -12,7 +12,10 @@ import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
-import org.bukkit.potion.*;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -95,7 +98,7 @@ public class Items {
             //Potions
             if (isPotion()) {
                 PotionMeta pm = (PotionMeta) getItem().getItemMeta();
-                if(pm.hasCustomEffects())
+                if (pm.hasCustomEffects())
                     for (PotionEffect p : pm.getCustomEffects())
                         string += " potion:" + p.getType().getName() + "," + p.getDuration() / 20 + "," + (p.getAmplifier() + 1);
             }

@@ -5,9 +5,9 @@ package me.bimmr.bimmcore.mysql;
  * A Column for MySQLManager
  */
 public class Column {
-    private Integer               length;
+    private Integer  length;
     private DataType type;
-    private String                name;
+    private String   name;
 
     public Column(String name, DataType type, Integer length) {
         this.name = name;

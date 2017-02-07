@@ -40,6 +40,7 @@ class BossBarExample {
     }
 
 }
+
 public class BossBar extends MessageDisplay {
 
     private static HashMap<String, BossBar>    bars = new HashMap<>();

@@ -77,7 +77,7 @@ public class MenuGUI {
     }
 
     /**
-     * Get the click event
+     * Get the message event
      *
      * @return
      */

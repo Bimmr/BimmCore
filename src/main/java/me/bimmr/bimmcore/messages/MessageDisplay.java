@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
  */
 public abstract class MessageDisplay {
 
-    public String     text;
-    public int        time;
+    public String text;
+    public int    time;
 
     public TimedEvent timedEvent;
 

@@ -9,14 +9,17 @@ public abstract class ChatOptionClick {
 
     private ChatOption chatOption;
 
-    public ChatOptionClick(){
+    public ChatOptionClick() {
 
     }
 
-    public void setAttatched(ChatOption chatOption){
+    public void setAttatched(ChatOption chatOption) {
         this.chatOption = chatOption;
     }
-    public ChatOption getChatOption(){return this.chatOption;}
+
+    public ChatOption getChatOption() {
+        return this.chatOption;
+    }
 
     public abstract void run(Player player);
 }

@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * The Board
- *
  */
 public class Board {
 

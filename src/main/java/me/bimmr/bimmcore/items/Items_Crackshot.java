@@ -9,11 +9,12 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Items_Crackshot {
 
-    public static ItemStack getGunItemStack(String code){
+    public static ItemStack getGunItemStack(String code) {
         CSUtility cs = new CSUtility();
         return cs.generateWeapon(code);
     }
-    public static String getGunName(ItemStack itemStack){
+
+    public static String getGunName(ItemStack itemStack) {
         CSUtility cs = new CSUtility();
         if (cs.getWeaponTitle(itemStack) != null)
             return "gun:" + cs.getWeaponTitle(itemStack);

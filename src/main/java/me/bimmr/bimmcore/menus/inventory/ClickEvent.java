@@ -55,7 +55,7 @@ public abstract class ClickEvent {
     }
 
     /**
-     * Gets the InventoryClickEvent involved in the GUI click.
+     * Gets the InventoryClickEvent involved in the GUI message.
      *
      * @return the event
      */

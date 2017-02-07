@@ -23,6 +23,22 @@ public class ItemModifier {
     private static Constructor<?> nbtTagDouble;
     private static Constructor<?> nbtTagLong;
 
+    static {
+        craftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
+        asNMSCopy = Reflection.getMethod(craftItemStack, "asNMSCopy", ItemStack.class);
+        nbtTagCompound = Reflection.getNMSClass("NBTTagCompound");
+        nbtBase = Reflection.getNMSClass("NBTBase");
+        nbtTagList = Reflection.getNMSClass("NBTTagList");
+        try {
+            nbtTagString = Reflection.getNMSClass("NBTTagString").getConstructor(String.class);
+            nbtTagInt = Reflection.getNMSClass("NBTTagInt").getConstructor(int.class);
+            nbtTagDouble = Reflection.getNMSClass("NBTTagDouble").getConstructor(double.class);
+            nbtTagLong = Reflection.getNMSClass("NBTTagLong").getConstructor(long.class);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
     //Non-Static Variables
     private Object         nmsItemStack;
     private Object         nbtTag;
@@ -38,22 +54,6 @@ public class ItemModifier {
     public ItemModifier(ItemStack itemStack, ItemAttributes itemAttributes) {
         nmsItemStack = getNMSItemStack(itemStack);
         this.itemAttributes = itemAttributes;
-    }
-
-    static {
-        craftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
-        asNMSCopy = Reflection.getMethod(craftItemStack, "asNMSCopy", ItemStack.class);
-        nbtTagCompound = Reflection.getNMSClass("NBTTagCompound");
-        nbtBase = Reflection.getNMSClass("NBTBase");
-        nbtTagList = Reflection.getNMSClass("NBTTagList");
-        try {
-            nbtTagString = Reflection.getNMSClass("NBTTagString").getConstructor(String.class);
-            nbtTagInt = Reflection.getNMSClass("NBTTagInt").getConstructor(int.class);
-            nbtTagDouble = Reflection.getNMSClass("NBTTagDouble").getConstructor(double.class);
-            nbtTagLong = Reflection.getNMSClass("NBTTagLong").getConstructor(long.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     private static Object getNMSItemStack(ItemStack itemStack) {
@@ -112,8 +112,7 @@ public class ItemModifier {
             nmsItemStack.getClass().getMethod("a", String.class, nbtBase).invoke(nmsItemStack, "AttributeModifiers", nbtTags);
 
             return (ItemStack) Reflection.getMethod(craftItemStack, "asBukkitCopy").invoke(null, nmsItemStack);
-        }
-        catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;

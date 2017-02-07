@@ -10,7 +10,20 @@ import java.util.UUID;
  */
 public class ChatOption {
 
-    private FancyMessage    fancyMessage;
+    private FancyMessage fancyMessage;
+    private String text;
+    private ChatOptionClick chatOptionClick;
+    private UUID            uuid;
+
+    public ChatOption(String text, ChatOptionClick chatOptionClick) {
+        this.uuid = UUID.randomUUID();
+        this.text = text;
+        this.fancyMessage = new FancyMessage(text).command("bcore " + uuid);
+
+        this.chatOptionClick = chatOptionClick;
+        if (this.chatOptionClick != null)
+            this.chatOptionClick.setAttatched(this);
+    }
 
     public String getText() {
         return text;
@@ -20,37 +33,28 @@ public class ChatOption {
         this.text = text;
     }
 
-    private String text;
+    public void show(Player player) {
+        this.fancyMessage.send(player);
+    }
 
-    public void setChatOptionClick(ChatOptionClick chatOptionClick) {
-        this.chatOptionClick = chatOptionClick;
+    public FancyMessage getFancyMessage() {
+        return this.fancyMessage;
     }
 
     public void setFancyMessage(FancyMessage fancyMessage) {
         this.fancyMessage = fancyMessage;
     }
 
-    private ChatOptionClick chatOptionClick;
-    private UUID            uuid;
+    public UUID getUUID() {
+        return this.uuid;
+    }
 
-    public ChatOption(String text, ChatOptionClick chatOptionClick){
-        this.uuid = UUID.randomUUID();
-        this.text = text;
-        this.fancyMessage = new FancyMessage(text).command("bcore "+uuid);
+    public ChatOptionClick getChatOptionClick() {
+        return this.chatOptionClick;
+    }
 
+    public void setChatOptionClick(ChatOptionClick chatOptionClick) {
         this.chatOptionClick = chatOptionClick;
-        if(this.chatOptionClick != null)
-            this.chatOptionClick.setAttatched(this);
     }
-
-
-    public void show(Player player){
-        this.fancyMessage.send(player);
-    }
-    public FancyMessage getFancyMessage(){return this.fancyMessage;}
-
-    public UUID getUUID(){return this.uuid;}
-
-    public ChatOptionClick getChatOptionClick(){return this.chatOptionClick;}
 
 }

@@ -8,31 +8,31 @@ import java.util.List;
 
 public abstract class SubCommand {
 
-	private String			name;
+    private String name;
 
-	public SubCommand(String name) {
-		this.name = name;
-	}
+    public SubCommand(String name) {
+        this.name = name;
+    }
 
-	public abstract void execute(CommandSender sender, String[] args) throws CommandException;
+    public abstract void execute(CommandSender sender, String[] args) throws CommandException;
 
-	public abstract List<String> getAliases();
+    public abstract List<String> getAliases();
 
-	public abstract String getCommandExample();
+    public abstract String getCommandExample();
 
-	public abstract FancyMessage getFancyMessage();
+    public abstract FancyMessage getFancyMessage();
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public abstract String getPermission();
+    public abstract String getPermission();
 
-	public abstract List<String> getTabs(String[] args);
+    public abstract List<String> getTabs(String[] args);
 
-	public final boolean hasPermission(CommandSender sender) {
+    public final boolean hasPermission(CommandSender sender) {
 
-		return sender.hasPermission(getPermission());
-	}
+        return sender.hasPermission(getPermission());
+    }
 
 }

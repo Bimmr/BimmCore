@@ -3,7 +3,7 @@ package me.bimmr.bimmcore.events.timing;
 /**
  * Created by Randy on 05/23/16.
  */
-public abstract class TimedEvent implements Cloneable{
+public abstract class TimedEvent implements Cloneable {
 
     private Object attachedObject;
     private int    ticks;
@@ -56,9 +56,9 @@ public abstract class TimedEvent implements Cloneable{
     public abstract void run();
 
 
-    public TimedEvent clone(){
+    public TimedEvent clone() {
         try {
-            return (TimedEvent)super.clone();
+            return (TimedEvent) super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
