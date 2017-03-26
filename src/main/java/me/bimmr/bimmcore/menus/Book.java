@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.menus.book;
+package me.bimmr.bimmcore.menus;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -34,6 +34,7 @@ class BookExample {
 public class Book {
 
     private final int MaxLinesPerPage = 14;
+
     private String             title;
     private String             author;
     private List<FancyMessage> lines;
@@ -75,7 +76,7 @@ public class Book {
     /**
      * Remove all lines
      */
-    public void clear(){
+    public void clear() {
         lines.clear();
     }
 
@@ -109,6 +110,15 @@ public class Book {
     public Book addBlankLine() {
         addLine("");
         return this;
+    }
+
+    /**
+     * Get the lines in the book
+     *
+     * @return
+     */
+    public List<FancyMessage> getLines() {
+        return this.lines;
     }
 
     /**
@@ -177,8 +187,24 @@ public class Book {
                 StringBuilder sb = new StringBuilder();
                 sb.append(prefix);
 
-                //Not getting subbed right
+                //Add all the lines
                 for (int i = 0; i < book.lines.size(); i++) {
+
+                    //If line is multiple of 13, it means a new page is needed
+                    if (i >= 13 && i % 13 == 0) {
+
+                        //Finish current page
+                        String temp = sb.toString();
+                        temp = temp.substring(0, temp.length() - 1);
+                        temp += suffix;
+                        String line = temp;
+                        page = serializer.invoke(null, line);
+                        pages.add(page);
+
+                        //Start new page
+                        sb = new StringBuilder();
+                        sb.append(prefix);
+                    }
                     String part = book.lines.get(i).then("\n").toJSON();
                     part = part.substring(prefix.length(), part.length() - suffix.length());
                     if (i != book.lines.size() - 1)
@@ -188,7 +214,6 @@ public class Book {
 
                 sb.append(suffix);
                 String line = sb.toString();
-
                 page = serializer.invoke(null, line);
 
                 pages.add(page);
@@ -206,7 +231,7 @@ public class Book {
             return iBook;
         }
 
-        public static void openBook(ItemStack book, Player p){
+        public static void openBook(ItemStack book, Player p) {
             int slot = p.getInventory().getHeldItemSlot();
             ItemStack iBook = book;
             ItemStack old = p.getInventory().getItem(slot);
