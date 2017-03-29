@@ -16,7 +16,7 @@ public abstract class FancyClickEvent {
     private BukkitTask removal;
 
     /**
-     * Deafult Constuructor
+     * Default Constructor
      * By default will self delete after 5 minutes from first message. Resets if clicked again within the time
      */
     public FancyClickEvent() {
