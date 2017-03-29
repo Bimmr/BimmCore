@@ -36,11 +36,18 @@ public class FancyMessage {
 
     private ComponentBuilder builder;
 
-
+    /**
+     * Default Constructor
+     */
     public FancyMessage() {
-        builder = new ComponentBuilder("");
+        this("");
     }
 
+    /**
+     * Constructor with first text
+     *
+     * @param string
+     */
     public FancyMessage(String string) {
         builder = new ComponentBuilder(string);
     }
@@ -88,6 +95,7 @@ public class FancyMessage {
 
     /**
      * Change the page in a book
+     *
      * @param page
      * @return
      */
@@ -97,9 +105,11 @@ public class FancyMessage {
     }
 
     /**
+     * CAN NOT BE USED WITH COMMAND
      * Add a callback for an onClick
-     *
+     * <p>
      * CallBack self deletes after 5 minutes from first message, unless told otherwise
+     *
      * @param fce
      * @return
      */
@@ -148,11 +158,11 @@ public class FancyMessage {
         BaseComponent[] components = builder.create();
         for (Player player : players)
             player.spigot().sendMessage(components);
-
     }
 
     /**
      * Get all the BaseComponents
+     *
      * @return
      */
     public BaseComponent[] getBaseComponents() {
@@ -161,6 +171,7 @@ public class FancyMessage {
 
     /**
      * Get the FancyMessage as JSON
+     *
      * @return
      */
     public String toJSON() {
@@ -178,24 +189,25 @@ public class FancyMessage {
             Bukkit.getConsoleSender().sendMessage(component.toPlainText());
     }
 
+
     /**
      * Listener for the Click Callbacks
      */
     public static class FancyMessageListener implements Listener {
-        public static List<FancyClickEvent> chats   = new ArrayList<>();
+        public static List<FancyClickEvent> chats = new ArrayList<>();
 
         /**
          * Event
+         *
          * @param event
          */
         @EventHandler
-        public void chatClick(PlayerCommandPreprocessEvent event){
-            if(event.getMessage().startsWith("/BimmCore ")){
+        public void chatClick(PlayerCommandPreprocessEvent event) {
+            if (event.getMessage().startsWith("/BimmCore ")) {
                 String uuid = event.getMessage().split(" ")[1];
 
-                for(FancyClickEvent chatClickEvent : chats)
-                    if(chatClickEvent.getUUID().toString().equals(uuid))
-                    {
+                for (FancyClickEvent chatClickEvent : chats)
+                    if (chatClickEvent.getUUID().toString().equals(uuid)) {
                         event.setCancelled(true);
                         chatClickEvent.onClick();
                         chatClickEvent.startRemoval();
