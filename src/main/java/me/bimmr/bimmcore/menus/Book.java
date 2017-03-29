@@ -113,6 +113,29 @@ public class Book {
     }
 
     /**
+     * Go to the next page
+     *
+     * @return
+     */
+    public Book nextPage() {
+        int line = getLines().size() / 13;
+        setLine((((line + 1) * 13)), "");
+        return this;
+    }
+
+    /**
+     * Go to the bottom of the page, leaving space for a footer
+     *
+     * @param lines
+     * @return
+     */
+    public Book goToFooter(int lines) {
+        int line = getLines().size() / 13;
+        setLine((((line + 1) * 13)) - lines, "");
+        return this;
+    }
+
+    /**
      * Get the lines in the book
      *
      * @return
@@ -129,6 +152,7 @@ public class Book {
     public void openFor(Player player) {
         BookAPI.openBook(this, player);
     }
+
 
     /**
      * Get the book as an ItemStack
@@ -171,6 +195,8 @@ public class Book {
 
         public static ItemStack getAsItemStack(Book book) {
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
+            ArrayList<FancyMessage> lines = new ArrayList(book.lines);
+
             try {
                 //create the book
                 BookMeta bookMeta = (BookMeta) iBook.getItemMeta();
@@ -188,7 +214,7 @@ public class Book {
                 sb.append(prefix);
 
                 //Add all the lines
-                for (int i = 0; i < book.lines.size(); i++) {
+                for (int i = 0; i < lines.size(); i++) {
 
                     //If line is multiple of 13, it means a new page is needed
                     if (i >= 13 && i % 13 == 0) {
@@ -205,9 +231,11 @@ public class Book {
                         sb = new StringBuilder();
                         sb.append(prefix);
                     }
-                    String part = book.lines.get(i).then("\n").toJSON();
+                    FancyMessage fm = lines.get(i);
+                    String part = fm.toJSON();
                     part = part.substring(prefix.length(), part.length() - suffix.length());
-                    if (i != book.lines.size() - 1)
+                    part += ",{\"text\":\"\\n\"}";
+                    if (i != lines.size() - 1)
                         part += ",";
                     sb.append(part);
                 }
