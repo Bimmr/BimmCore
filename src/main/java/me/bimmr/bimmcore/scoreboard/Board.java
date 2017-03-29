@@ -254,7 +254,8 @@ public class Board {
      * Stop the TimedEvent
      */
     public void stopTask() {
-        task.cancel();
+        if (task != null)
+            task.cancel();
         task = null;
     }
 
