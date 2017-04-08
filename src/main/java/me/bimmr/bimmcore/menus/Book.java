@@ -53,7 +53,10 @@ public class Book {
      * @return
      */
     public Book setLine(int line, String message) {
-        setLine(line, new FancyMessage(message));
+        if (message != null)
+            setLine(line, new FancyMessage(message));
+        else
+            throw new NullPointerException("null cannot be added to a book");
         return this;
     }
 
@@ -87,7 +90,10 @@ public class Book {
      * @return
      */
     public Book addLine(String message) {
-        addLine(new FancyMessage(message));
+        if (message != null)
+            addLine(new FancyMessage(message));
+        else
+            throw new NullPointerException("null cannot be added to a book");
         return this;
     }
 
