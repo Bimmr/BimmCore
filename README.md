@@ -5,7 +5,7 @@
 and not every plugin when something changes.</p>
 
 <h2>What is in BimmCore?</h2>
-<h3>CommandHandler</h3>
+<h3><a href="http://bimmr.github.io/BimmCore/me/bimmr/bimmcore/commands/package-summary.html">CommandHandler</a></h3>
 Handles commands, subcommands, and tabs
 <h3>Items</h3>
 Easily create/edit items, as while as saving and loading from files
