@@ -34,7 +34,15 @@ class FancyMessageExample {
 
 public class FancyMessage {
 
+    private BaseComponent[] built;
     private ComponentBuilder builder;
+
+    public static FancyMessage getFromJSON(String json) {
+        FancyMessage fm = new FancyMessage();
+
+
+        return fm;
+    }
 
     /**
      * Default Constructor
@@ -146,7 +154,10 @@ public class FancyMessage {
      * @param player
      */
     public void send(Player player) {
-        player.spigot().sendMessage(builder.create());
+
+        if(built == null)
+            built = builder.create();
+        player.spigot().sendMessage(built);
     }
 
     /**
@@ -155,9 +166,10 @@ public class FancyMessage {
      * @param players
      */
     public void send(Player[] players) {
-        BaseComponent[] components = builder.create();
+        if(built == null)
+            built = builder.create();
         for (Player player : players)
-            player.spigot().sendMessage(components);
+            player.spigot().sendMessage(built);
     }
 
     /**
@@ -185,7 +197,9 @@ public class FancyMessage {
      * @param sender
      */
     public void sendToConsole(CommandSender sender) {
-        for (BaseComponent component : builder.create())
+        if(built == null)
+            built = builder.create();
+        for (BaseComponent component : built)
             Bukkit.getConsoleSender().sendMessage(component.toPlainText());
     }
 
