@@ -182,12 +182,10 @@ public class Book {
         private static Class<?> craftMetaBook;
 
         static {
-
             chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
             craftMetaBook = Reflection.getCraftClass("inventory.CraftMetaBook");
             packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
             packetDataSerializer = Reflection.getNMSClass("PacketDataSerializer");
-
 
             try {
                 serializer = chatSerializer.getMethod("a", String.class);
