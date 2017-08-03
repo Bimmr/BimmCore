@@ -155,7 +155,7 @@ public class FancyMessage {
      */
     public void send(Player player) {
 
-        if(built == null)
+        if (built == null)
             built = builder.create();
         player.spigot().sendMessage(built);
     }
@@ -166,7 +166,7 @@ public class FancyMessage {
      * @param players
      */
     public void send(Player[] players) {
-        if(built == null)
+        if (built == null)
             built = builder.create();
         for (Player player : players)
             player.spigot().sendMessage(built);
@@ -197,10 +197,24 @@ public class FancyMessage {
      * @param sender
      */
     public void sendToConsole(CommandSender sender) {
-        if(built == null)
+        if (built == null)
             built = builder.create();
         for (BaseComponent component : built)
             Bukkit.getConsoleSender().sendMessage(component.toPlainText());
+    }
+
+    /**
+     * Get the Fancy Message as just plain text
+     * @return
+     */
+    public String toPlainText() {
+        if (built == null)
+            built = builder.create();
+        String plainTxt = "";
+        for (BaseComponent component : built)
+            plainTxt += component.toPlainText();
+
+        return plainTxt;
     }
 
 
