@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Created by Randy on 9/23/2015.
@@ -54,6 +55,10 @@ public class Items {
     public String toString() {
         //Default the string to just air
         String string = "item:AIR";
+
+        if(item == null || item.getType() == null)
+            return string;
+
         if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && Items_Crackshot.getGunName(getItem()) != null) {
             return Items_Crackshot.getGunName(getItem());
         }
@@ -156,181 +161,186 @@ public class Items {
     @SuppressWarnings("deprecation")
     public Items fromString(String string) {
 
-        if (string != null)
-            if (string.contains(" ")) {
-                String[] line = string.split(" ");
-                // Loop through every part of the code
-                for (String data : line)
+        try {
+            if (string != null)
+                if (string.contains(" ")) {
+                    String[] line = string.split(" ");
+                    // Loop through every part of the code
+                    for (String data : line)
 
-                    if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (data.startsWith("crackshot") || data.startsWith("gun"))) {
-                        String name = data.split(":", 2)[1];
-                        item = Items_Crackshot.getGunItemStack(name);
-                    } else {
-                        // Item Variables
-                        if (data.startsWith("id") || data.startsWith("item")) {
+                        if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (data.startsWith("crackshot") || data.startsWith("gun"))) {
+                            String name = data.split(":", 2)[1];
+                            item = Items_Crackshot.getGunItemStack(name);
+                        } else {
+                            // Item Variables
+                            if (data.startsWith("id") || data.startsWith("item")) {
 
-                            Material mat = null;
-                            String itemName = data.split(":", 2)[1];
-                            try {
-                                mat = Material.getMaterial(Integer.valueOf(itemName));
-                            } catch (NumberFormatException e) {
-                                if (Material.getMaterial(itemName.toUpperCase()) != null)
-                                    mat = Material.getMaterial(itemName.toUpperCase());
+                                Material mat = null;
+                                String itemName = data.split(":", 2)[1];
+                                try {
+                                    mat = Material.getMaterial(Integer.valueOf(itemName));
+                                } catch (NumberFormatException e) {
+                                    if (Material.getMaterial(itemName.toUpperCase()) != null)
+                                        mat = Material.getMaterial(itemName.toUpperCase());
 
-                                    //So 1.9 Splash_Potion and Lingering_Potion don't cause issues
-                                else if (itemName.toUpperCase().contains("POTION"))
-                                    mat = Material.POTION;
+                                        //So 1.9 Splash_Potion and Lingering_Potion don't cause issues
+                                    else if (itemName.toUpperCase().contains("POTION"))
+                                        mat = Material.POTION;
 
-                                else
-                                    mat = Material.AIR;
+                                    else
+                                        mat = Material.AIR;
+                                }
+                                item.setType(mat);
                             }
-                            item.setType(mat);
+
+                            // Amount Variables
+                            else if (data.startsWith("amount") || data.startsWith("quantity"))
+                                setAmount(Integer.parseInt(data.split(":", 2)[1]));
+
+                                // Durability Variables
+                            else if (data.startsWith("data") || data.startsWith("durability") || data.startsWith("damage"))
+                                setDurability(Short.parseShort(data.split(":", 2)[1]));
+
+                                // Enchantment variables
+                            else if (data.startsWith("enchantment") || data.startsWith("enchant")) {
+                                String s = data.split(":", 2)[1];
+                                Enchantment enchantment;
+                                try {
+                                    enchantment = Enchantment.getById(Integer.parseInt(s.split("-")[0]));
+                                } catch (NumberFormatException e) {
+                                    enchantment = Enchantment.getByName(s.split("-")[0].toUpperCase());
+                                }
+                                if (enchantment != null) {
+                                    // Level Stated
+                                    if (s.contains("-"))
+                                        addEnchantment(enchantment, Integer.parseInt(s.split("-")[1]));
+                                        // No Level Stated
+                                    else
+                                        addEnchantment(enchantment, 1);
+                                }
+                            } else if (data.startsWith("glow"))
+                                addGlow();
+
+                                // Name Variables
+                            else if (data.startsWith("name") || data.startsWith("title"))
+                                setDisplayName(StringUtil.addColor(data.split(":", 2)[1]).replaceAll("_", " "));
+
+                                // Owner Variables
+                            else if (data.startsWith("owner") || data.startsWith("player"))
+                                setSkullOwner(data.split(":", 2)[1]);
+
+                                // Color Variables(Leather Only)
+                            else if (data.startsWith("color") || data.startsWith("colour"))
+                                try {
+                                    String[] s = data.replaceAll("color:", "").replaceAll("colour:", "").split(",");
+                                    setLeatherColor(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
+                                } catch (ClassCastException notLeather) {
+                                    Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: " + string);
+                                }
+                                // Potion Effect Variables(Potions Only)
+                            else if (data.startsWith("potion")) {
+                                String[] s = data.replaceAll("potion:", "").split(",");
+                                PotionEffectType type = PotionEffectType.SPEED;
+                                try {
+                                    type = PotionEffectType.getById((Integer.valueOf(s[0])));
+                                } catch (NumberFormatException e) {
+                                    if (PotionEffectType.getByName(s[0].toUpperCase()) != null)
+                                        type = PotionEffectType.getByName(s[0].toUpperCase());
+                                }
+                                if (type != null) {
+
+                                    //If they are still using the splash tag(not supported since 1.9) try and make the potion a splash potion still
+                                    if (string.contains("splash"))
+                                        try {
+                                            Potion potion = new Potion(PotionType.getByEffect(type));
+                                            potion.setSplash(true);
+                                            potion.apply(item);
+                                        } catch (Exception e) {
+
+                                            //Looks like they're using 1.9 and still have the splash tag
+                                            Bukkit.getLogger().severe("Spigot 1.9 and newer doesn't support the splash tag in the item: " + string);
+                                            item.setType(Material.SPLASH_POTION);
+                                        }
+                                    int time = Integer.parseInt(s[1]) * 20;
+                                    int level = Integer.parseInt(s[2]) - 1;
+                                    addPotionEffect(new PotionEffect(type, time, level));
+                                }
+                            }
+
+                            // Lore Variables
+                            else if (data.startsWith("lore") || data.startsWith("desc") || data.startsWith("description")) {
+                                String s = data.split(":", 2)[1];
+                                for (String lore : s.split("\\|"))
+                                    addLore(StringUtil.addColor(lore.replaceAll("_", " ")));
+                            }
+                            // Page Variables
+                            else if (data.startsWith("page") || data.startsWith("pages")) {
+                                String s = data.split(":", 2)[1];
+                                List<String> pages = new ArrayList<String>();
+                                for (String lore : s.split("\\|"))
+                                    pages.add(StringUtil.addColor(lore.replaceAll("_", " ")));
+
+                                BookMeta meta = (BookMeta) item.getItemMeta();
+                                meta.setPages(pages);
+                                item.setItemMeta(meta);
+                            }
+
+                            // Author Variables
+                            else if (data.startsWith("author") || data.startsWith("writter"))
+                                setBookAuthor(StringUtil.addColor(data.split(":", 2)[1]));
+
+                                // Title Variables
+                            else if (data.startsWith("title"))
+                                setBookTitle(StringUtil.addColor(data.split(":", 2)[1]));
+
+                                // Unbreakable Variables
+                            else if (data.startsWith("unbreakable"))
+                                setUnbreakable(true);
+
+                            else if (data.startsWith("flag"))
+                                try {
+                                    addFlag(ItemFlag.valueOf(data.split(":")[1].toUpperCase()));
+                                } catch (IllegalArgumentException notflag) {
+                                    Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
+                                }
+                            else if (data.startsWith("attribute")) {
+                                String[] elements = data.split(":", 2)[1].split(",");
+                                String attribute = elements[0];
+                                String slot = elements[1];
+                                Double value = Double.parseDouble(elements[2]);
+                                String operation = elements[3];
+
+                                addAttribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value, Operation.valueOf(operation));
+                            }
                         }
 
-                        // Amount Variables
-                        else if (data.startsWith("amount") || data.startsWith("quantity"))
-                            setAmount(Integer.parseInt(data.split(":", 2)[1]));
-
-                            // Durability Variables
-                        else if (data.startsWith("data") || data.startsWith("durability") || data.startsWith("damage"))
-                            setDurability(Short.parseShort(data.split(":", 2)[1]));
-
-                            // Enchantment variables
-                        else if (data.startsWith("enchantment") || data.startsWith("enchant")) {
-                            String s = data.split(":", 2)[1];
-                            Enchantment enchantment;
-                            try {
-                                enchantment = Enchantment.getById(Integer.parseInt(s.split("-")[0]));
-                            } catch (NumberFormatException e) {
-                                enchantment = Enchantment.getByName(s.split("-")[0].toUpperCase());
-                            }
-                            if (enchantment != null) {
-                                // Level Stated
-                                if (s.contains("-"))
-                                    addEnchantment(enchantment, Integer.parseInt(s.split("-")[1]));
-                                    // No Level Stated
-                                else
-                                    addEnchantment(enchantment, 1);
-                            }
-                        } else if (data.startsWith("glow"))
-                            addGlow();
-
-                            // Name Variables
-                        else if (data.startsWith("name") || data.startsWith("title"))
-                            setDisplayName(StringUtil.addColor(data.split(":", 2)[1]).replaceAll("_", " "));
-
-                            // Owner Variables
-                        else if (data.startsWith("owner") || data.startsWith("player"))
-                            setSkullOwner(data.split(":", 2)[1]);
-
-                            // Color Variables(Leather Only)
-                        else if (data.startsWith("color") || data.startsWith("colour"))
-                            try {
-                                String[] s = data.replaceAll("color:", "").replaceAll("colour:", "").split(",");
-                                setLeatherColor(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                            } catch (ClassCastException notLeather) {
-                                Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: " + string);
-                            }
-                            // Potion Effect Variables(Potions Only)
-                        else if (data.startsWith("potion")) {
-                            String[] s = data.replaceAll("potion:", "").split(",");
-                            PotionEffectType type = PotionEffectType.SPEED;
-                            try {
-                                type = PotionEffectType.getById((Integer.valueOf(s[0])));
-                            } catch (NumberFormatException e) {
-                                if (PotionEffectType.getByName(s[0].toUpperCase()) != null)
-                                    type = PotionEffectType.getByName(s[0].toUpperCase());
-                            }
-                            if (type != null) {
-
-                                //If they are still using the splash tag(not supported since 1.9) try and make the potion a splash potion still
-                                if (string.contains("splash"))
-                                    try {
-                                        Potion potion = new Potion(PotionType.getByEffect(type));
-                                        potion.setSplash(true);
-                                        potion.apply(item);
-                                    } catch (Exception e) {
-
-                                        //Looks like they're using 1.9 and still have the splash tag
-                                        Bukkit.getLogger().severe("Spigot 1.9 and newer doesn't support the splash tag in the item: " + string);
-                                        item.setType(Material.SPLASH_POTION);
-                                    }
-                                int time = Integer.parseInt(s[1]) * 20;
-                                int level = Integer.parseInt(s[2]) - 1;
-                                addPotionEffect(new PotionEffect(type, time, level));
-                            }
-                        }
-
-                        // Lore Variables
-                        else if (data.startsWith("lore") || data.startsWith("desc") || data.startsWith("description")) {
-                            String s = data.split(":", 2)[1];
-                            for (String lore : s.split("\\|"))
-                                addLore(StringUtil.addColor(lore.replaceAll("_", " ")));
-                        }
-                        // Page Variables
-                        else if (data.startsWith("page") || data.startsWith("pages")) {
-                            String s = data.split(":", 2)[1];
-                            List<String> pages = new ArrayList<String>();
-                            for (String lore : s.split("\\|"))
-                                pages.add(StringUtil.addColor(lore.replaceAll("_", " ")));
-
-                            BookMeta meta = (BookMeta) item.getItemMeta();
-                            meta.setPages(pages);
-                            item.setItemMeta(meta);
-                        }
-
-                        // Author Variables
-                        else if (data.startsWith("author") || data.startsWith("writter"))
-                            setBookAuthor(StringUtil.addColor(data.split(":", 2)[1]));
-
-                            // Title Variables
-                        else if (data.startsWith("title"))
-                            setBookTitle(StringUtil.addColor(data.split(":", 2)[1]));
-
-                            // Unbreakable Variables
-                        else if (data.startsWith("unbreakable"))
-                            setUnbreakable(true);
-
-                        else if (data.startsWith("flag"))
-                            try {
-                                addFlag(ItemFlag.valueOf(data.split(":")[1].toUpperCase()));
-                            } catch (IllegalArgumentException notflag) {
-                                Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
-                            }
-                        else if (data.startsWith("attribute")) {
-                            String[] elements = data.split(":", 2)[1].split(",");
-                            String attribute = elements[0];
-                            String slot = elements[1];
-                            Double value = Double.parseDouble(elements[2]);
-                            String operation = elements[3];
-
-                            addAttribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value, Operation.valueOf(operation));
-                        }
-                    }
-
-            }
-
-            // Item Variables
-            else if (string.startsWith("id") || string.startsWith("item")) {
-
-                Material mat;
-                String itemName = string.split(":", 2)[1];
-                try {
-                    mat = Material.getMaterial(Integer.valueOf(itemName));
-                } catch (NumberFormatException e) {
-                    if (Material.getMaterial(itemName.toUpperCase()) != null)
-                        mat = Material.getMaterial(itemName.toUpperCase());
-                    else
-                        mat = Material.AIR;
                 }
-                item.setType(mat);
-            }
 
-            // Crackshot Variables else if (itemCode.startsWith("crackshot") ||
-            else if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (string.startsWith("crackshot") || string.startsWith("gun"))) {
-                String name = string.split(":", 2)[1];
-                item = Items_Crackshot.getGunItemStack(name);
-            }
+                // Item Variables
+                else if (string.startsWith("id") || string.startsWith("item")) {
+
+                    Material mat;
+                    String itemName = string.split(":", 2)[1];
+                    try {
+                        mat = Material.getMaterial(Integer.valueOf(itemName));
+                    } catch (NumberFormatException e) {
+                        if (Material.getMaterial(itemName.toUpperCase()) != null)
+                            mat = Material.getMaterial(itemName.toUpperCase());
+                        else
+                            mat = Material.AIR;
+                    }
+                    item.setType(mat);
+                }
+
+                // Crackshot Variables else if (itemCode.startsWith("crackshot") ||
+                else if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && (string.startsWith("crackshot") || string.startsWith("gun"))) {
+                    String name = string.split(":", 2)[1];
+                    item = Items_Crackshot.getGunItemStack(name);
+                }
+        }catch (Exception e){
+            Bukkit.getLogger().log(Level.SEVERE, "BimmCore is unable to get the item from: " + string);
+            item = new ItemStack(Material.AIR);
+        }
 
         return this;
     }
