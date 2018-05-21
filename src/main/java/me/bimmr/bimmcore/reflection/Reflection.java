@@ -65,9 +65,7 @@ public class Reflection {
     public static Object getHandle(Object object) {
         try {
             return getMethod(object.getClass(), "getHandle").invoke(object, new Object[0]);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -105,6 +103,45 @@ public class Reflection {
         return null;
     }
 
+    /**
+     * Invoke a method
+     * @param c
+     * @param methodName
+     * @param paramaterTypes
+     * @param paramaters
+     */
+    public static Object invokeMethod(Class<?> c, String methodName, Class<?>[] paramaterTypes, Object[] paramaters){
+       return invokeMethod(c,methodName, null, paramaterTypes, paramaters);
+    }
+
+    /**
+     * Invoke a method on an object
+     * @param c
+     * @param methodName
+     * @param object
+     */
+    public static Object invokeMethod(Class<?> c, String methodName, Object object){
+        return invokeMethod(c, methodName, object, null,null);
+    }
+
+    /**
+     * Invoke a method on an object
+     * @param c
+     * @param methodName
+     * @param object
+     * @param paramaterTypes
+     * @param paramaters
+     */
+    public static Object invokeMethod(Class<?> c, String methodName, Object object, Class<?>[] paramaterTypes, Object[] paramaters){
+        Method m = getMethod(c, methodName, paramaterTypes);
+        try {
+            return m.invoke(object, paramaters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     /**
      * Get the field from the class
@@ -139,5 +176,6 @@ public class Reflection {
         }
         return null;
     }
+
 
 }
