@@ -5,6 +5,9 @@ import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,7 +19,7 @@ import java.util.logging.Level;
 /**
  * Created by Randy on 12/25/2015.
  */
-public class BimmCore extends JavaPlugin {
+public class BimmCore extends JavaPlugin implements Listener {
 
     private static BimmCore instance;
 
@@ -98,7 +101,7 @@ public class BimmCore extends JavaPlugin {
         instance = this;
 
         loadTimeUtil();
-// CTRL + /
+
 //
 //        /*
 //          Create all the Scrollers
@@ -183,5 +186,11 @@ public class BimmCore extends JavaPlugin {
 //
 //        }
 
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
+
+    @EventHandler
+    public void command(PlayerCommandPreprocessEvent e){
+    }
+
 }
