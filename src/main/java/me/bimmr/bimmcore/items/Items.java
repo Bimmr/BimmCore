@@ -592,10 +592,11 @@ public class Items {
         return this.equals(item);
     }
 
-    public void addFlag(ItemFlag flag) {
+    public Items addFlag(ItemFlag flag) {
         ItemMeta im = getItem().getItemMeta();
         im.addItemFlags(flag);
         getItem().setItemMeta(im);
+        return this;
     }
 
     private static class EnchantGlow extends EnchantmentWrapper {
