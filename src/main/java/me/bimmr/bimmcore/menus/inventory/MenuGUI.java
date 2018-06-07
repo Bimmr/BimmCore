@@ -23,7 +23,8 @@ public class MenuGUI {
     private ItemStack[] items;
     private Inventory   inventory;
     private boolean centered = false;
-    private int     slot     = 18;
+    private boolean outline = true;
+    private int     slot     = 9;
     private int        numOfItems;
     private ClickEvent clickEvent;
 
@@ -39,8 +40,15 @@ public class MenuGUI {
 
         inventory = Bukkit.createInventory(player, size, name);
 
-        outline(this, cornerItem, sideItem);
+        if(cornerItem != null || cornerItem != null)
+            outline(this, cornerItem, sideItem);
+        else {
+            outline = false;
+            size -= 18;
+        }
+
         menuGUIManager.menus.add(this);
+
     }
 
     public Inventory getInventory() {
@@ -132,15 +140,18 @@ public class MenuGUI {
     public MenuGUI addItem(ItemStack itemStack) {
         numOfItems--;
 
+        //Get num of rows
         int rows = size / 9;
+
 
         while (getItems()[slot] != null)
             slot++;
 
+        //Get current row
         int currentrow = ((slot + 1) / 9);
 
-        if (currentrow >= (rows - 3) && !centered) {
-            slot = (slot + 3) - (numOfItems / 2);
+        if (currentrow >= (rows - 2) && !centered) {
+            slot = (slot + (outline ? 3 : 1)) - (numOfItems / 2);
             centered = true;
         }
         items[slot] = itemStack;
