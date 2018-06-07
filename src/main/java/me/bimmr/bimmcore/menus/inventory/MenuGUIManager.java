@@ -114,7 +114,7 @@ public abstract class MenuGUIManager implements Listener {
      * @return
      */
     public int getRows(int numberOfItems) {
-        return (int) Math.ceil((numberOfItems / 7.0)) + 4;
+        return (int) Math.ceil((numberOfItems / 7.0)) + 2;
 
     }
 }
