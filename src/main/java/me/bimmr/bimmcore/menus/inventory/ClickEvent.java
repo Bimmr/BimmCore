@@ -10,15 +10,17 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class ClickEvent {
 
-    private Player              player;
-    private int                 position;
-    private boolean             close;
-    private boolean             destroy;
-    private ItemStack           item;
+    private Player player;
+    private int position;
+    private int page;
+    private boolean close;
+    private boolean destroy;
+    private ItemStack item;
     private InventoryClickEvent event;
 
-    public void setup(Player player, int position, ItemStack item, InventoryClickEvent event) {
+    public void setup(Player player, int page, int position, ItemStack item, InventoryClickEvent event) {
         this.player = player;
+        this.page = page;
         this.position = position;
         this.close = true;
         this.destroy = false;
@@ -68,4 +70,8 @@ public abstract class ClickEvent {
     }
 
     public abstract void click();
+
+    public int getPage() {
+        return page;
+    }
 }

@@ -1,5 +1,6 @@
 package me.bimmr.bimmcore.menus.inventory;
 
+import me.bimmr.bimmcore.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -24,17 +26,16 @@ class MenuGUIManagerExample extends MenuGUIManager {
         super(plugin);
 
         //Create a new menu
-        MenuGUI menu = new MenuGUI(this, "Menu Name", 3, new ClickEvent() {
+        MenuGUI menu = new MenuGUI(this, "MenuGUI Name", new ClickEvent() {
             @Override
             public void click() {
                 //Method gets called whenever an item gets clicked
                 setClose(true);
                 setDestroy(false);
             }
-        },      //Corrner Item
-                new ItemStack(Material.GOLD_BLOCK),
-                //Side Item
-                new ItemStack(Material.DIAMOND_BLOCK));
+        })
+                .center()
+                .border(new ItemStack(Material.GOLD_BLOCK), new ItemStack(Material.DIAMOND_BLOCK));
 
 
         menu.addItem(new ItemStack(Material.DIAMOND), "Fancy Diamond", "Lore Can Go Here");
@@ -72,8 +73,9 @@ public abstract class MenuGUIManager implements Listener {
 
     public MenuGUI getMenuGUI(Inventory inventory) {
         for (MenuGUI menuGUI : menus)
-            if (menuGUI.getInventory().equals(inventory))
-                return menuGUI;
+            for (Inventory inv : menuGUI.getInventories())
+                if (inv.equals(inventory))
+                    return menuGUI;
         return null;
     }
 
@@ -82,22 +84,26 @@ public abstract class MenuGUIManager implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         MenuGUI menu = getMenuGUI(event.getInventory());
         if (menu != null) {
-            if (menu.getPlayer() == null || menu.getPlayer() == event.getWhoClicked()) {
-                event.setCancelled(true);
-                int position = event.getRawSlot();
-                if (menu.getItems().length > position && position >= 0) {
-                    if (menu.getItems()[position] != null) {
-                        menu.getClickEvent().setup((Player) event.getWhoClicked(), position, menu.getItems()[position], event);
-                        final Player player = (Player) event.getWhoClicked();
+            event.setCancelled(true);
+            Player player = (Player) event.getWhoClicked();
+            int position = event.getRawSlot();
+
+            int page = menu.getCurrentPage(player);
+            Inventory inv = menu.getInventories().get(page);
+
+            if (position < inv.getContents().length && position >= 0) {
+                if (inv.getContents()[position] != null) {
+                    if (inv.getContents()[position] == MenuGUI.PREVIOUSPAGEITEM)
+                        menu.openPreviousPage(player);
+                    else if (inv.getContents()[position] == MenuGUI.NEXTPAGEITEM)
+                        menu.openNextPage(player);
+
+                    else {
+                        menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
                         menu.getClickEvent().click();
                         player.updateInventory();
                         if (menu.getClickEvent().willClose()) {
                             player.closeInventory();
-                            //Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-
-                            //  public void run() {
-                            //}
-                            //});
                         }
                         if (menu.getClickEvent().willDestroy())
                             menu.destroy();
@@ -113,8 +119,39 @@ public abstract class MenuGUIManager implements Listener {
      * @param numberOfItems
      * @return
      */
-    public int getRows(int numberOfItems) {
+    public static int getRows(int numberOfItems) {
         return (int) Math.ceil((numberOfItems / 7.0)) + 2;
+    }
 
+    /**
+     * Creates an itemstack with the given values
+     *
+     * @param item
+     * @param name
+     * @param lore
+     * @return
+     */
+    public static ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {
+        ItemMeta im = item.getItemMeta();
+
+        //Set the meta if it has been given
+        if (im != null) {
+            if (name != null) im.setDisplayName(name);
+            if (lore != null) {
+                ArrayList<String> lores = new ArrayList<String>();
+
+                //If a lore has a ';' in it, split it into a new line
+                for (String line : lore)
+                    if (line.contains(";"))
+                        for (String part : line.split(";"))
+                            lores.add(StringUtil.addColor(part));
+                    else
+                        lores.add(StringUtil.addColor(line));
+
+                im.setLore(lores);
+            }
+            item.setItemMeta(im);
+        }
+        return item;
     }
 }
