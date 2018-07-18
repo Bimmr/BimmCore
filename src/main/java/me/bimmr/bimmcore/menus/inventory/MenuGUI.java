@@ -94,7 +94,6 @@ public class MenuGUI {
         this(menuGUIManager, name, clickEvent);
         this.size = size;
         border(borderCorners, borderSides);
-        center();
     }
 
 
@@ -137,7 +136,7 @@ public class MenuGUI {
                     else
                         lores.add(StringUtil.addColor(line));
 
-                im.setLore(Arrays.asList(lore));
+                im.setLore(lores);
             }
             itemstack.setItemMeta(im);
         }
@@ -338,7 +337,7 @@ public class MenuGUI {
             }
 
 
-            Inventory inv = Bukkit.createInventory(null, size > -1 ? getRows(size, 9) * 9 : (getRows(items.size(), 9) + (bordered ? -1 : 1)) * 9, name);
+            Inventory inv = Bukkit.createInventory(null, size != -1 ? (getRows(size, 9)+2) * 9 : (getRows(items.size(), 9) + (bordered ? -1 : 1)) * 9, name);
             for (int position = 0; position < items.size(); position++) {
                 if (items.get(position) != null)
                     inv.setItem(position, items.get(position));
@@ -478,4 +477,5 @@ public class MenuGUI {
     public void setSize(int size) {
         this.size = size;
     }
+
 }
