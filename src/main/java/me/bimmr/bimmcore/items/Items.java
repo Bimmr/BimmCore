@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -383,6 +384,20 @@ public class Items {
         SkullMeta im = (SkullMeta) item.getItemMeta();
 
         im.setOwner(owner);
+
+        item.setItemMeta(im);
+        return this;
+    }
+    /**
+     * Set the skull skin
+     *
+     * @param owner
+     * @return
+     */
+    public Items setSkullOwner(UUID owner) {
+        SkullMeta im = (SkullMeta) item.getItemMeta();
+
+        im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
 
         item.setItemMeta(im);
         return this;
