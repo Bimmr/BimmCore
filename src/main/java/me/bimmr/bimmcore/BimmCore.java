@@ -130,7 +130,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 //            @Override
 //            public void run() {
 //                Board board = (Board) getAttachedObject();
-//                board.setTitle(scroller3.next());
+//                board.setName(scroller3.next());
 //                if (i % 2 == 0)
 //                    board.setText(0, scroller2.next());
 //                if (i % 5 == 0)
@@ -190,7 +190,6 @@ public class BimmCore extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void command(PlayerCommandPreprocessEvent e){
+    public void command(PlayerCommandPreprocessEvent e) {
     }
-
 }
