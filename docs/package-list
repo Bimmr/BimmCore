@@ -1,12 +1,15 @@
 me.bimmr.bimmcore
 me.bimmr.bimmcore.commands
-me.bimmr.bimmcore.depricted
+me.bimmr.bimmcore.events.message
 me.bimmr.bimmcore.events.timing
 me.bimmr.bimmcore.items
 me.bimmr.bimmcore.items.attributes
+me.bimmr.bimmcore.menus
+me.bimmr.bimmcore.menus.anvil
 me.bimmr.bimmcore.menus.chat
 me.bimmr.bimmcore.menus.inventory
 me.bimmr.bimmcore.messages
 me.bimmr.bimmcore.mysql
+me.bimmr.bimmcore.npc
 me.bimmr.bimmcore.reflection
 me.bimmr.bimmcore.scoreboard
