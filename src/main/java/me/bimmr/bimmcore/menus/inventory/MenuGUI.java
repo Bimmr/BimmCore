@@ -10,10 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MenuGUI {
 
@@ -83,9 +80,9 @@ public class MenuGUI {
         this.pages.add(new ArrayList<ItemStack>());
 
         if (PREVIOUSPAGEITEM == null)
-            PREVIOUSPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
+            PREVIOUSPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
         if (NEXTPAGEITEM == null)
-            NEXTPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
+            NEXTPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
 
         menuGUIManager.menus.add(this);
     }
@@ -194,6 +191,10 @@ public class MenuGUI {
      * @return the MenuGUI
      */
     public MenuGUI addItem(int page, ItemStack itemStack) {
+
+        while (page < pages.size() && ((bordered && pages.get(page).size() >= MAXITEMSPERPAGEBORDERED) || (!bordered && pages.get(page).size() >= MAXITEMSPERPAGE)))
+            page++;
+
         if (pages.size() <= page)
             pages.add(page, new ArrayList<ItemStack>());
 
@@ -228,13 +229,7 @@ public class MenuGUI {
      * @return the MenuGUI
      */
     public MenuGUI addItem(ItemStack itemStack) {
-        int page = 0;
-
-        while (page < pages.size() && ((bordered && pages.get(page).size() >= MAXITEMSPERPAGEBORDERED) || (!bordered && pages.get(page).size() >= MAXITEMSPERPAGE)))
-            page++;
-
-        addItem(page, itemStack);
-
+        addItem(0, itemStack);
         return this;
     }
 
@@ -259,8 +254,14 @@ public class MenuGUI {
      * @return the MenuGUI
      */
     public MenuGUI setItem(int page, int slot, ItemStack item) {
-        if (pages.size() <= page)
-            pages.add(page, new ArrayList<ItemStack>());
+        while (slot >= (bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE)) {
+            page++;
+            if (page >= pages.size()) {
+                slot -= bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE;
+                pages.add(new ArrayList<ItemStack>());
+            }
+        }
+
 
         toSetItems.put(new Integer[]{page, slot}, item);
         return this;
@@ -326,18 +327,24 @@ public class MenuGUI {
                 items = outline(items);
 
 
+            HashMap<Integer, ItemStack> toSetAfter = new HashMap<>();
             //Set any items that need to be set
             for (Map.Entry<Integer[], ItemStack> e : toSetItems.entrySet()) {
                 if (e.getKey()[0] == i) {
-                    while (e.getKey()[1] > items.size() - 2)
-                        items.add(null);
+                    int slot = e.getKey()[1];
+                    if (slot < 0)
+                        toSetAfter.put(slot, e.getValue());
+                    else {
+                        while (slot > items.size() - 2)
+                            items.add(null);
 
-                    items.set(e.getKey()[1], e.getValue());
+                        items.set(slot, e.getValue());
+                    }
                 }
             }
 
 
-            Inventory inv = Bukkit.createInventory(null, size != -1 ? (getRows(size, 9)+2) * 9 : (getRows(items.size(), 9) + (bordered ? -1 : 1)) * 9, name);
+            Inventory inv = Bukkit.createInventory(null, size != -1 ? (getRows(size, 9) + 2) * 9 : (getRows(items.size(), 9) + (bordered ? -1 : 1)) * 9, name);
             for (int position = 0; position < items.size(); position++) {
                 if (items.get(position) != null)
                     inv.setItem(position, items.get(position));
@@ -347,6 +354,9 @@ public class MenuGUI {
                 inv.setItem(inv.getSize() - 9, PREVIOUSPAGEITEM);
             if (i != pages.size() - 1)
                 inv.setItem(inv.getSize() - 1, NEXTPAGEITEM);
+
+            for (Map.Entry<Integer, ItemStack> e : toSetAfter.entrySet())
+                inv.setItem(inv.getSize() + e.getKey(), e.getValue());
 
             inventories.add(inv);
         }
@@ -371,7 +381,7 @@ public class MenuGUI {
         return items;
     }
 
-    public ArrayList<ItemStack> outline(ArrayList<ItemStack> inventory) {
+    private ArrayList<ItemStack> outline(ArrayList<ItemStack> inventory) {
         int rows = getRows(inventory.size(), 7) + 2;
         for (int i = 0; i < 9; i++)
             inventory.add(null);
