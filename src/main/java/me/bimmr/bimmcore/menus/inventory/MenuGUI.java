@@ -330,7 +330,6 @@ public class MenuGUI {
             //Set any items that need to be set
             for (Map.Entry<Integer[], ItemStack> e : toSetItems.entrySet()) {
                 if (e.getKey()[0] == i) {
-                    System.out.println("Setting: " + e);
                     while (e.getKey()[1] > items.size() - 2)
                         items.add(null);
 
@@ -383,7 +382,6 @@ public class MenuGUI {
                     inventory.add((9 * r) + c, borderCorners);
                 else if (c == 0 || c + 1 == 9 || r == 0 || r + 1 == rows)
                     inventory.add((9 * r) + c, borderSides);
-                System.out.println(r + " - " + c);
             }
         return inventory;
     }
