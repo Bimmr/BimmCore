@@ -89,16 +89,18 @@ public abstract class MenuGUIManager implements Listener {
             int position = event.getRawSlot();
 
             int page = menu.getCurrentPage(player);
+            System.out.println(page + " - " + position);
             Inventory inv = menu.getInventories().get(page);
 
             if (position < inv.getContents().length && position >= 0) {
                 if (inv.getContents()[position] != null) {
-                    if (inv.getContents()[position] == MenuGUI.PREVIOUSPAGEITEM)
+                    if (position == inv.getSize() - 9) {
                         menu.openPreviousPage(player);
-                    else if (inv.getContents()[position] == MenuGUI.NEXTPAGEITEM)
+                        menu.getClickEvent().setClose(false);
+                    } else if (position == inv.getSize() - 1) {
                         menu.openNextPage(player);
-
-                    else {
+                        menu.getClickEvent().setClose(false);
+                    } else {
                         menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
                         menu.getClickEvent().click();
                         player.updateInventory();
