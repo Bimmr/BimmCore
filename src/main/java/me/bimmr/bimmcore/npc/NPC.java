@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+//TODO: Finish equipping NPC code
 public class NPC {
 
     private int id;

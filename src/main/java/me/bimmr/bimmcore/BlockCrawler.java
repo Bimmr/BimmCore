@@ -33,6 +33,7 @@ public class BlockCrawler {
                 if (this.mProcessedBlocks.size() < this.maxSize) processAdjacent(nextLoc.getBlock(), block.getType());
             }
         }
+
     }
 
     /**

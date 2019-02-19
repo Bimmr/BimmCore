@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 /**
  * Created by Randy on 03/24/17.
  */
+//TODO: Make anvil GUI
 class AnvilExample {
     public AnvilExample() {
         Anvil anvil = new Anvil("Test", new AnvilFinishEvent() {
