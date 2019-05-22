@@ -132,7 +132,7 @@ public class Items {
                 }
 
                 //Unbreakable
-                if (im.spigot().isUnbreakable())
+                if (im.isUnbreakable())
                     string += " unbreakable";
 
                 //Flags
@@ -178,9 +178,7 @@ public class Items {
 
                                 Material mat = null;
                                 String itemName = data.split(":", 2)[1];
-                                try {
-                                    mat = Material.getMaterial(Integer.valueOf(itemName));
-                                } catch (NumberFormatException e) {
+
                                     if (Material.getMaterial(itemName.toUpperCase()) != null)
                                         mat = Material.getMaterial(itemName.toUpperCase());
 
@@ -190,7 +188,7 @@ public class Items {
 
                                     else
                                         mat = Material.AIR;
-                                }
+
                                 item.setType(mat);
                             }
 
@@ -206,11 +204,9 @@ public class Items {
                             else if (data.startsWith("enchantment") || data.startsWith("enchant")) {
                                 String s = data.split(":", 2)[1];
                                 Enchantment enchantment;
-                                try {
-                                    enchantment = Enchantment.getById(Integer.parseInt(s.split("-")[0]));
-                                } catch (NumberFormatException e) {
+
                                     enchantment = Enchantment.getByName(s.split("-")[0].toUpperCase());
-                                }
+
                                 if (enchantment != null) {
                                     // Level Stated
                                     if (s.contains("-"))
@@ -322,14 +318,12 @@ public class Items {
 
                     Material mat;
                     String itemName = string.split(":", 2)[1];
-                    try {
-                        mat = Material.getMaterial(Integer.valueOf(itemName));
-                    } catch (NumberFormatException e) {
+
                         if (Material.getMaterial(itemName.toUpperCase()) != null)
                             mat = Material.getMaterial(itemName.toUpperCase());
                         else
                             mat = Material.AIR;
-                    }
+
                     item.setType(mat);
                 }
 
@@ -441,7 +435,7 @@ public class Items {
     public Items setUnbreakable(boolean unbreakable) {
         ItemMeta im = getItem().getItemMeta();
 
-        im.spigot().setUnbreakable(true);
+        im.setUnbreakable(true);
 
         getItem().setItemMeta(im);
         return this;
@@ -564,7 +558,6 @@ public class Items {
         itemAttributes.addAttribute(new Attribute(attribute, slot, value, operation));
     }
 
-
     /**
      * Makes the item glow
      *
@@ -574,6 +567,7 @@ public class Items {
         EnchantGlow.addGlow(getItem());
         return this;
     }
+
 
     /**
      * Returns if the two items are equal
@@ -618,7 +612,7 @@ public class Items {
 
         private static Enchantment glow;
 
-        public EnchantGlow(int id) {
+        public EnchantGlow(String id) {
             super(id);
         }
 
@@ -640,7 +634,7 @@ public class Items {
                 e.printStackTrace();
             }
 
-            glow = new EnchantGlow(255);
+            glow = new EnchantGlow("bcoreglow");
             try {
                 Enchantment.registerEnchantment(glow);
             } catch (IllegalArgumentException iae) {

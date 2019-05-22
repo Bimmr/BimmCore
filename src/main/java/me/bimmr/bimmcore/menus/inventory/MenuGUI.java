@@ -80,9 +80,9 @@ public class MenuGUI {
         this.pages.add(new ArrayList<ItemStack>());
 
         if (PREVIOUSPAGEITEM == null)
-            PREVIOUSPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
+            PREVIOUSPAGEITEM = new Items(new ItemStack(Material.PLAYER_HEAD)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
         if (NEXTPAGEITEM == null)
-            NEXTPAGEITEM = new Items(new ItemStack(Material.SKULL_ITEM)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
+            NEXTPAGEITEM = new Items(new ItemStack(Material.PLAYER_HEAD)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
 
         menuGUIManager.menus.add(this);
     }
