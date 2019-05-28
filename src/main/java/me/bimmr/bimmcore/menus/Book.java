@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import me.bimmr.bimmcore.messages.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
+import net.minecraft.server.v1_14_R1.EnumHand;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,8 +36,8 @@ public class Book {
 
     private final int MaxLinesPerPage = 14;
 
-    private String             title;
-    private String             author;
+    private String title;
+    private String author;
     private List<FancyMessage> lines;
 
     public Book() {
@@ -104,7 +105,10 @@ public class Book {
      * @return
      */
     public Book addLine(FancyMessage message) {
-        lines.add(message);
+        if (message != null)
+            lines.add(message);
+        else
+            throw new NullPointerException("null cannot be added to a book");
         return this;
     }
 
@@ -114,7 +118,7 @@ public class Book {
      * @return
      */
     public Book addBlankLine() {
-        addLine("");
+        addLine(" ");
         return this;
     }
 
@@ -125,7 +129,7 @@ public class Book {
      */
     public Book nextPage() {
         int line = getLines().size() / 13;
-        setLine((((line + 1) * 13)), "");
+        setLine((((line + 1) * 13)), " ");
         return this;
     }
 
@@ -137,7 +141,7 @@ public class Book {
      */
     public Book goToFooter(int lines) {
         int line = getLines().size() / 13;
-        setLine((((line + 1) * 13)) - lines, "");
+        setLine((((line + 1) * 13)) - lines, " ");
         return this;
     }
 
@@ -171,29 +175,64 @@ public class Book {
 
     public static class BookAPI {
         private static Class<?> chatSerializer;
-        private static Method   serializer;
+        private static Method serializer;
 
-        private static Class<?>       packetDataSerializer;
+        private static Class<?> packetDataSerializer;
         private static Constructor<?> packetDataSerializerConstructor;
 
-        private static Class<?>       packetPlayOutCustomPayLoad;
+        private static Class<?> packetPlayOutCustomPayLoad;
         private static Constructor<?> packetPlayOutCustomPayLoadConstructor;
 
         private static Class<?> craftMetaBook;
+        private static Class<?> craftKeyClass;
+        private static Constructor<?> craftKeyConstructor;
+
+        private static Class<?> packetPlayOutOpenBookClass;
+        private static Constructor<?> packetPlayOutOpenBookConstructor;
+        private static Class<?> enumHandClass;
+        private static Object mainHandEnum;
 
         static {
             chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
             craftMetaBook = Reflection.getCraftClass("inventory.CraftMetaBook");
-            packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
             packetDataSerializer = Reflection.getNMSClass("PacketDataSerializer");
+
+            if (Reflection.getVersion().startsWith("v1_13")) {
+                packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
+                craftKeyClass = Reflection.getNMSClass("MinecraftKey");
+            } else {
+                packetPlayOutOpenBookClass = Reflection.getNMSClass("PacketPlayOutOpenBook");
+                enumHandClass = Reflection.getNMSClass("EnumHand");
+            }
 
             try {
                 serializer = chatSerializer.getMethod("a", String.class);
-                packetDataSerializerConstructor = packetDataSerializer.getConstructor(ByteBuf.class);
-                packetPlayOutCustomPayLoadConstructor = packetPlayOutCustomPayLoad.getConstructor(String.class, packetDataSerializer);
-
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
+            }
+            try {
+                packetDataSerializerConstructor = packetDataSerializer.getConstructor(ByteBuf.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            if (Reflection.getVersion().startsWith("v1_13")) {
+                try {
+                    craftKeyConstructor = craftKeyClass.getConstructor(String.class);
+                    packetPlayOutCustomPayLoadConstructor = packetPlayOutCustomPayLoad.getConstructor(craftKeyClass, packetDataSerializer);
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            } else {
+
+                try {
+                    packetPlayOutOpenBookConstructor = packetPlayOutOpenBookClass.getConstructor(enumHandClass);
+                    Method value = enumHandClass.getMethod("valueOf", String.class);
+                    mainHandEnum = value.invoke(null, "MAIN_HAND");
+
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -237,8 +276,8 @@ public class Book {
                     }
                     FancyMessage fm = lines.get(i);
                     String part = fm.toJSON();
-                    part = part.substring(prefix.length(), part.length() - suffix.length());
-                    part += ",{\"text\":\"\\n\"}";
+
+                    part = "[\"\", " + part + ",{\"text\":\"\\n\"}]";
                     if (i != lines.size() - 1)
                         part += ",";
                     sb.append(part);
@@ -270,14 +309,23 @@ public class Book {
             try {
                 p.getInventory().setItem(slot, iBook);
 
-                ByteBuf byteBuf = Unpooled.buffer(256);
-                byteBuf.setByte(0, (byte) 0);
-                byteBuf.writerIndex(1);
+                if (Reflection.getVersion().startsWith("v1_14")) {
+                    Object packetPlayOutOpenBookInstance = packetPlayOutOpenBookConstructor.newInstance(mainHandEnum);
+                    Packets.sendPacket(p, packetPlayOutOpenBookInstance);
+                }
 
-                Object packetDataSerializerInstance = packetDataSerializerConstructor.newInstance(byteBuf);
-                Object packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance("MC|BOpen", packetDataSerializerInstance);
+                if (Reflection.getVersion().startsWith("v1_13")) {
+                    ByteBuf byteBuf = Unpooled.buffer(256);
+                    byteBuf.setByte(0, (byte) 0);
+                    byteBuf.writerIndex(1);
 
-                Packets.sendPacket(p, packetPlayOutCustomPayLoadInstance);
+                    Object packetDataSerializerInstance = packetDataSerializerConstructor.newInstance(byteBuf);
+                    Object craftKeyInstance = craftKeyConstructor.newInstance("minecraft:book_open");
+
+                    Object packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance(craftKeyInstance, packetDataSerializerInstance);
+
+                    Packets.sendPacket(p, packetPlayOutCustomPayLoadInstance);
+                }
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }

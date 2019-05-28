@@ -24,14 +24,12 @@ public class PotionUtil {
 
                     String p = data.split(":")[1];
 
-                    try {
-                        pet = PotionEffectType.getById(Integer.valueOf(p));
-                    } catch (NumberFormatException e) {
+
                         if (PotionEffectType.getByName(p) != null)
                             pet = PotionEffectType.getByName(p);
                         else
                             pet = PotionEffectType.SPEED;
-                    }
+
 
                     type = pet;
                 } else if (data.startsWith("length") || data.startsWith("time") || data.startsWith("duration")) {

@@ -223,8 +223,15 @@ public class Items {
                                 setDisplayName(StringUtil.addColor(data.split(":", 2)[1]).replaceAll("_", " "));
 
                                 // Owner Variables
-                            else if (data.startsWith("owner") || data.startsWith("player"))
-                                setSkullOwner(data.split(":", 2)[1]);
+                            else if (data.startsWith("owner") || data.startsWith("player")) {
+                                String v = data.split(":", 2)[1];
+                                try {
+                                    UUID id = UUID.fromString(v);
+                                    setSkullOwner(id);
+                                } catch (Exception e) {
+                                    setSkullOwner(data.split(":", 2)[1]);
+                                }
+                            }
 
                                 // Color Variables(Leather Only)
                             else if (data.startsWith("color") || data.startsWith("colour"))
@@ -334,6 +341,7 @@ public class Items {
                 }
         }catch (Exception e){
             Bukkit.getLogger().log(Level.SEVERE, "BimmCore is unable to get the item from: " + string);
+            e.printStackTrace();
             item = new ItemStack(Material.AIR);
         }
 
@@ -376,9 +384,7 @@ public class Items {
      */
     public Items setSkullOwner(String owner) {
         SkullMeta im = (SkullMeta) item.getItemMeta();
-
-        im.setOwner(owner);
-
+        im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
         item.setItemMeta(im);
         return this;
     }

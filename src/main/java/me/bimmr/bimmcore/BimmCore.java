@@ -1,13 +1,21 @@
 package me.bimmr.bimmcore;
 
+import me.bimmr.bimmcore.menus.Book;
+import me.bimmr.bimmcore.menus.inventory.ClickEvent;
+import me.bimmr.bimmcore.menus.inventory.MenuGUI;
+import me.bimmr.bimmcore.menus.inventory.MenuGUIManager;
 import me.bimmr.bimmcore.messages.FancyMessage;
+import me.bimmr.bimmcore.npc.NPC;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,10 +30,12 @@ import java.util.logging.Level;
 public class BimmCore extends JavaPlugin implements Listener {
 
     private static BimmCore instance;
+    private static NamespacedKey key;
 
     public static BimmCore getInstance() {
         return instance;
     }
+    public static NamespacedKey getKey(){return key;}
 
     public static boolean checkBimmLibVersion(final Plugin plugin, int versionNeeded) {
 
@@ -99,97 +109,22 @@ public class BimmCore extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         instance = this;
+        key = new NamespacedKey(this, "bimmcore");
 
         loadTimeUtil();
-
-//
-//        /*
-//          Create all the Scrollers
-//         */
-//        String message = "&3Welcome &eTo &6My &4Test Server!";
-//        final Scroller scroller = new Scroller(message, 15, 5);
-//        final Scroller scroller2 = new Scroller(message, 30, 5);
-//        final Scroller scroller3 = new Scroller(message, 10, 5);
-//
-//        /*
-//         Create the TimedEvent that will run all of the MessageDisplays
-//         */
-//        TimedEvent timedEvent = new TimedEvent(3) {
-//            @Override
-//            public void run() {
-//                MessageDisplay bar = (MessageDisplay) this.getAttachedObject();
-//                bar.setText(scroller.next());
-//            }
-//        };
-//        /*
-//        Create the TimedEvent that will run the scoreboard
-//         */
-//        TimedEvent timedEvent3 = new TimedEvent(1) {
-//            int i = 0;
-//
-//            @Override
-//            public void run() {
-//                Board board = (Board) getAttachedObject();
-//                board.setName(scroller3.next());
-//                if (i % 2 == 0)
-//                    board.setText(0, scroller2.next());
-//                if (i % 5 == 0)
-//                    board.setText(9, scroller2.current());
-//
-//                board.getBoardLine(11).setValue(board.getBoardLine(11).getValue() + 1);
-//
-//                if (i == Integer.MAX_VALUE)
-//                    i = 0;
-//                i++;
-//            }
-//        };
-//
-//        /*
-//         Create the Board
-//         */
-//        Board board = new Board("Test", timedEvent3);
-//        board.add(new BoardLine(scroller2.next()));
-//        board.add(new BoardLine("Test2          "));
-//        board.add(new BoardLine("Test3"));
-//        board.add(new BoardLine("Test4"));
-//        board.add(new BoardLine("Test5"));
-//        board.add(new BoardLine("Test6"));
-//        board.add(new BoardLine("Test7"));
-//        board.add(new BoardLine("Test8"));
-//        board.add(new BoardLine("Test9"));
-//        board.add(new BoardLine("Test10"));
-//        board.add(new BoardLine("Test12"));
-//        board.add(new BoardLine("Test13"));
-//        board.add(new BoardLine("&4abcdefghijklm&3nopqrstuvwxyz"));
-//        board.add(new BoardLine("&4abcdefghijklmnopqrstuvwxyz"));
-//        board.add(new BoardLine("abcdefghijklmnopqrstuvwxyz"));
-//
-//        //Start the Board's timedTask(Not active by default to prevent un-needed lag
-//        board.startTask();
-//
-//
-//        /*
-//        Create all the MessageDisplays
-//         */
-//        Title title = new Title("Test", "", 0, 30, timedEvent);
-//        ActionBar actionBar = new ActionBar("Test", 30, timedEvent.clone());
-//        BossBar bossBar = new BossBar("Test", 30, timedEvent.clone());
-//
-//        /*
-//        Send it to all players online
-//         */
-//        for (Player player : Bukkit.getOnlinePlayers()) {
-//            title.send(player);
-//            actionBar.send(player);
-//            bossBar.send(player);
-//            board.send(player);
-//
-//        }
 
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
-    @EventHandler
-    public void command(PlayerCommandPreprocessEvent e) {
-    }
+//    @EventHandler
+//    public void command(PlayerCommandPreprocessEvent e) {
+//        if (e.getMessage().contains("BTest")) {
+//            Book b = new Book();
+//            b.addLine(new FancyMessage("Test").command("test"));
+//            b.openFor(e.getPlayer());
+//            // NPC npc = new NPC("Test", e.getPlayer().getLocation());
+//            // npc.equip(NPC.ItemSlots.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+//        }
+//    }
+
 }

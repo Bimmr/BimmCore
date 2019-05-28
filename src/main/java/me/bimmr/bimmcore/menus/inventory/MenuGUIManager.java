@@ -38,7 +38,12 @@ class MenuGUIManagerExample extends MenuGUIManager {
                 .border(new ItemStack(Material.GOLD_BLOCK), new ItemStack(Material.DIAMOND_BLOCK));
 
 
-        menu.addItem(new ItemStack(Material.DIAMOND), "Fancy Diamond", "Lore Can Go Here");
+        menu.addItem(new ItemStack(Material.DIAMOND), "Fancy Diamond", "Lore Can Go Here", new ClickEvent() {
+            @Override
+            public void click() {
+                System.out.println("test");
+            }
+        });
         menu.addItem(new ItemStack(Material.GOLD_INGOT), "Fancy Gold", "Lore Can Go Here");
         menu.addItem(new ItemStack(Material.IRON_INGOT), "Fancy Iron", "Lore Can Go Here");
 
@@ -102,6 +107,10 @@ public abstract class MenuGUIManager implements Listener {
                     } else {
                         menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
                         menu.getClickEvent().click();
+                        if(menu.getClickEvent(inv.getContents()[position]) != null) {
+                            menu.getClickEvent(inv.getContents()[position]).setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
+                            menu.getClickEvent(inv.getContents()[position]).click();
+                        }
                         player.updateInventory();
                         if (menu.getClickEvent().willClose()) {
                             player.closeInventory();

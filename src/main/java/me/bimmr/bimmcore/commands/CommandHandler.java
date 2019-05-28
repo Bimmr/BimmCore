@@ -87,7 +87,7 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
         } else {
             List<String> params = new ArrayList<String>();
             for (SubCommand subCommand : this.commands)
-                if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase()))
+                if (subCommand.getName().equalsIgnoreCase(args[0]) || (subCommand.getAliases() != null && subCommand.getAliases().contains(args[0].toLowerCase())))
                     params = subCommand.getTabs(args);
             if (params != null && !params.isEmpty())
                 return TabCompletionHelper.getPossibleCompletionsForGivenArgs(args, params);

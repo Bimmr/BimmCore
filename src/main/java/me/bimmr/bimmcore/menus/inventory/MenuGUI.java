@@ -1,14 +1,19 @@
 package me.bimmr.bimmcore.menus.inventory;
 
+import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.StringUtil;
+import me.bimmr.bimmcore.UUIDItemTagType;
 import me.bimmr.bimmcore.items.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 
 import java.util.*;
 
@@ -69,6 +74,7 @@ public class MenuGUI {
     private HashMap<String, Integer> playerPage = new HashMap<>();
     private HashMap<Integer[], ItemStack> toSetItems = new HashMap<>();
 
+    private HashMap<UUID, ClickEvent> clickEvents = new HashMap<>();
     private ArrayList<ArrayList<ItemStack>> pages = new ArrayList<>();
     private ArrayList<Inventory> inventories = new ArrayList<>();
     private HashMap<Integer, Integer> pageSlot = new HashMap<>();
@@ -190,8 +196,23 @@ public class MenuGUI {
      * @param itemStack the itemstack to add
      * @return the MenuGUI
      */
-    public MenuGUI addItem(int page, ItemStack itemStack) {
 
+    public MenuGUI addItem(int page, ItemStack itemStack) {
+        return addItem(page, itemStack, null);
+    }
+
+    public MenuGUI addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
+
+        if (clickEvent != null) {
+            UUID id = UUID.randomUUID();
+            ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
+            ItemMeta im = itemStack.getItemMeta();
+            im.getCustomTagContainer().setCustomTag(BimmCore.getKey(), uuidItemTagType, id);
+            itemStack.setItemMeta(im);
+
+            if (clickEvent != null)
+                clickEvents.put(id, clickEvent);
+        }
         while (page < pages.size() && ((bordered && pages.get(page).size() >= MAXITEMSPERPAGEBORDERED) || (!bordered && pages.get(page).size() >= MAXITEMSPERPAGE)))
             page++;
 
@@ -206,6 +227,8 @@ public class MenuGUI {
         pages.get(page).add(itemStack);
 
         pageSlot.put(page, slot + 1);
+
+
         return this;
     }
 
@@ -223,6 +246,34 @@ public class MenuGUI {
     }
 
     /**
+     * Add an item to a specific page
+     *
+     * @param page       the page to modify
+     * @param itemStack  the itemstack to add
+     * @param name       the custom name of the itemstack
+     * @param lore       the custom lore of the itemstack
+     * @param clickEvent the ClickEvent
+     * @return the MenuGUI
+     */
+    public MenuGUI addItem(int page, ItemStack itemStack, String name, String[] lore, ClickEvent clickEvent) {
+        return addItem(page, format(itemStack, name, lore), clickEvent);
+    }
+
+    /**
+     * Add an item to a specific page
+     *
+     * @param page       the page to modify
+     * @param itemStack  the itemstack to add
+     * @param name       the custom name of the itemstack
+     * @param lore       the custom lore of the itemstack
+     * @param clickEvent the ClickEvent
+     * @return the MenuGUI
+     */
+    public MenuGUI addItem(int page, ItemStack itemStack, String name, String lore, ClickEvent clickEvent) {
+        return addItem(page, format(itemStack, name, lore), clickEvent);
+    }
+
+    /**
      * Add an item to the first available page
      *
      * @param itemStack the itemstack to add
@@ -230,6 +281,18 @@ public class MenuGUI {
      */
     public MenuGUI addItem(ItemStack itemStack) {
         addItem(0, itemStack);
+        return this;
+    }
+
+    /**
+     * Add an item to the first available page
+     *
+     * @param itemStack  the itemstack to add
+     * @param clickEvent the clickEvent
+     * @return the MenuGUI
+     */
+    public MenuGUI addItem(ItemStack itemStack, ClickEvent clickEvent) {
+        addItem(0, itemStack, clickEvent);
         return this;
     }
 
@@ -246,6 +309,50 @@ public class MenuGUI {
     }
 
     /**
+     * Add an item to the first available page
+     *
+     * @param itemstack  the itemstack to add
+     * @param name       the custom name of the itemstack
+     * @param lore       the custom lore of the itemstack
+     * @param clickEvent the clickevent
+     * @return the MenuGUI
+     */
+    public MenuGUI addItem(ItemStack itemstack, String name, String lore, ClickEvent clickEvent) {
+        return addItem(format(itemstack, name, lore), clickEvent);
+    }
+
+    /**
+     * Set an item to a specific page's slot
+     *
+     * @param page the page to modify
+     * @param slot the slot to set the item to
+     * @param item the itemstack to set
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int page, int slot, ItemStack item, ClickEvent clickEvent) {
+        while (slot >= (bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE)) {
+            page++;
+            if (page >= pages.size()) {
+                slot -= bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE;
+                pages.add(new ArrayList<ItemStack>());
+            }
+        }
+        if (clickEvent != null) {
+            UUID id = UUID.randomUUID();
+            ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
+            ItemMeta im = item.getItemMeta();
+            im.getCustomTagContainer().setCustomTag(BimmCore.getKey(), uuidItemTagType, id);
+            item.setItemMeta(im);
+
+            if (clickEvent != null)
+                clickEvents.put(id, clickEvent);
+        }
+        toSetItems.put(new Integer[]{page, slot}, item);
+
+        return this;
+    }
+
+    /**
      * Set an item to a specific page's slot
      *
      * @param page the page to modify
@@ -254,18 +361,9 @@ public class MenuGUI {
      * @return the MenuGUI
      */
     public MenuGUI setItem(int page, int slot, ItemStack item) {
-        while (slot >= (bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE)) {
-            page++;
-            if (page >= pages.size()) {
-                slot -= bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE;
-                pages.add(new ArrayList<ItemStack>());
-            }
-        }
-
-
-        toSetItems.put(new Integer[]{page, slot}, item);
-        return this;
+        return setItem(page, slot, item, null);
     }
+
 
     /**
      * Set an item to a specific page's slot
@@ -279,6 +377,37 @@ public class MenuGUI {
      */
     public MenuGUI setItem(int page, int slot, ItemStack item, String name, String... lore) {
         return setItem(page, slot, format(item, name, lore));
+    }
+
+
+    /**
+     * Set an item to a specific page's slot
+     *
+     * @param page       the page to modify
+     * @param slot       the slot to set the item to
+     * @param item       the itemstack to set
+     * @param name       the name of the item
+     * @param lore       the lore of the item
+     * @param clickEvent the clickEvent
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int page, int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
+        return setItem(page, slot, format(item, name, lore), clickEvent);
+    }
+
+    /**
+     * Set an item to a specific page's slot
+     *
+     * @param page       the page to modify
+     * @param slot       the slot to set the item to
+     * @param item       the itemstack to set
+     * @param name       the name of the item
+     * @param lore       the lore of the item
+     * @param clickEvent the clickEvent
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int page, int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
+        return setItem(page, slot, format(item, name, lore), clickEvent);
     }
 
     /**
@@ -297,12 +426,51 @@ public class MenuGUI {
      *
      * @param slot the slot to set the item
      * @param item the itemstack to set
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int slot, ItemStack item, ClickEvent clickEvent) {
+        return setItem(0, slot, item, clickEvent);
+    }
+
+    /**
+     * Set an item on the first page
+     *
+     * @param slot the slot to set the item
+     * @param item the itemstack to set
      * @param name the name of the item
      * @param lore the lore of the item
      * @return the MenuGUI
      */
     public MenuGUI setItem(int slot, ItemStack item, String name, String... lore) {
         return setItem(slot, format(item, name, lore));
+    }
+
+    /**
+     * Set an item on the first page
+     *
+     * @param slot       the slot to set the item
+     * @param item       the itemstack to set
+     * @param name       the name of the item
+     * @param lore       the lore of the item
+     * @param clickEvent the click event
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
+        return setItem(slot, format(item, name, lore), clickEvent);
+    }
+
+    /**
+     * Set an item on the first page
+     *
+     * @param slot       the slot to set the item
+     * @param item       the itemstack to set
+     * @param name       the name of the item
+     * @param lore       the lore of the item
+     * @param clickEvent the click event
+     * @return the MenuGUI
+     */
+    public MenuGUI setItem(int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
+        return setItem(slot, format(item, name, lore), clickEvent);
     }
 
     /**
@@ -474,6 +642,18 @@ public class MenuGUI {
 
     public ClickEvent getClickEvent() {
         return clickEvent;
+    }
+
+    public ClickEvent getClickEvent(ItemStack itemStack) {
+        ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        CustomItemTagContainer tagContainer = itemMeta.getCustomTagContainer();
+
+        if (tagContainer.hasCustomTag(BimmCore.getKey(), uuidItemTagType)) {
+            UUID id = tagContainer.getCustomTag(BimmCore.getKey(), uuidItemTagType);
+            return clickEvents.get(id);
+        } else
+            return null;
     }
 
     public void setClickEvent(ClickEvent clickEvent) {
