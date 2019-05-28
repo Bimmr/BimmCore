@@ -11,7 +11,7 @@ import java.util.List;
 public class ItemsUtil {
 
     /**
-     * Go through a list of <u>ItemStacks</u> and return a list of the <u>ItemStacks -> Items#ToString</u>
+     * Go through a list of <u>ItemStacks</u> and return a list of the <u>ItemStacks = Items#ToString</u>
      */
     public static ArrayList<String> getItemStacksToString(List<ItemStack> list) {
         ArrayList<String> items = new ArrayList<String>();

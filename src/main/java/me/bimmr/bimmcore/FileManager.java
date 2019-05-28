@@ -154,10 +154,8 @@ public class FileManager {
         /**
          * Copies the config from the resources to the config's default
          * settings.
-         * <p/>
-         * Force = true ----> Will add any new values from the default file
-         * <p/>
-         * Force = false ---> Will NOT add new values from the default file
+         * Force = true = Will add any new values from the default file
+         * Force = false = Will NOT add new values from the default file
          *
          * @param force
          * @return

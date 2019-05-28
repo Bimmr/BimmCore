@@ -406,8 +406,8 @@ public class Items {
     /**
      * Sets a book's title
      *
-     * @param title
-     * @return
+     * @param title - the title
+     * @return - the item
      */
     public Items setBookTitle(String title) {
 
@@ -420,8 +420,8 @@ public class Items {
     }
 
     /**
-     * @param author
-     * @return
+     * @param author - the author
+     * @return - the item
      */
     public Items setBookAuthor(String author) {
         BookMeta im = (BookMeta) item.getItemMeta();
@@ -435,8 +435,8 @@ public class Items {
     /**
      * Sets if the item is unbreakable
      *
-     * @param unbreakable
-     * @return
+     * @param unbreakable - if the item is unbreakable
+     * @return the item
      */
     public Items setUnbreakable(boolean unbreakable) {
         ItemMeta im = getItem().getItemMeta();
@@ -450,10 +450,10 @@ public class Items {
     /**
      * Sets the color value of leather items
      *
-     * @param red
-     * @param green
-     * @param blue
-     * @return
+     * @param red - value of red tint
+     * @param green - value of green tint
+     * @param blue - value of blue tint
+     * @return the item
      */
     public Items setLeatherColor(int red, int green, int blue) {
         LeatherArmorMeta im = (LeatherArmorMeta) item.getItemMeta();
@@ -467,8 +467,8 @@ public class Items {
     /**
      * Set the amount
      *
-     * @param amount
-     * @return
+     * @param amount the amount of the item
+     * @return the item
      */
     public Items setAmount(int amount) {
         getItem().setAmount(amount);
@@ -478,8 +478,8 @@ public class Items {
     /**
      * Sets the durability
      *
-     * @param durability
-     * @return
+     * @param durability - the durability of the item
+     * @return the item
      */
     public Items setDurability(int durability) {
         getItem().setDurability((short) durability);
@@ -489,9 +489,9 @@ public class Items {
     /**
      * Adds an enchantment
      *
-     * @param enchantment
-     * @param level
-     * @return
+     * @param enchantment - the enchantment
+     * @param level - the level of enchantment
+     * @return - the item
      */
     public Items addEnchantment(Enchantment enchantment, int level) {
         getItem().addUnsafeEnchantment(enchantment, level);
@@ -501,8 +501,8 @@ public class Items {
     /**
      * Add a potion effect to an itemstack
      *
-     * @param potionEffect
-     * @return
+     * @param potionEffect - the potion effect
+     * @return - the item
      */
     public Items addPotionEffect(PotionEffect potionEffect) {
         if (potionEffect != null) {

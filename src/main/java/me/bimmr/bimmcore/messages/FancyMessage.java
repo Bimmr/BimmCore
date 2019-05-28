@@ -90,7 +90,6 @@ public class FancyMessage {
 
     /**
      * The command/Message the player will use/say when they message the messages
-     * <p/>
      * To make it a command, don't forget to have a "/"
      *
      * @param string
@@ -115,7 +114,6 @@ public class FancyMessage {
     /**
      * CAN NOT BE USED WITH COMMAND
      * Add a callback for an onClick
-     * <p>
      * CallBack self deletes after 5 minutes from first message, unless told otherwise
      *
      * @param fce

@@ -14,7 +14,7 @@ import java.util.Random;
 public class StringUtil {
 
     /**
-     * Gets a String with '&' converted to ChatColor#COLOUR_CHAR
+     * Gets a String with &amp; converted to ChatColor#COLOUR_CHAR
      *
      * @param string
      * @return
@@ -24,7 +24,7 @@ public class StringUtil {
     }
 
     /**
-     * Gets a String with ChatColor#COLOUR_CHAR converted to '&'
+     * Gets a String with ChatColor#COLOUR_CHAR converted to '&amp;'
      *
      * @param string
      * @return
@@ -51,7 +51,7 @@ public class StringUtil {
     }
 
     /**
-     * Change every individual word in a string to propper case
+     * Change every individual word in a string to proper case
      *
      * @param line
      * @return
@@ -75,7 +75,7 @@ public class StringUtil {
     }
 
     /**
-     * Get a string splitting at '|' to make a List<String>
+     * Get a string splitting at '|' to make a List of type String
      *
      * @param line
      * @return
