@@ -62,7 +62,7 @@ public class Board {
      */
     public Board(String name, int size, TimedEvent timedEvent) {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy", name);
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(name);
         setTimedEvent(timedEvent);
@@ -302,7 +302,7 @@ public class Board {
             this.objective = null;
         }
         this.lines.clear();
-        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy", name);
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(getName());
     }

@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
-import net.minecraft.server.v1_14_R1.PacketPlayOutEntityHeadRotation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
