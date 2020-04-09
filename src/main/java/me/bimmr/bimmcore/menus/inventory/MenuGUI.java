@@ -1,32 +1,41 @@
 package me.bimmr.bimmcore.menus.inventory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.StringUtil;
-import me.bimmr.bimmcore.UUIDItemTagType;
 import me.bimmr.bimmcore.items.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
-
-import java.util.*;
 
 public class MenuGUI {
-
     public static final int MAXITEMSPERPAGE = 45;
+
     public static final int MAXITEMSPERPAGEBORDERED = 28;
-    public static ItemStack PREVIOUSPAGEITEM, NEXTPAGEITEM;
+
+    public static ItemStack PREVIOUSPAGEITEM;
+
+    public static ItemStack NEXTPAGEITEM;
 
     private MenuGUIManager menuGUIManager;
 
+    private String name;
+
+    private ClickEvent clickEvent;
+
+    private boolean centered;
+
+    private boolean bordered;
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -34,23 +43,23 @@ public class MenuGUI {
     }
 
     public ItemStack getBorderCorners() {
-        return borderCorners;
+        return this.borderCorners;
     }
 
     public MenuGUIManager getMenuGUIManager() {
-        return menuGUIManager;
+        return this.menuGUIManager;
     }
 
     public HashMap<String, Integer> getPlayerPage() {
-        return playerPage;
+        return this.playerPage;
     }
 
     public ArrayList<ArrayList<ItemStack>> getPages() {
-        return pages;
+        return this.pages;
     }
 
     public ArrayList<Inventory> getInventories() {
-        return inventories;
+        return this.inventories;
     }
 
     public void setBorderCorners(ItemStack borderCorners) {
@@ -58,38 +67,48 @@ public class MenuGUI {
     }
 
     public ItemStack getBorderSides() {
-        return borderSides;
+        return this.borderSides;
     }
 
     public void setBorderSides(ItemStack borderSides) {
         this.borderSides = borderSides;
     }
 
-    private String name;
-    private ClickEvent clickEvent;
-    private boolean centered;
-    private boolean bordered;
     private int size = -1;
-    private ItemStack borderCorners, borderSides;
+
+    private ItemStack borderCorners;
+
+    private ItemStack borderSides;
+
     private HashMap<String, Integer> playerPage = new HashMap<>();
-    private HashMap<Integer[], ItemStack> toSetItems = new HashMap<>();
+
+    private HashMap<Integer[], ItemStack> toSetItems = (HashMap)new HashMap<>();
 
     private HashMap<UUID, ClickEvent> clickEvents = new HashMap<>();
+
     private ArrayList<ArrayList<ItemStack>> pages = new ArrayList<>();
+
     private ArrayList<Inventory> inventories = new ArrayList<>();
+
     private HashMap<Integer, Integer> pageSlot = new HashMap<>();
 
     public MenuGUI(MenuGUIManager menuGUIManager, String name, ClickEvent clickEvent) {
         this.menuGUIManager = menuGUIManager;
         this.name = name;
         this.clickEvent = clickEvent;
-        this.pages.add(new ArrayList<ItemStack>());
-
+        this.pages.add(new ArrayList<>());
         if (PREVIOUSPAGEITEM == null)
-            PREVIOUSPAGEITEM = new Items(new ItemStack(Material.PLAYER_HEAD)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
+            if (!BimmCore.oldAPI) {
+                PREVIOUSPAGEITEM = (new Items(new ItemStack(Material.PLAYER_HEAD))).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
+            } else {
+                PREVIOUSPAGEITEM = (new Items(new ItemStack(Material.valueOf("SKULL_ITEM")))).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("MHF_ArrowLeft").getItem();
+            }
         if (NEXTPAGEITEM == null)
-            NEXTPAGEITEM = new Items(new ItemStack(Material.PLAYER_HEAD)).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
-
+            if (!BimmCore.oldAPI) {
+                NEXTPAGEITEM = (new Items(new ItemStack(Material.PLAYER_HEAD))).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
+            } else {
+                NEXTPAGEITEM = (new Items(new ItemStack(Material.valueOf("SKULL_ITEM")))).setDurability(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("MHF_ArrowRight").getItem();
+            }
         menuGUIManager.menus.add(this);
     }
 
@@ -99,46 +118,28 @@ public class MenuGUI {
         border(borderCorners, borderSides);
     }
 
-
-    /**
-     * Set border items, and set bordered to true
-     *
-     * @param borderCorners the items at the corner of the GUI
-     * @param borderSides   the items at the sides of the GUI
-     * @return the MenuGUI
-     */
     public MenuGUI border(ItemStack borderCorners, ItemStack borderSides) {
         this.borderCorners = format(borderCorners, ChatColor.GRAY + "");
         this.borderSides = format(borderSides, ChatColor.GRAY + "");
         this.bordered = true;
-
         return this;
     }
 
-    /**
-     * Format an itemstack
-     *
-     * @param itemstack the itemstack to format
-     * @param name      the display name
-     * @param lore      the lore
-     * @return the modified itemstack
-     */
     public ItemStack format(ItemStack itemstack, String name, String... lore) {
         ItemMeta im = itemstack.getItemMeta();
         if (im != null) {
             if (name != null)
                 im.setDisplayName(StringUtil.addColor(name));
             if (lore != null) {
-                ArrayList<String> lores = new ArrayList<String>();
-
-                //If a lore has a ';' in it, split it into a new line
-                for (String line : lore)
-                    if (line.contains(";"))
+                ArrayList<String> lores = new ArrayList<>();
+                for (String line : lore) {
+                    if (line.contains(";")) {
                         for (String part : line.split(";"))
                             lores.add(StringUtil.addColor(part));
-                    else
+                    } else {
                         lores.add(StringUtil.addColor(line));
-
+                    }
+                }
                 im.setLore(lores);
             }
             itemstack.setItemMeta(im);
@@ -146,514 +147,250 @@ public class MenuGUI {
         return itemstack;
     }
 
-    /**
-     * Format an itemstack
-     *
-     * @param itemstack the itemstack to format
-     * @param name      the display name
-     * @return the modified itemstack
-     */
     public ItemStack format(ItemStack itemstack, String name) {
         return format(itemstack, name, null);
     }
 
-    /**
-     * Set the bordered boolean
-     *
-     * @param bordered if bordered or not
-     * @return the MenuGUI
-     */
     public MenuGUI setBordered(boolean bordered) {
         this.bordered = false;
         return this;
     }
 
-    /**
-     * Set centered to true
-     *
-     * @return the MenuGUI
-     */
     public MenuGUI center() {
         this.centered = true;
         return this;
     }
 
-    /**
-     * Set the centered boolean
-     *
-     * @param centered if centered or not
-     * @return the MenuGUI
-     */
     public MenuGUI setCentered(boolean centered) {
         this.centered = centered;
         return this;
     }
 
-    /**
-     * Add an item to a specific page
-     *
-     * @param page      the page to modify
-     * @param itemStack the itemstack to add
-     * @return the MenuGUI
-     */
-
     public MenuGUI addItem(int page, ItemStack itemStack) {
-        return addItem(page, itemStack, null);
+        return addItem(page, itemStack, (ClickEvent)null);
     }
 
     public MenuGUI addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
-
-        if (clickEvent != null) {
-            UUID id = UUID.randomUUID();
-            ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
-            ItemMeta im = itemStack.getItemMeta();
-            im.getCustomTagContainer().setCustomTag(BimmCore.getKey(), uuidItemTagType, id);
-            itemStack.setItemMeta(im);
-
-            if (clickEvent != null)
-                clickEvents.put(id, clickEvent);
-        }
-        while (page < pages.size() && ((bordered && pages.get(page).size() >= MAXITEMSPERPAGEBORDERED) || (!bordered && pages.get(page).size() >= MAXITEMSPERPAGE)))
+        if (clickEvent != null)
+            if (!BimmCore.oldAPI) {
+                UUID id = UUID.randomUUID();
+                itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
+                this.clickEvents.put(id, clickEvent);
+            }
+        while (page < this.pages.size() && ((this.bordered && ((ArrayList)this.pages.get(page)).size() >= 28) || (!this.bordered && ((ArrayList)this.pages.get(page)).size() >= 45)))
             page++;
-
-        if (pages.size() <= page)
-            pages.add(page, new ArrayList<ItemStack>());
-
-        if (!pageSlot.containsKey(page))
-            pageSlot.put(page, 0);
-
-        int slot = pageSlot.get(page);
-
-        pages.get(page).add(itemStack);
-
-        pageSlot.put(page, slot + 1);
-
-
+        if (this.pages.size() <= page)
+            this.pages.add(page, new ArrayList<>());
+        if (!this.pageSlot.containsKey(Integer.valueOf(page)))
+            this.pageSlot.put(Integer.valueOf(page), Integer.valueOf(0));
+        int slot = ((Integer)this.pageSlot.get(Integer.valueOf(page))).intValue();
+        ((ArrayList<ItemStack>)this.pages.get(page)).add(itemStack);
+        this.pageSlot.put(Integer.valueOf(page), Integer.valueOf(slot + 1));
         return this;
     }
 
-    /**
-     * Add an item to a specific page
-     *
-     * @param page      the page to modify
-     * @param itemStack the itemstack to add
-     * @param name      the custom name of the itemstack
-     * @param lore      the custom lore of the itemstack
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(int page, ItemStack itemStack, String name, String... lore) {
         return addItem(page, format(itemStack, name, lore));
     }
 
-    /**
-     * Add an item to a specific page
-     *
-     * @param page       the page to modify
-     * @param itemStack  the itemstack to add
-     * @param name       the custom name of the itemstack
-     * @param lore       the custom lore of the itemstack
-     * @param clickEvent the ClickEvent
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(int page, ItemStack itemStack, String name, String[] lore, ClickEvent clickEvent) {
         return addItem(page, format(itemStack, name, lore), clickEvent);
     }
 
-    /**
-     * Add an item to a specific page
-     *
-     * @param page       the page to modify
-     * @param itemStack  the itemstack to add
-     * @param name       the custom name of the itemstack
-     * @param lore       the custom lore of the itemstack
-     * @param clickEvent the ClickEvent
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(int page, ItemStack itemStack, String name, String lore, ClickEvent clickEvent) {
-        return addItem(page, format(itemStack, name, lore), clickEvent);
+        return addItem(page, format(itemStack, name, new String[] { lore }), clickEvent);
     }
 
-    /**
-     * Add an item to the first available page
-     *
-     * @param itemStack the itemstack to add
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(ItemStack itemStack) {
         addItem(0, itemStack);
         return this;
     }
 
-    /**
-     * Add an item to the first available page
-     *
-     * @param itemStack  the itemstack to add
-     * @param clickEvent the clickEvent
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(ItemStack itemStack, ClickEvent clickEvent) {
         addItem(0, itemStack, clickEvent);
         return this;
     }
 
-    /**
-     * Add an item to the first available page
-     *
-     * @param itemstack the itemstack to add
-     * @param name      the custom name of the itemstack
-     * @param lore      the custom lore of the itemstack
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(ItemStack itemstack, String name, String... lore) {
         return addItem(format(itemstack, name, lore));
     }
 
-    /**
-     * Add an item to the first available page
-     *
-     * @param itemstack  the itemstack to add
-     * @param name       the custom name of the itemstack
-     * @param lore       the custom lore of the itemstack
-     * @param clickEvent the clickevent
-     * @return the MenuGUI
-     */
     public MenuGUI addItem(ItemStack itemstack, String name, String lore, ClickEvent clickEvent) {
-        return addItem(format(itemstack, name, lore), clickEvent);
+        return addItem(format(itemstack, name, new String[] { lore }), clickEvent);
     }
 
-    /**
-     * Set an item to a specific page's slot
-     *
-     * @param page the page to modify
-     * @param slot the slot to set the item to
-     * @param item the itemstack to set
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int page, int slot, ItemStack item, ClickEvent clickEvent) {
-        while (slot >= (bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE)) {
+        while (slot >= (this.bordered ? 28 : 45)) {
             page++;
-            if (page >= pages.size()) {
-                slot -= bordered ? MAXITEMSPERPAGEBORDERED : MAXITEMSPERPAGE;
-                pages.add(new ArrayList<ItemStack>());
+            if (page >= this.pages.size()) {
+                slot -= this.bordered ? 28 : 45;
+                this.pages.add(new ArrayList<>());
             }
         }
-        if (clickEvent != null) {
-            UUID id = UUID.randomUUID();
-            ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
-            ItemMeta im = item.getItemMeta();
-            im.getCustomTagContainer().setCustomTag(BimmCore.getKey(), uuidItemTagType, id);
-            item.setItemMeta(im);
-
-            if (clickEvent != null)
-                clickEvents.put(id, clickEvent);
-        }
-        toSetItems.put(new Integer[]{page, slot}, item);
-
+        if (clickEvent != null)
+            if (!BimmCore.oldAPI) {
+                UUID id = UUID.randomUUID();
+                item = SingleClickEventUtil.addUUIDTag(id, item);
+                this.clickEvents.put(id, clickEvent);
+            }
+        this.toSetItems.put(new Integer[] { Integer.valueOf(page), Integer.valueOf(slot) }, item);
         return this;
     }
 
-    /**
-     * Set an item to a specific page's slot
-     *
-     * @param page the page to modify
-     * @param slot the slot to set the item to
-     * @param item the itemstack to set
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int page, int slot, ItemStack item) {
-        return setItem(page, slot, item, null);
+        return setItem(page, slot, item, (ClickEvent)null);
     }
 
-
-    /**
-     * Set an item to a specific page's slot
-     *
-     * @param page the page to modify
-     * @param slot the slot to set the item to
-     * @param item the itemstack to set
-     * @param name the name of the item
-     * @param lore the lore of the item
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int page, int slot, ItemStack item, String name, String... lore) {
         return setItem(page, slot, format(item, name, lore));
     }
 
-
-    /**
-     * Set an item to a specific page's slot
-     *
-     * @param page       the page to modify
-     * @param slot       the slot to set the item to
-     * @param item       the itemstack to set
-     * @param name       the name of the item
-     * @param lore       the lore of the item
-     * @param clickEvent the clickEvent
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int page, int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
         return setItem(page, slot, format(item, name, lore), clickEvent);
     }
 
-    /**
-     * Set an item to a specific page's slot
-     *
-     * @param page       the page to modify
-     * @param slot       the slot to set the item to
-     * @param item       the itemstack to set
-     * @param name       the name of the item
-     * @param lore       the lore of the item
-     * @param clickEvent the clickEvent
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int page, int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
-        return setItem(page, slot, format(item, name, lore), clickEvent);
+        return setItem(page, slot, format(item, name, new String[] { lore }), clickEvent);
     }
 
-    /**
-     * Set an item on the first page
-     *
-     * @param slot the slot to set the item
-     * @param item the itemstack to set
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int slot, ItemStack item) {
         return setItem(0, slot, item);
     }
 
-    /**
-     * Set an item on the first page
-     *
-     * @param slot the slot to set the item
-     * @param item the itemstack to set
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int slot, ItemStack item, ClickEvent clickEvent) {
         return setItem(0, slot, item, clickEvent);
     }
 
-    /**
-     * Set an item on the first page
-     *
-     * @param slot the slot to set the item
-     * @param item the itemstack to set
-     * @param name the name of the item
-     * @param lore the lore of the item
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int slot, ItemStack item, String name, String... lore) {
         return setItem(slot, format(item, name, lore));
     }
 
-    /**
-     * Set an item on the first page
-     *
-     * @param slot       the slot to set the item
-     * @param item       the itemstack to set
-     * @param name       the name of the item
-     * @param lore       the lore of the item
-     * @param clickEvent the click event
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
-        return setItem(slot, format(item, name, lore), clickEvent);
+        return setItem(slot, format(item, name, new String[] { lore }), clickEvent);
     }
 
-    /**
-     * Set an item on the first page
-     *
-     * @param slot       the slot to set the item
-     * @param item       the itemstack to set
-     * @param name       the name of the item
-     * @param lore       the lore of the item
-     * @param clickEvent the click event
-     * @return the MenuGUI
-     */
     public MenuGUI setItem(int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
         return setItem(slot, format(item, name, lore), clickEvent);
     }
 
-    /**
-     * Build the menu(All Pages)
-     */
     public MenuGUI build() {
-        for (int i = 0; i < pages.size(); i++) {
-
-            ArrayList<ItemStack> items = pages.get(i);
-
-
-            if (bordered && items.size() == 0)
+        for (int i = 0; i < this.pages.size(); i++) {
+            ArrayList<ItemStack> items = this.pages.get(i);
+            if (this.bordered && items.size() == 0)
                 items.add(null);
-
-            //Center the last row
-            if (centered)
-                if (pageSlot.containsKey(i))
-                    items = centerLastRow(items, pageSlot.get(i));
-
-            // Add a border if requested
-            if (bordered)
+            if (this.centered &&
+                    this.pageSlot.containsKey(Integer.valueOf(i)))
+                items = centerLastRow(items, ((Integer)this.pageSlot.get(Integer.valueOf(i))).intValue());
+            if (this.bordered)
                 items = outline(items);
-
-
             HashMap<Integer, ItemStack> toSetAfter = new HashMap<>();
-            //Set any items that need to be set
-            for (Map.Entry<Integer[], ItemStack> e : toSetItems.entrySet()) {
-                if (e.getKey()[0] == i) {
-                    int slot = e.getKey()[1];
-                    if (slot < 0)
-                        toSetAfter.put(slot, e.getValue());
-                    else {
-                        while (slot > items.size() - 2)
-                            items.add(null);
-
-                        items.set(slot, e.getValue());
+            for (Map.Entry<Integer[], ItemStack> e : this.toSetItems.entrySet()) {
+                if (((Integer[])e.getKey())[0].intValue() == i) {
+                    int slot = ((Integer[])e.getKey())[1].intValue();
+                    if (slot < 0) {
+                        toSetAfter.put(Integer.valueOf(slot), e.getValue());
+                        continue;
                     }
+                    while (slot > items.size() - 2)
+                        items.add(null);
+                    items.set(slot, e.getValue());
                 }
             }
-
-
-            Inventory inv = Bukkit.createInventory(null, size != -1 ? (getRows(size, 9) + 2) * 9 : (getRows(items.size(), 9) + (bordered ? -1 : 1)) * 9, name);
+            Inventory inv = Bukkit.createInventory(null, (this.size != -1) ? ((getRows(this.size, 9.0D) + 2) * 9) : ((getRows(items.size(), 9.0D) + (this.bordered ? -1 : 1)) * 9), this.name);
             for (int position = 0; position < items.size(); position++) {
                 if (items.get(position) != null)
                     inv.setItem(position, items.get(position));
             }
-
             if (i > 0)
                 inv.setItem(inv.getSize() - 9, PREVIOUSPAGEITEM);
-            if (i != pages.size() - 1)
+            if (i != this.pages.size() - 1)
                 inv.setItem(inv.getSize() - 1, NEXTPAGEITEM);
-
             for (Map.Entry<Integer, ItemStack> e : toSetAfter.entrySet())
-                inv.setItem(inv.getSize() + e.getKey(), e.getValue());
-
-            inventories.add(inv);
+                inv.setItem(inv.getSize() + ((Integer)e.getKey()).intValue(), e.getValue());
+            this.inventories.add(inv);
         }
         return this;
     }
 
     private ArrayList<ItemStack> centerLastRow(ArrayList<ItemStack> items, int lastAddPlace) {
-
         int count = lastAddPlace;
-        int itemsPerRow = (bordered ? 7 : 9);
+        int itemsPerRow = this.bordered ? 7 : 9;
         int lastRowCount = count % itemsPerRow;
         int lastRowStart = count - lastRowCount;
-
         if (lastRowCount == 0)
             return items;
-
-
-        int toShift = (itemsPerRow / 2) - (lastRowCount / 2);
+        int toShift = itemsPerRow / 2 - lastRowCount / 2;
         for (int i = 0; i < toShift; i++)
             items.add(lastRowStart, null);
-
         return items;
     }
 
     private ArrayList<ItemStack> outline(ArrayList<ItemStack> inventory) {
-        int rows = getRows(inventory.size(), 7) + 2;
+        int rows = getRows(inventory.size(), 7.0D) + 2;
         for (int i = 0; i < 9; i++)
             inventory.add(null);
-        for (int r = 0; r != rows; r++)
+        for (int r = 0; r != rows; r++) {
             for (int c = 0; c != 9; c++) {
-                if ((r == 0 || r + 1 == rows) && (c == 0 || c + 1 == 9))
-                    inventory.add((9 * r) + c, borderCorners);
-                else if (c == 0 || c + 1 == 9 || r == 0 || r + 1 == rows)
-                    inventory.add((9 * r) + c, borderSides);
+                if ((r == 0 || r + 1 == rows) && (c == 0 || c + 1 == 9)) {
+                    inventory.add(9 * r + c, this.borderCorners);
+                } else if (c == 0 || c + 1 == 9 || r == 0 || r + 1 == rows) {
+                    inventory.add(9 * r + c, this.borderSides);
+                }
             }
+        }
         return inventory;
     }
 
-    /**
-     * Open the inventory for the player
-     *
-     * @param player the player to open the menu for
-     */
     public void open(Player player) {
         open(0, player);
     }
 
-    /**
-     * Open the inventories specific page for the player
-     *
-     * @param page   the page to open
-     * @param player the player to open the menu for
-     */
     public void open(int page, Player player) {
-        playerPage.put(player.getName(), page);
-
-        player.openInventory(inventories.get(page));
+        this.playerPage.put(player.getName(), Integer.valueOf(page));
+        player.openInventory(this.inventories.get(page));
     }
 
-    /**
-     * Open the next page in the inventory
-     *
-     * @param player the player to view the next page
-     */
     public void openNextPage(Player player) {
-        int current = playerPage.get(player.getName());
+        int current = ((Integer)this.playerPage.get(player.getName())).intValue();
         open(current + 1, player);
     }
 
-    /**
-     * Open the next page in the inventory
-     *
-     * @param player the player to view the next page
-     */
     public void openPreviousPage(Player player) {
-        int current = playerPage.get(player.getName());
+        int current = ((Integer)this.playerPage.get(player.getName())).intValue();
         open(current - 1, player);
     }
 
-    /**
-     * Get the current page of the player
-     *
-     * @param player the player
-     * @return the page
-     */
     public int getCurrentPage(Player player) {
-        if (!playerPage.containsKey(player.getName()))
-            playerPage.put(player.getName(), 0);
-        return playerPage.get(player.getName());
+        if (!this.playerPage.containsKey(player.getName()))
+            this.playerPage.put(player.getName(), Integer.valueOf(0));
+        return ((Integer)this.playerPage.get(player.getName())).intValue();
     }
 
-    /**
-     * Dispose of the menu cleanly
-     */
     public void destroy() {
-        menuGUIManager.menus.remove(this);
-
-        name = null;
-        pages = null;
-        inventories = null;
-        borderSides = null;
-        borderCorners = null;
-        clickEvent = null;
+        this.menuGUIManager.menus.remove(this);
+        this.name = null;
+        this.pages = null;
+        this.inventories = null;
+        this.borderSides = null;
+        this.borderCorners = null;
+        this.clickEvent = null;
     }
 
-    /**
-     * Get the number of rows that would be needed for the number of items specified
-     *
-     * @param numberOfItems
-     * @return
-     */
     public int getRows(int numberOfItems, double itemsPerRow) {
-        return (int) Math.ceil(numberOfItems / itemsPerRow);
+        return (int)Math.ceil(numberOfItems / itemsPerRow);
     }
 
     public ClickEvent getClickEvent() {
-        return clickEvent;
+        return this.clickEvent;
     }
 
     public ClickEvent getClickEvent(ItemStack itemStack) {
-        ItemTagType<byte[], UUID> uuidItemTagType = new UUIDItemTagType();
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        CustomItemTagContainer tagContainer = itemMeta.getCustomTagContainer();
-
-        if (tagContainer.hasCustomTag(BimmCore.getKey(), uuidItemTagType)) {
-            UUID id = tagContainer.getCustomTag(BimmCore.getKey(), uuidItemTagType);
-            return clickEvents.get(id);
-        } else
-            return null;
+        if (!BimmCore.oldAPI) {
+            UUID id = SingleClickEventUtil.getUUIDFromTag(itemStack);
+            if (id != null)
+                return this.clickEvents.get(id);
+        }
+        return null;
     }
 
     public void setClickEvent(ClickEvent clickEvent) {
@@ -661,11 +398,10 @@ public class MenuGUI {
     }
 
     public int getSize() {
-        return size;
+        return this.size;
     }
 
     public void setSize(int size) {
         this.size = size;
     }
-
 }

@@ -1,20 +1,26 @@
-package me.bimmr.bimmcore.items.attributes;
+/*    */ package me.bimmr.bimmcore.items.attributes;
+/*    */ 
+/*    */ 
+/*    */ 
+/*    */ public enum Operation
+/*    */ {
+/*  7 */   ADD_NUMBER(0),
+/*  8 */   MULTIPLY_PERCENTAGE(1),
+/*  9 */   ADD_PERCENTAGE(2);
+/*    */   
+/*    */   private int id;
+/*    */   
+/*    */   Operation(int id) {
+/* 14 */     this.id = id;
+/*    */   }
+/*    */   
+/*    */   public int getID() {
+/* 18 */     return this.id;
+/*    */   }
+/*    */ }
 
-/**
- * Created by Randy on 05/12/16.
+
+/* Location:              C:\Users\bimmr\Downloads\BimmCore (1).jar!\me\bimmr\bimmcore\items\attributes\Operation.class
+ * Java compiler version: 7 (51.0)
+ * JD-Core Version:       1.1.3
  */
-public enum Operation {
-    ADD_NUMBER(0),
-    MULTIPLY_PERCENTAGE(1),
-    ADD_PERCENTAGE(2);
-
-    private int id;
-
-    private Operation(int id) {
-        this.id = id;
-    }
-
-    public int getID() {
-        return this.id;
-    }
-}

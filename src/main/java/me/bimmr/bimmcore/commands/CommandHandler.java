@@ -27,6 +27,7 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
         this.unknownCommand = unknownCommand;
 
         plugin.getCommand(command).setExecutor(this);
+
         plugin.getCommand(command).setTabCompleter(this);
     }
 

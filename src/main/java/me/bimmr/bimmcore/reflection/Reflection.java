@@ -24,6 +24,16 @@ public class Reflection {
     }
 
     /**
+     * Get Server's version as number
+     * @return
+     */
+    public static double getVersionAsNumber(){
+        String ver = getVersion();
+        int v = Integer.parseInt(ver.substring(1).replaceAll("_", ""));
+        return v;
+    }
+
+    /**
      * Get a craft class
      * (net.minecraft.server)
      *

@@ -5,7 +5,6 @@ import io.netty.buffer.Unpooled;
 import me.bimmr.bimmcore.messages.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
-import net.minecraft.server.v1_14_R1.EnumHand;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -309,11 +308,6 @@ public class Book {
             try {
                 p.getInventory().setItem(slot, iBook);
 
-                if (Reflection.getVersion().startsWith("v1_14")) {
-                    Object packetPlayOutOpenBookInstance = packetPlayOutOpenBookConstructor.newInstance(mainHandEnum);
-                    Packets.sendPacket(p, packetPlayOutOpenBookInstance);
-                }
-
                 if (Reflection.getVersion().startsWith("v1_13")) {
                     ByteBuf byteBuf = Unpooled.buffer(256);
                     byteBuf.setByte(0, (byte) 0);
@@ -325,6 +319,9 @@ public class Book {
                     Object packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance(craftKeyInstance, packetDataSerializerInstance);
 
                     Packets.sendPacket(p, packetPlayOutCustomPayLoadInstance);
+                }else{
+                    Object packetPlayOutOpenBookInstance = packetPlayOutOpenBookConstructor.newInstance(mainHandEnum);
+                    Packets.sendPacket(p, packetPlayOutOpenBookInstance);
                 }
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
