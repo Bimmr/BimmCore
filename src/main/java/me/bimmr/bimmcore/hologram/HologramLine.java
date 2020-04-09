@@ -167,14 +167,13 @@ public class HologramLine extends TimedObject {
                     entityArmorStand = armorStandConstructor.newInstance(worldHandle, location.getX(), location.getY(), location.getZ());
                 } else {
                     entityArmorStand = armorStandConstructor.newInstance(worldHandle);
+                    setLocationMethod.invoke(entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
                 }
                 Object id = entityGetIdMethod.invoke(entityArmorStand);
 
                 if (!BimmCore.oldAPI) {
                     setNoGravityMethod.invoke(entityArmorStand, true);
                 }
-                if (BimmCore.oldAPI)
-                    setLocationMethod.invoke(entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
 
                 setCustomNameVisibleMethod.invoke(entityArmorStand, true);
                 setText(entityArmorStand, text);
@@ -191,7 +190,7 @@ public class HologramLine extends TimedObject {
                 Object packetPlayOutSpawnEntityLiving = packetPlayOutSpawnEntityLivingConstructor.newInstance(entityArmorStand);
                 Packets.sendPacket(p, packetPlayOutSpawnEntityLiving);
 
-                if(!BimmCore.oldAPI) {
+                if(!BimmCore.oldAPI && !Reflection.getVersion().startsWith("v1_13") && !Reflection.getVersion().startsWith("v1_14")) {
                     Object packetPlayOutEntityMetaData = packetPlayOutEntityMetadataConstructor.newInstance(entityGetIdMethod.invoke(entityArmorStand), getDataWatcherMethod.invoke(entityArmorStand), true);
                     Packets.sendPacket(p, packetPlayOutEntityMetaData);
                 }

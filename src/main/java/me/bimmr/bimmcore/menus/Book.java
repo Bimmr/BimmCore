@@ -2,6 +2,7 @@ package me.bimmr.bimmcore.menus;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.messages.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
@@ -196,7 +197,9 @@ public class Book {
             craftMetaBook = Reflection.getCraftClass("inventory.CraftMetaBook");
             packetDataSerializer = Reflection.getNMSClass("PacketDataSerializer");
 
-            if (Reflection.getVersion().startsWith("v1_13")) {
+            if (BimmCore.oldAPI) {
+                packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
+            } else if (Reflection.getVersion().startsWith("v1_13")) {
                 packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
                 craftKeyClass = Reflection.getNMSClass("MinecraftKey");
             } else {
@@ -215,7 +218,14 @@ public class Book {
                 e.printStackTrace();
             }
 
-            if (Reflection.getVersion().startsWith("v1_13")) {
+            if (BimmCore.oldAPI) {
+                try {
+                    packetPlayOutCustomPayLoadConstructor = packetPlayOutCustomPayLoad.getConstructor(String.class, packetDataSerializer);
+
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            } else if (Reflection.getVersion().startsWith("v1_13")) {
                 try {
                     craftKeyConstructor = craftKeyClass.getConstructor(String.class);
                     packetPlayOutCustomPayLoadConstructor = packetPlayOutCustomPayLoad.getConstructor(craftKeyClass, packetDataSerializer);
@@ -308,18 +318,23 @@ public class Book {
             try {
                 p.getInventory().setItem(slot, iBook);
 
-                if (Reflection.getVersion().startsWith("v1_13")) {
+                if (BimmCore.oldAPI || Reflection.getVersion().startsWith("v1_13")) {
                     ByteBuf byteBuf = Unpooled.buffer(256);
                     byteBuf.setByte(0, (byte) 0);
                     byteBuf.writerIndex(1);
 
                     Object packetDataSerializerInstance = packetDataSerializerConstructor.newInstance(byteBuf);
-                    Object craftKeyInstance = craftKeyConstructor.newInstance("minecraft:book_open");
 
-                    Object packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance(craftKeyInstance, packetDataSerializerInstance);
+                    Object packetPlayOutCustomPayLoadInstance;
 
+                    if(Reflection.getVersion().startsWith("v1_13")) {
+                        Object craftKeyInstance = craftKeyConstructor.newInstance("minecraft:book_open");
+                        packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance(craftKeyInstance, packetDataSerializerInstance);
+                    }else{
+                        packetPlayOutCustomPayLoadInstance = packetPlayOutCustomPayLoadConstructor.newInstance("MC|BOpen", packetDataSerializerInstance);
+                    }
                     Packets.sendPacket(p, packetPlayOutCustomPayLoadInstance);
-                }else{
+                } else {
                     Object packetPlayOutOpenBookInstance = packetPlayOutOpenBookConstructor.newInstance(mainHandEnum);
                     Packets.sendPacket(p, packetPlayOutOpenBookInstance);
                 }
