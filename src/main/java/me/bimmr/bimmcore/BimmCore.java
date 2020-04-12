@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import me.bimmr.bimmcore.hologram.Hologram;
 import me.bimmr.bimmcore.messages.FancyMessage;
 import me.bimmr.bimmcore.reflection.Reflection;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import net.minecraft.server.v1_15_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_15_R1.PacketPlayOutSpawnEntityLiving;
@@ -35,17 +36,17 @@ public class BimmCore extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public static boolean checkBimmLibVersion(final Plugin plugin, int versionNeeded) {
-        int mcVersion = Integer.valueOf(instance.getDescription().getVersion().replaceAll("\\.", "").substring(0, 3)).intValue();
-        if (mcVersion < versionNeeded) {
-            Bukkit.getLogger().log(Level.SEVERE, plugin.getName() + " requires a newer BimmLib version.");
+    public static boolean checkBimmCoreVersion(final Plugin plugin, int versionNeeded) {
+        int bcVersion = Integer.parseInt(instance.getDescription().getVersion().replaceAll("\\.", ""));
+        if (bcVersion < versionNeeded) {
+            System.out.println(ChatColor.DARK_RED+plugin.getName() + " requires at least BimmCore version "+versionNeeded);
             (new BukkitRunnable() {
                 public void run() {
                     Bukkit.getPluginManager().disablePlugin(plugin);
                 }
             }).runTaskLater((Plugin)instance, 1L);
         }
-        return (mcVersion >= versionNeeded);
+        return (bcVersion >= versionNeeded);
     }
 
     public static Player[] getOnlinePlayers() {

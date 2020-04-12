@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.StringUtil;
 import me.bimmr.bimmcore.items.attributes.Attribute;
@@ -28,10 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
+import org.bukkit.potion.*;
 
 class Example {
     public Example() {
@@ -40,6 +38,7 @@ class Example {
         ItemStack itemStack = item.getItem();
     }
 }
+
 public class Items {
     private ItemStack item = new ItemStack(Material.AIR);
 
@@ -58,81 +57,122 @@ public class Items {
     }
 
     public String toString() {
-        String string = "item:AIR";
+
+        StringBuilder string = new StringBuilder("item:AIR");
         if (this.item == null || this.item.getType() == null)
-            return string;
+            return string.toString();
+
+        //Check Crackshot
         if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null && Items_Crackshot.getGunName(getItem()) != null)
             return Items_Crackshot.getGunName(getItem());
+
+        //Check QualityArmory
         if (Bukkit.getServer().getPluginManager().getPlugin("QualityArmory") != null && Items_QualityArmory.getGunName(getItem()) != null)
             return Items_Crackshot.getGunName(getItem());
+
+        //Make sure item isn't air
         if (getItem().getType() != Material.AIR) {
-            string = "item:" + getItem().getType().name();
+
+            //Add Item
+            string = new StringBuilder("item:" + getItem().getType().name());
+
+            //Make sure item has ItemMeta
             if (getItem().hasItemMeta()) {
+
+                //Add Item name
                 if (getItem().getItemMeta().hasDisplayName())
-                    string = string + " name:" + StringUtil.replaceToYAMLFriendlyColors(getItem().getItemMeta().getDisplayName());
+                    string.append(" name:").append(StringUtil.replaceToYAMLFriendlyColors(getItem().getItemMeta().getDisplayName()));
+
+                //Add Item Lore
                 if (getItem().getItemMeta().hasLore() && getItem().getType() != Material.POTION) {
-                    string = string + " lore:";
+                    string.append(" lore:");
                     for (String line : getItem().getItemMeta().getLore())
-                        string = string + StringUtil.replaceToYAMLFriendlyColors(line.replaceAll(" ", "_") + "|");
-                    string = string.substring(0, string.length() - 1);
+                        string.append(StringUtil.replaceToYAMLFriendlyColors(line.replaceAll(" ", "_") + "|"));
+                    string = new StringBuilder(string.substring(0, string.length() - 1));
                 }
             }
+            //If the item has a durability
             if (getItem().getDurability() > 0 && !isPotion())
-                string = string + " data:" + getItem().getDurability();
+                string.append(" data:").append(getItem().getDurability());
+
+            //Get the amount
             if (getItem().getAmount() > 1)
-                string = string + " amount:" + getItem().getAmount();
+                string.append(" amount:").append(getItem().getAmount());
+
+            //Add Glow
             if (EnchantGlow.isGlow(getItem()))
-                string = string + " Glow";
+                string.append(" Glow");
+
+            //Add Enchantments
             if (!getItem().getEnchantments().isEmpty())
-                for (Map.Entry<Enchantment, Integer> enchantment : (Iterable<Map.Entry<Enchantment, Integer>>)getItem().getEnchantments().entrySet()) {
-                    if (!((Enchantment)enchantment.getKey()).getName().equals("Glow"))
-                        string = string + " enchantment:" + ((Enchantment)enchantment.getKey()).getName() + ((((Integer)enchantment.getValue()).intValue() > 1) ? ("-" + enchantment.getValue()) : "");
+                for (Map.Entry<Enchantment, Integer> enchantment : (Iterable<Map.Entry<Enchantment, Integer>>) getItem().getEnchantments().entrySet()) {
+                    if (!((Enchantment) enchantment.getKey()).getName().equals("Glow"))
+                        string.append(" enchantment:").append(((Enchantment) enchantment.getKey()).getName()).append((((Integer) enchantment.getValue()).intValue() > 1) ? ("-" + enchantment.getValue()) : "");
                 }
+
+            //If potion
             if (isPotion()) {
-                PotionMeta pm = (PotionMeta)getItem().getItemMeta();
+                PotionMeta pm = (PotionMeta) getItem().getItemMeta();
+
+                //Add potion effects
+                if (pm.getBasePotionData() != null)
+                    string.append(" potion:").append(pm.getBasePotionData().getType().name()).append(",").append(pm.getBasePotionData().isExtended()).append(",").append(pm.getBasePotionData().isUpgraded());
                 if (pm.hasCustomEffects())
                     for (PotionEffect p : pm.getCustomEffects())
-                        string = string + " potion:" + p.getType().getName() + "," + (p.getDuration() / 20) + "," + (p.getAmplifier() + 1);
+                        string.append(" potion:").append(p.getType().getName()).append(",").append(p.getDuration() / 20).append(",").append(p.getAmplifier() + 1);
             }
-            if (getItem().getType().name().contains("LEATHER_") && ((LeatherArmorMeta)getItem().getItemMeta()).getColor() != null) {
-                LeatherArmorMeta im = (LeatherArmorMeta)getItem().getItemMeta();
-                string = string + " color:" + im.getColor().getRed() + "," + im.getColor().getGreen() + "," + im.getColor().getBlue();
+
+            //Add Leather Colour options
+            if (getItem().getType().name().contains("LEATHER_") && ((LeatherArmorMeta) getItem().getItemMeta()).getColor() != null) {
+                LeatherArmorMeta im = (LeatherArmorMeta) getItem().getItemMeta();
+                string.append(" color:").append(im.getColor().getRed()).append(",").append(im.getColor().getGreen()).append(",").append(im.getColor().getBlue());
             }
+
+            //Add written book
             if (getItem().getType() == Material.WRITTEN_BOOK) {
                 BookMeta im = (BookMeta) getItem().getItemMeta();
+
+                //Add author
                 if (im.hasAuthor())
-                    string += " author:" + im.getAuthor();
+                    string.append(" author:").append(im.getAuthor());
+
+                //Add title
                 if (im.hasTitle())
-                    string += " title:" + im.getTitle().replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&");
+                    string.append(" title:").append(im.getTitle().replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&"));
 
+                //Add Pages
                 if (im.hasPages()) {
-                    string += " pages:";
+                    string.append(" pages:");
                     for (String page : im.getPages())
-                        string += page.replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&") + "|";
+                        string.append(page.replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&")).append("|");
 
-                    string = string.substring(0, string.length() - 1);
+                    string = new StringBuilder(string.substring(0, string.length() - 1));
                 }
                 try {
                     if (im.isUnbreakable())
-                        string = string + " unbreakable";
+                        string.append(" unbreakable");
                 } catch (Exception e) {
-                    if (im.isUnbreakable())
-                        string = string + " unbreakable";
+                    BimmCore.getInstance().getLogger().log(Level.INFO, "Due to old API, Unable to check for unbreakable tag");
                 }
+                //Add Flags
                 if (!im.getItemFlags().isEmpty()) {
-                    string = string + " flags:";
+                    string.append(" flags:");
                     for (ItemFlag flag : im.getItemFlags())
-                        string = string + flag.name();
+                        string.append(flag.name());
                 }
+
+                //Add Item Attributes
                 if (this.itemAttributes != null)
                     for (Attribute attribute : this.itemAttributes.getAttributes())
-                        string = string + attribute.getAttribute().toString() + "," + attribute.getSlot().toString() + "," + attribute.getValue() + "," + attribute.getOperation().toString();
+                        string.append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
+
             }
         }
-        return string;
+        return string.toString();
     }
 
     public Items fromString(String string) {
+
         try {
             if (string != null)
                 if (string.contains(" ")) {
@@ -213,9 +253,17 @@ public class Items {
                                         if (!BimmCore.oldAPI)
                                             this.item.setType(Material.SPLASH_POTION);
                                     }
-                                int time = Integer.parseInt(s[1]) * 20;
-                                int level = Integer.parseInt(s[2]) - 1;
-                                addPotionEffect(new PotionEffect(type, time, level));
+                                try {
+                                    int time = Integer.parseInt(s[1]) * 20;
+                                    int level = Integer.parseInt(s[2]) - 1;
+                                    addPotionEffect(new PotionEffect(type, time, level));
+                                } catch (Exception e) {
+                                    boolean extended = Boolean.valueOf(s[1]);
+                                    boolean upgraded = Boolean.valueOf(s[2]);
+                                    PotionMeta pm = (PotionMeta) getItem().getItemMeta();
+                                    pm.setBasePotionData(new PotionData(PotionType.valueOf(s[0].toUpperCase()), extended, upgraded));
+                                    getItem().setItemMeta(pm);
+                                }
                             }
                         } else if (data.startsWith("lore") || data.startsWith("desc") || data.startsWith("description")) {
                             String s = data.split(":", 2)[1];
@@ -226,9 +274,9 @@ public class Items {
                             List<String> pages = new ArrayList<>();
                             for (String lore : s.split("\\|"))
                                 pages.add(StringUtil.addColor(lore.replaceAll("_", " ")));
-                            BookMeta meta = (BookMeta)this.item.getItemMeta();
+                            BookMeta meta = (BookMeta) this.item.getItemMeta();
                             meta.setPages(pages);
-                            this.item.setItemMeta((ItemMeta)meta);
+                            this.item.setItemMeta((ItemMeta) meta);
                         } else if (data.startsWith("author") || data.startsWith("writter")) {
                             setBookAuthor(StringUtil.addColor(data.split(":", 2)[1]));
                         } else if (data.startsWith("title")) {
@@ -277,6 +325,12 @@ public class Items {
         return this;
     }
 
+
+    /**
+     * Get Item
+     *
+     * @return the itemstack
+     */
     public ItemStack getItem() {
         if (this.itemAttributes != null) {
             this.itemAttributes.setItemStack(this.item);
@@ -285,43 +339,51 @@ public class Items {
         return this.item;
     }
 
+    /**
+     * Set the item's displayname
+     *
+     * @param name
+     * @return the item
+     */
     public Items setDisplayName(String name) {
         ItemMeta im = getItem().getItemMeta();
-        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        getItem().setItemMeta(im);
+        if (im != null) {
+            im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+            getItem().setItemMeta(im);
+        }
         return this;
     }
 
     public Items setSkullOwner(String owner) {
-        SkullMeta im = (SkullMeta)this.item.getItemMeta();
+        SkullMeta im = (SkullMeta) this.item.getItemMeta();
         if (!BimmCore.oldAPI) {
             im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
         } else {
             im.setOwner(owner);
         }
-        this.item.setItemMeta((ItemMeta)im);
+        this.item.setItemMeta((ItemMeta) im);
         return this;
     }
 
     public Items setSkullOwner(UUID owner) {
-        SkullMeta im = (SkullMeta)this.item.getItemMeta();
+        SkullMeta im = (SkullMeta) this.item.getItemMeta();
         if (!BimmCore.oldAPI)
             im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
-        this.item.setItemMeta((ItemMeta)im);
+        this.item.setItemMeta((ItemMeta) im);
         return this;
     }
 
     public Items setBookTitle(String title) {
-        BookMeta im = (BookMeta)this.item.getItemMeta();
+        BookMeta im = (BookMeta) this.item.getItemMeta();
         im.setTitle(title);
-        this.item.setItemMeta((ItemMeta)im);
+        this.item.setItemMeta((ItemMeta) im);
         return this;
     }
 
     public Items setBookAuthor(String author) {
-        BookMeta im = (BookMeta)this.item.getItemMeta();
+        BookMeta im = (BookMeta) this.item.getItemMeta();
         im.setAuthor(author);
-        this.item.setItemMeta((ItemMeta)im);
+        this.item.setItemMeta((ItemMeta) im);
         return this;
     }
 
@@ -334,9 +396,9 @@ public class Items {
     }
 
     public Items setLeatherColor(int red, int green, int blue) {
-        LeatherArmorMeta im = (LeatherArmorMeta)this.item.getItemMeta();
+        LeatherArmorMeta im = (LeatherArmorMeta) this.item.getItemMeta();
         im.setColor(Color.fromRGB(red, green, blue));
-        this.item.setItemMeta((ItemMeta)im);
+        this.item.setItemMeta((ItemMeta) im);
         return this;
     }
 
@@ -346,7 +408,7 @@ public class Items {
     }
 
     public Items setDurability(int durability) {
-        getItem().setDurability((short)durability);
+        getItem().setDurability((short) durability);
         return this;
     }
 
@@ -357,9 +419,9 @@ public class Items {
 
     public Items addPotionEffect(PotionEffect potionEffect) {
         if (potionEffect != null) {
-            PotionMeta potionMeta = (PotionMeta)getItem().getItemMeta();
+            PotionMeta potionMeta = (PotionMeta) getItem().getItemMeta();
             potionMeta.addCustomEffect(potionEffect, true);
-            getItem().setItemMeta((ItemMeta)potionMeta);
+            getItem().setItemMeta((ItemMeta) potionMeta);
         }
         return this;
     }
@@ -405,8 +467,8 @@ public class Items {
     public boolean equals(Items item, boolean useLore) {
         if (useLore)
             try {
-                Items i1 = (Items)clone();
-                Items i2 = (Items)item.clone();
+                Items i1 = (Items) clone();
+                Items i2 = (Items) item.clone();
                 ItemMeta im1 = i1.getItem().getItemMeta();
                 ItemMeta im2 = i2.getItem().getItemMeta();
                 List<String> nothing = new ArrayList<>();
@@ -423,7 +485,7 @@ public class Items {
 
     public Items addFlag(ItemFlag flag) {
         ItemMeta im = getItem().getItemMeta();
-        im.addItemFlags(new ItemFlag[] { flag });
+        im.addItemFlags(new ItemFlag[]{flag});
         getItem().setItemMeta(im);
         return this;
     }
@@ -451,10 +513,11 @@ public class Items {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            glow = (Enchantment)new EnchantGlow("bcoreglow");
+            glow = (Enchantment) new EnchantGlow("bcoreglow");
             try {
                 Enchantment.registerEnchantment(glow);
-            } catch (IllegalArgumentException illegalArgumentException) {}
+            } catch (IllegalArgumentException illegalArgumentException) {
+            }
             return glow;
         }
 

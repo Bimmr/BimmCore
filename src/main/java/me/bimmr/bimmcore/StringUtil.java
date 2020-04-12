@@ -3,9 +3,7 @@ package me.bimmr.bimmcore;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -100,11 +98,12 @@ public class StringUtil {
 
     /**
      * Center a string into any length of message
+     *
      * @param size
      * @param line
      * @return
      */
-    public static String getMidMessage(int size, String line){
+    public static String getMidMessage(int size, String line) {
 
         int le = (size - line.length()) / 2;
         String newLine = "";
@@ -152,5 +151,24 @@ public class StringUtil {
             return string.substring(0, string.length());
         else
             return String.format("%1$" + length + "s", string);
+    }
+
+
+    public static String stringFromMap(Map<String, Object> map) {
+        StringBuilder result = new StringBuilder("");
+        for (Object key : map.keySet()) {
+            result.append(" " + key.toString() + ":" + map.get(key).toString());
+        }
+        result.substring(1);
+        return result.toString();
+    }
+
+    public static Map<String, Object> mapFromString(String string) {
+        Map<String, Object> map = new HashMap<>();
+        for (String part : string.split(" ")) {
+            Object[] set = part.split(":", 1);
+            map.put(set[0].toString(), set[1]);
+        }
+        return map;
     }
 }
