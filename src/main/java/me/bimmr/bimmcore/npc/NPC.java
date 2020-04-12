@@ -230,7 +230,7 @@ public class NPC {
         static {
             craftItemStackClass = Reflection.getCraftClass("inventory.CraftItemStack");
             itemStackClass = Reflection.getNMSClass("ItemStack");
-            asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", new Class[] { ItemStack.class });
+            asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
             enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
             itemSlotEnumMainHand = enumItemSlotClass.getEnumConstants()[0];
             itemSlotEnumOffHand = enumItemSlotClass.getEnumConstants()[1];
@@ -238,7 +238,7 @@ public class NPC {
             itemSlotEnumLegs = enumItemSlotClass.getEnumConstants()[3];
             itemSlotEnumChest = enumItemSlotClass.getEnumConstants()[4];
             itemSlotEnumHead = enumItemSlotClass.getEnumConstants()[5];
-            setEquipment = Reflection.getMethod(entityPlayerClass, "setEquipment", new Class[] { enumItemSlotClass, itemStackClass });
+            setEquipment = Reflection.getMethod(entityPlayerClass, "setEquipment", enumItemSlotClass, itemStackClass);
             packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
             enumPlayerInfoActionClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
             packetPlayOutEntityHeadRotationClass = Reflection.getNMSClass("PacketPlayOutEntityHeadRotation");
@@ -251,8 +251,8 @@ public class NPC {
 
         public static void setRotation(Object entity, Player player, float yaw) {
             try {
-                Constructor<?> packetPlayOutEntityHeadRotationConstructor = packetPlayOutEntityHeadRotationClass.getConstructor(new Class[] { entityClass, byte.class });
-                Object packetPlayOutEntityHeadRotation = packetPlayOutEntityHeadRotationConstructor.newInstance(new Object[] { entity, Byte.valueOf(getFixRotation(yaw)) });
+                Constructor<?> packetPlayOutEntityHeadRotationConstructor = packetPlayOutEntityHeadRotationClass.getConstructor(entityClass, byte.class );
+                Object packetPlayOutEntityHeadRotation = packetPlayOutEntityHeadRotationConstructor.newInstance(entity, Byte.valueOf(getFixRotation(yaw)) );
                 Packets.sendPacket(player, packetPlayOutEntityHeadRotation);
             } catch (NoSuchMethodException|InstantiationException|IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
                 e.printStackTrace();
@@ -261,7 +261,7 @@ public class NPC {
 
         public static void teleport(Object entity, Location location) {
             try {
-                setLocation.invoke(entity, new Object[] { Double.valueOf(location.getX()), Double.valueOf(location.getY()), Double.valueOf(location.getZ()), Float.valueOf(location.getYaw()), Float.valueOf(location.getPitch()) });
+                setLocation.invoke(entity,Double.valueOf(location.getX()), Double.valueOf(location.getY()), Double.valueOf(location.getZ()), Float.valueOf(location.getYaw()), Float.valueOf(location.getPitch()) );
             } catch (IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -272,18 +272,18 @@ public class NPC {
         }
 
         public static int getEntityID(Object entity) {
-            return ((Integer)Reflection.invokeMethod(entityPlayerClass, "getId", entity)).intValue();
+            return (Integer) Reflection.invokeMethod(entityPlayerClass, "getId", entity);
         }
 
         public static void show(Object entity, Player player) {
             try {
                 Object[] entities = (Object[])Array.newInstance(entityPlayerClass, 1);
                 entities[0] = entity;
-                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor(new Class[] { enumPlayerInfoActionClass, entities.getClass() });
-                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(new Object[] { playerInfoActionEnumAdd, entities });
+                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor( enumPlayerInfoActionClass, entities.getClass() );
+                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(playerInfoActionEnumAdd, entities );
                 Packets.sendPacket(player, packetPlayOutPlayerInfo);
-                Constructor<?> packetPlayOutNamedEntitySpawnConstructor = packetPlayOutNamedEntitySpawnClass.getConstructor(new Class[] { entityHumanClass });
-                Object packetPlayOutNamedEntitySpawn = packetPlayOutNamedEntitySpawnConstructor.newInstance(new Object[] { entity });
+                Constructor<?> packetPlayOutNamedEntitySpawnConstructor = packetPlayOutNamedEntitySpawnClass.getConstructor(entityHumanClass );
+                Object packetPlayOutNamedEntitySpawn = packetPlayOutNamedEntitySpawnConstructor.newInstance(entity);
                 Packets.sendPacket(player, packetPlayOutNamedEntitySpawn);
             } catch (InstantiationException|java.lang.reflect.InvocationTargetException|IllegalAccessException|NoSuchMethodException e) {
                 e.printStackTrace();
@@ -294,8 +294,8 @@ public class NPC {
             try {
                 Object[] entities = (Object[])Array.newInstance(entityPlayerClass, 1);
                 entities[0] = entity;
-                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor(new Class[] { enumPlayerInfoActionClass, entities.getClass() });
-                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(new Object[] { playerInfoActionEnumRemove, entities });
+                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor( enumPlayerInfoActionClass, entities.getClass());
+                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(playerInfoActionEnumRemove, entities);
                 Packets.sendPacket(player, packetPlayOutPlayerInfo);
             } catch (InstantiationException|java.lang.reflect.InvocationTargetException|IllegalAccessException|NoSuchMethodException e) {
                 e.printStackTrace();
@@ -304,7 +304,7 @@ public class NPC {
 
         private static Object getCraftItemStack(ItemStack itemStack) {
             try {
-                return asNMSCopy.invoke(craftItemStackClass, new Object[] { itemStack });
+                return asNMSCopy.invoke(craftItemStackClass,  itemStack);
             } catch (IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
                 e.printStackTrace();
                 return null;
@@ -332,8 +332,8 @@ public class NPC {
             }
             try {
                 Object craftItem = getCraftItemStack(item);
-                Constructor<?> packetPlayOutEntityEquipmentConstructor = packetPlayOutEntityEquipmentClass.getConstructor(new Class[] { int.class, enumItemSlotClass, itemStackClass });
-                Object packetPlayOutEntityEquipment = packetPlayOutEntityEquipmentConstructor.newInstance(new Object[] { Integer.valueOf(getEntityID(entity)), oSlot, craftItem });
+                Constructor<?> packetPlayOutEntityEquipmentConstructor = packetPlayOutEntityEquipmentClass.getConstructor(int.class, enumItemSlotClass, itemStackClass );
+                Object packetPlayOutEntityEquipment = packetPlayOutEntityEquipmentConstructor.newInstance(Integer.valueOf(getEntityID(entity)), oSlot, craftItem );
                 Packets.sendPacket(player, packetPlayOutEntityEquipment);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -344,12 +344,12 @@ public class NPC {
             try {
                 Object craftWorld = craftWorldClass.cast(npc.getLocation().getWorld());
                 Object worldHandle = Reflection.getHandle(craftWorld);
-                playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(new Class[] { worldServerClass });
+                playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass );
                 Object craftServer = craftServerClass.cast(Bukkit.getServer());
                 Object minecraftServer = Reflection.invokeMethod(craftServerClass, "getServer", craftServer);
-                Object playerInteractManager = playerInteractManagerConstructor.newInstance(new Object[] { worldHandle });
-                entityConstructor = entityPlayerClass.getConstructor(new Class[] { minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass });
-                Object entityPlayer = entityConstructor.newInstance(new Object[] { minecraftServer, worldHandle, npc.getGameProfile(), playerInteractManager });
+                Object playerInteractManager = playerInteractManagerConstructor.newInstance(worldHandle );
+                entityConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass );
+                Object entityPlayer = entityConstructor.newInstance( minecraftServer, worldHandle, npc.getGameProfile(), playerInteractManager );
                 return entityPlayer;
             } catch (Exception e) {
                 e.printStackTrace();
