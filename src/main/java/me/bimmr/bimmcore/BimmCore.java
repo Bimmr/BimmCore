@@ -1,8 +1,9 @@
 package me.bimmr.bimmcore;
 
+import me.bimmr.bimmcore.files.Config;
 import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
-import me.bimmr.bimmcore.misc.FileManager;
+import me.bimmr.bimmcore.files.FileManager;
 import me.bimmr.bimmcore.timed.TimedEvent;
 import me.bimmr.bimmcore.hologram.Hologram;
 import me.bimmr.bimmcore.hologram.HologramLine;
@@ -63,7 +64,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     private void loadTimeUtil() {
         FileManager fileManager = new FileManager(getInstance());
-        FileManager.Config config = fileManager.getConfig("Language.yml").setup();
+        Config config = fileManager.getConfig("Language.yml").setup();
         ConfigurationSection yearConfig = config.get().getConfigurationSection("Time.Year");
         ConfigurationSection monthConfig = config.get().getConfigurationSection("Time.Month");
         ConfigurationSection dayConfig = config.get().getConfigurationSection("Time.Day");
