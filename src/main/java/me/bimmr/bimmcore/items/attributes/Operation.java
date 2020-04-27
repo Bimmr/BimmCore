@@ -1,8 +1,11 @@
 package me.bimmr.bimmcore.items.attributes;
 
 /**
- * Created by Randy on 05/12/16.
+ * Attribute Operations
+ *
+ * Used from 1.8.8 - 1.13
  */
+@Deprecated
 public enum Operation {
     ADD_NUMBER(0),
     MULTIPLY_PERCENTAGE(1),

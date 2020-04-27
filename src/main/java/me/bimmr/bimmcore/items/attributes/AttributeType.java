@@ -1,8 +1,11 @@
 package me.bimmr.bimmcore.items.attributes;
 
 /**
- * Created by Randy on 05/12/16.
+ * Attribute Types
+ *
+ * Used from 1.8.8 - 1.13
  */
+@Deprecated
 public enum AttributeType {
     MAX_HEALTH("generic.maxHealth"),
     FOLLOW_RANGE("generic.followRange"),
@@ -22,6 +25,10 @@ public enum AttributeType {
         this.name = name;
     }
 
+    /**
+     *
+     * @return Get Attribute Name
+     */
     public String getName() {
         return this.name;
     }

@@ -99,7 +99,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.menus</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.gui</a></div>
 <h2 title="Class Book" class="title">Class Book</h2>
 </div>
 <div class="contentContainer">
@@ -107,7 +107,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>me.bimmr.bimmcore.menus.Book</li>
+<li>me.bimmr.bimmcore.gui.book.Book</li>
 </ul>
 </li>
 </ul>
@@ -141,7 +141,7 @@ extends java.lang.Object</pre>
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="Book.BookAPI.html" title="class in me.bimmr.bimmcore.menus">Book.BookAPI</a></span></code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="Book.BookAPI.html" title="class in me.bimmr.bimmcore.gui">Book.BookAPI</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -193,21 +193,21 @@ extends java.lang.Object</pre>
 </tr>
 <tbody>
 <tr class="altColor" id="i0">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addBlankLine()">addBlankLine</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Add a blank line</div>
 </td>
 </tr>
 <tr class="rowColor" id="i1">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addLine(java.lang.String)">addLine</a></span>&#8203;(java.lang.String&nbsp;message)</code></th>
 <td class="colLast">
 <div class="block">Add a new line</div>
 </td>
 </tr>
 <tr class="altColor" id="i2">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addLine(me.bimmr.bimmcore.messages.FancyMessage)">addLine</a></span>&#8203;(<a href="../messages/FancyMessage.html" title="class in me.bimmr.bimmcore.messages">FancyMessage</a>&nbsp;message)</code></th>
 <td class="colLast">
 <div class="block">Add a new line</div>
@@ -235,14 +235,14 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor" id="i6">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#goToFooter(int)">goToFooter</a></span>&#8203;(int&nbsp;lines)</code></th>
 <td class="colLast">
 <div class="block">Go to the bottom of the page, leaving space for a footer</div>
 </td>
 </tr>
 <tr class="rowColor" id="i7">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nextPage()">nextPage</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Go to the next page</div>
@@ -256,7 +256,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor" id="i9">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLine(int,java.lang.String)">setLine</a></span>&#8203;(int&nbsp;line,
        java.lang.String&nbsp;message)</code></th>
 <td class="colLast">
@@ -264,7 +264,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor" id="i10">
-<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a></code></td>
+<td class="colFirst"><code><a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLine(int,me.bimmr.bimmcore.messages.FancyMessage)">setLine</a></span>&#8203;(int&nbsp;line,
        <a href="../messages/FancyMessage.html" title="class in me.bimmr.bimmcore.messages">FancyMessage</a>&nbsp;message)</code></th>
 <td class="colLast">
@@ -323,7 +323,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setLine</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;setLine&#8203;(int&nbsp;line,
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;setLine&#8203;(int&nbsp;line,
                     java.lang.String&nbsp;message)</pre>
 <div class="block">Set a specific value at a specific line</div>
 <dl>
@@ -340,7 +340,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setLine</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;setLine&#8203;(int&nbsp;line,
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;setLine&#8203;(int&nbsp;line,
                     <a href="../messages/FancyMessage.html" title="class in me.bimmr.bimmcore.messages">FancyMessage</a>&nbsp;message)</pre>
 <div class="block">Set a specific value at a specific line</div>
 <dl>
@@ -367,7 +367,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addLine</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;addLine&#8203;(java.lang.String&nbsp;message)</pre>
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;addLine&#8203;(java.lang.String&nbsp;message)</pre>
 <div class="block">Add a new line</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -382,7 +382,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addLine</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;addLine&#8203;(<a href="../messages/FancyMessage.html" title="class in me.bimmr.bimmcore.messages">FancyMessage</a>&nbsp;message)</pre>
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;addLine&#8203;(<a href="../messages/FancyMessage.html" title="class in me.bimmr.bimmcore.messages">FancyMessage</a>&nbsp;message)</pre>
 <div class="block">Add a new line</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -397,7 +397,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addBlankLine</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;addBlankLine()</pre>
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;addBlankLine()</pre>
 <div class="block">Add a blank line</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -410,7 +410,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>nextPage</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;nextPage()</pre>
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;nextPage()</pre>
 <div class="block">Go to the next page</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -423,7 +423,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>goToFooter</h4>
-<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.menus">Book</a>&nbsp;goToFooter&#8203;(int&nbsp;lines)</pre>
+<pre class="methodSignature">public&nbsp;<a href="Book.html" title="class in me.bimmr.bimmcore.gui">Book</a>&nbsp;goToFooter&#8203;(int&nbsp;lines)</pre>
 <div class="block">Go to the bottom of the page, leaving space for a footer</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

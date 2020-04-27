@@ -1,8 +1,8 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.Scroller;
-import me.bimmr.bimmcore.events.timing.TimedEvent;
+import me.bimmr.bimmcore.timed.TimedEvent;
+import me.bimmr.bimmcore.misc.Scroller;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -55,7 +55,7 @@ public class BossBar extends MessageDisplay {
      * style = solid
      * progress = 1.0
      *
-     * @param text
+     * @param text The Text
      */
     public BossBar(String text) {
         this(text, 2, BarColor.WHITE, BarStyle.SOLID, 1.0, null);
@@ -69,8 +69,8 @@ public class BossBar extends MessageDisplay {
      * style = solid
      * progress = 1.0
      *
-     * @param text
-     * @param time
+     * @param text The Text
+     * @param time The Time
      */
     public BossBar(String text, int time) {
         this(text, time, BarColor.WHITE, BarStyle.SOLID, 1.0, null);
@@ -80,10 +80,10 @@ public class BossBar extends MessageDisplay {
      * Create a BossBar
      * progress = 1.0
      *
-     * @param text
-     * @param time
-     * @param barColor
-     * @param barStyle
+     * @param text The text
+     * @param time The time
+     * @param barColor the Barcolor
+     * @param barStyle The Barstyle
      */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle) {
         this(text, time, barColor, barStyle, 1.0, null);
@@ -92,11 +92,11 @@ public class BossBar extends MessageDisplay {
     /**
      * Create a BossBar
      *
-     * @param text
-     * @param time
-     * @param barColor
-     * @param barStyle
-     * @param progress
+     * @param text The text
+     * @param time The Time
+     * @param barColor The Barcolor
+     * @param barStyle The BarStyle
+     * @param progress The progress
      */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, Double progress) {
         this(text, time, barColor, barStyle, progress, null);
@@ -110,8 +110,8 @@ public class BossBar extends MessageDisplay {
      * style = solid
      * progress = 1.0
      *
-     * @param text
-     * @param timedEvent
+     * @param text The text
+     * @param timedEvent The TimedEvent
      */
     public BossBar(String text, TimedEvent timedEvent) {
         this(text, 2, BarColor.WHITE, BarStyle.SOLID, 1.0, timedEvent);
@@ -124,9 +124,9 @@ public class BossBar extends MessageDisplay {
      * style = solid
      * progress = 1.0
      *
-     * @param text
-     * @param time
-     * @param timedEvent
+     * @param text The text
+     * @param time The time
+     * @param timedEvent The TimedEvent
      */
     public BossBar(String text, int time, TimedEvent timedEvent) {
         this(text, time, BarColor.WHITE, BarStyle.SOLID, 1.0, timedEvent);
@@ -136,11 +136,11 @@ public class BossBar extends MessageDisplay {
      * Create a BossBar
      * progress = 1.0
      *
-     * @param text
-     * @param time
-     * @param barColor
-     * @param barStyle
-     * @param timedEvent
+     * @param text The text
+     * @param time The time
+     * @param barColor The bar color
+     * @param barStyle The bar style
+     * @param timedEvent The TimedEvent
      */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, TimedEvent timedEvent) {
         this(text, time, barColor, barStyle, 1.0, timedEvent);
@@ -149,12 +149,12 @@ public class BossBar extends MessageDisplay {
     /**
      * Create a BossBar
      *
-     * @param text
-     * @param time
-     * @param barColor
-     * @param barStyle
-     * @param progress
-     * @param timedEvent
+     * @param text The text
+     * @param time The time
+     * @param barColor The bar color
+     * @param barStyle The bar style
+     * @param progress The bar's progress
+     * @param timedEvent The TimedEvent
      */
     public BossBar(String text, int time, BarColor barColor, BarStyle barStyle, Double progress, TimedEvent timedEvent) {
         bar = Bukkit.createBossBar(text, barColor, BarStyle.SOLID);
@@ -179,10 +179,10 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
-     * Get the BossBar being shown to the player
      *
-     * @param player
-     * @return
+     *
+     * @param player The player
+     * @return Get the BossBar being shown to the player
      */
     public static BossBar getBossBar(Player player) {
         if (isRunning(player))
@@ -192,10 +192,10 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
-     * Check if a BossBar is being sent to the player
      *
-     * @param player
-     * @return
+     *
+     * @param player The player
+     * @return Check if a BossBar is being sent to the player
      */
     private static boolean isRunning(Player player) {
         return bars.containsKey(player.getName());
@@ -214,7 +214,7 @@ public class BossBar extends MessageDisplay {
     /**
      * Clear the bossbar off the players screen
      *
-     * @param player
+     * @param player The player
      */
     @Override
     public void stop(Player player) {
@@ -222,18 +222,18 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
-     * Get the BukkitBossBar
      *
-     * @return
+     *
+     * @return Get the BukkitBossBar
      */
     public org.bukkit.boss.BossBar getBukkitBar() {
         return this.bar;
     }
 
     /**
-     * Get the TimedEvent
      *
-     * @return
+     *
+     * @return Get the TimedEvent
      */
     @Override
     public TimedEvent getTimedEvent() {
@@ -243,7 +243,7 @@ public class BossBar extends MessageDisplay {
     /**
      * Set the TimedEvent
      *
-     * @param timedEvent
+     * @param timedEvent The TimedEvent
      */
     @Override
     public void setTimedEvent(TimedEvent timedEvent) {
@@ -254,9 +254,9 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
-     * Get the text
      *
-     * @return
+     *
+     * @return Get the text
      */
     @Override
     public String getText() {
@@ -264,9 +264,9 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
-     * Get the text
+     * Set the text
      *
-     * @param text
+     * @param text The text
      */
     @Override
     public void setText(String text) {
@@ -276,7 +276,7 @@ public class BossBar extends MessageDisplay {
     /**
      * Sends a BossBar for a set amount of time
      *
-     * @param player
+     * @param player The player
      */
     @Override
     public void send(final Player player) {

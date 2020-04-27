@@ -9,15 +9,17 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 /**
- * Created by Randy on 05/12/16.
+ * Item ItemModifier NMS
+ * Used from 1.8.8 - 1.13
  */
+@Deprecated
 public class ItemModifier {
     //Static variables
-    private static Class<?>       craftItemStack;
-    private static Method         asNMSCopy;
-    private static Class<?>       nbtTagCompound;
-    private static Class<?>       nbtTagList;
-    private static Class<?>       nbtBase;
+    private static Class<?> craftItemStack;
+    private static Method asNMSCopy;
+    private static Class<?> nbtTagCompound;
+    private static Class<?> nbtTagList;
+    private static Class<?> nbtBase;
     private static Constructor<?> nbtTagString;
     private static Constructor<?> nbtTagInt;
     private static Constructor<?> nbtTagDouble;
@@ -40,16 +42,16 @@ public class ItemModifier {
     }
 
     //Non-Static Variables
-    private Object         nmsItemStack;
-    private Object         nbtTag;
-    private Object         nbtTags;
+    private Object nmsItemStack;
+    private Object nbtTag;
+    private Object nbtTags;
     private ItemAttributes itemAttributes;
 
     /**
      * Create an ItemModifier
      *
-     * @param itemStack
-     * @param itemAttributes
+     * @param itemStack The ItemStack
+     * @param itemAttributes The ItemAttribute
      */
     public ItemModifier(ItemStack itemStack, ItemAttributes itemAttributes) {
         nmsItemStack = getNMSItemStack(itemStack);
@@ -68,7 +70,7 @@ public class ItemModifier {
     private static Object getNBTTagCompound(Object nmsItem) {
         boolean hasNBTTagCompound = false;
         try {
-            Object tagCompound = Reflection.getPrivateField(nmsItem.getClass(), "tag");
+            Object tagCompound = Reflection.getField(nmsItem.getClass(), "tag");
 
             if (tagCompound == null)
                 tagCompound = nbtTagCompound.newInstance();
@@ -100,6 +102,10 @@ public class ItemModifier {
         return null;
     }
 
+    /**
+     *
+     * @return Get the built ItemStack
+     */
     public ItemStack build() {
         try {
             nbtTag = getNBTTagCompound(nmsItemStack);

@@ -99,7 +99,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.menus.inventory</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.gui.inventory</a></div>
 <h2 title="Class MenuGUI" class="title">Class MenuGUI</h2>
 </div>
 <div class="contentContainer">
@@ -107,7 +107,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>me.bimmr.bimmcore.menus.inventory.MenuGUI</li>
+<li>me.bimmr.bimmcore.gui.inventory.Menu</li>
 </ul>
 </li>
 </ul>
@@ -181,18 +181,18 @@ extends java.lang.Object</pre>
 </tr>
 <tbody>
 <tr class="altColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(me.bimmr.bimmcore.menus.inventory.MenuGUIManager,java.lang.String,int,me.bimmr.bimmcore.menus.inventory.ClickEvent,org.bukkit.inventory.ItemStack,org.bukkit.inventory.ItemStack)">MenuGUI</a></span>&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(me.bimmr.bimmcore.gui.inventory.MenuManager,java.lang.String,int,me.bimmr.bimmcore.gui.inventory.ClickEvent,org.bukkit.inventory.ItemStack,org.bukkit.inventory.ItemStack)">MenuGUI</a></span>&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
        java.lang.String&nbsp;name,
        int&nbsp;size,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent,
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent,
        org.bukkit.inventory.ItemStack&nbsp;borderCorners,
        org.bukkit.inventory.ItemStack&nbsp;borderSides)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(me.bimmr.bimmcore.menus.inventory.MenuGUIManager,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">MenuGUI</a></span>&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(me.bimmr.bimmcore.gui.inventory.MenuManager,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">MenuGUI</a></span>&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
        java.lang.String&nbsp;name,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -219,13 +219,13 @@ extends java.lang.Object</pre>
 </tr>
 <tbody>
 <tr class="altColor" id="i0">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack)">addItem</a></span>&#8203;(int&nbsp;page,
        org.bukkit.inventory.ItemStack&nbsp;itemStack)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i1">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">addItem</a></span>&#8203;(int&nbsp;page,
        org.bukkit.inventory.ItemStack&nbsp;itemStack,
        java.lang.String&nbsp;name,
@@ -233,69 +233,69 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i2">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.menus.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.gui.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
        org.bukkit.inventory.ItemStack&nbsp;itemStack,
        java.lang.String&nbsp;name,
        java.lang.String[]&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i3">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
        org.bukkit.inventory.ItemStack&nbsp;itemStack,
        java.lang.String&nbsp;name,
        java.lang.String&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i4">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">addItem</a></span>&#8203;(int&nbsp;page,
        org.bukkit.inventory.ItemStack&nbsp;itemStack,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i5">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i6">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
        java.lang.String&nbsp;name,
        java.lang.String...&nbsp;lore)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i7">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
        java.lang.String&nbsp;name,
        java.lang.String&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i8">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addItem(org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">addItem</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack,
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i9">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#border(org.bukkit.inventory.ItemStack,org.bukkit.inventory.ItemStack)">border</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;borderCorners,
       org.bukkit.inventory.ItemStack&nbsp;borderSides)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i10">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#build()">build</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i11">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#center()">center</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -328,12 +328,12 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i17">
-<td class="colFirst"><code><a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a></code></td>
+<td class="colFirst"><code><a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getClickEvent()">getClickEvent</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i18">
-<td class="colFirst"><code><a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a></code></td>
+<td class="colFirst"><code><a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getClickEvent(org.bukkit.inventory.ItemStack)">getClickEvent</a></span>&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -348,7 +348,7 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i21">
-<td class="colFirst"><code><a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a></code></td>
+<td class="colFirst"><code><a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMenuGUIManager()">getMenuGUIManager</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -405,7 +405,7 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i32">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setBordered(boolean)">setBordered</a></span>&#8203;(boolean&nbsp;bordered)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -415,24 +415,24 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i34">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setCentered(boolean)">setCentered</a></span>&#8203;(boolean&nbsp;centered)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i35">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setClickEvent(me.bimmr.bimmcore.menus.inventory.ClickEvent)">setClickEvent</a></span>&#8203;(<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setClickEvent(me.bimmr.bimmcore.gui.inventory.ClickEvent)">setClickEvent</a></span>&#8203;(<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i36">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack)">setItem</a></span>&#8203;(int&nbsp;page,
        int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i37">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">setItem</a></span>&#8203;(int&nbsp;page,
        int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
@@ -441,41 +441,41 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i38">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
        int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
        java.lang.String&nbsp;name,
        java.lang.String[]&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i39">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
        int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
        java.lang.String&nbsp;name,
        java.lang.String&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i40">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;page,
        int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i41">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack)">setItem</a></span>&#8203;(int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i42">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">setItem</a></span>&#8203;(int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
        java.lang.String&nbsp;name,
@@ -483,28 +483,28 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i43">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String%5B%5D,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
        java.lang.String&nbsp;name,
        java.lang.String[]&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i44">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
        java.lang.String&nbsp;name,
        java.lang.String&nbsp;lore,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i45">
-<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
+<td class="colFirst"><code><a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">setItem</a></span>&#8203;(int&nbsp;slot,
        org.bukkit.inventory.ItemStack&nbsp;item,
-       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
+       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i46">
@@ -553,7 +553,7 @@ extends java.lang.Object</pre>
 <pre>public static final&nbsp;int MAXITEMSPERPAGE</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#me.bimmr.bimmcore.menus.inventory.MenuGUI.MAXITEMSPERPAGE">Constant Field Values</a></dd>
+<dd><a href="../../../../../constant-values.html#me.bimmr.bimmcore.gui.inventory.Menu.MAXITEMSPERPAGE">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -566,7 +566,7 @@ extends java.lang.Object</pre>
 <pre>public static final&nbsp;int MAXITEMSPERPAGEBORDERED</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#me.bimmr.bimmcore.menus.inventory.MenuGUI.MAXITEMSPERPAGEBORDERED">Constant Field Values</a></dd>
+<dd><a href="../../../../../constant-values.html#me.bimmr.bimmcore.gui.inventory.Menu.MAXITEMSPERPAGEBORDERED">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -598,27 +598,27 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a id="&lt;init&gt;(me.bimmr.bimmcore.menus.inventory.MenuGUIManager,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="&lt;init&gt;(me.bimmr.bimmcore.gui.inventory.MenuManager,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>MenuGUI</h4>
-<pre>public&nbsp;MenuGUI&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
+<pre>public&nbsp;MenuGUI&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
                java.lang.String&nbsp;name,
-               <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+               <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
-<a id="&lt;init&gt;(me.bimmr.bimmcore.menus.inventory.MenuGUIManager,java.lang.String,int,me.bimmr.bimmcore.menus.inventory.ClickEvent,org.bukkit.inventory.ItemStack,org.bukkit.inventory.ItemStack)">
+<a id="&lt;init&gt;(me.bimmr.bimmcore.gui.inventory.MenuManager,java.lang.String,int,me.bimmr.bimmcore.gui.inventory.ClickEvent,org.bukkit.inventory.ItemStack,org.bukkit.inventory.ItemStack)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MenuGUI</h4>
-<pre>public&nbsp;MenuGUI&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
+<pre>public&nbsp;MenuGUI&#8203;(<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a>&nbsp;menuGUIManager,
                java.lang.String&nbsp;name,
                int&nbsp;size,
-               <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent,
+               <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent,
                org.bukkit.inventory.ItemStack&nbsp;borderCorners,
                org.bukkit.inventory.ItemStack&nbsp;borderSides)</pre>
 </li>
@@ -666,7 +666,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMenuGUIManager</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUIManager</a>&nbsp;getMenuGUIManager()</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUIManager.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUIManager</a>&nbsp;getMenuGUIManager()</pre>
 </li>
 </ul>
 <a id="getPlayerPage()">
@@ -729,7 +729,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>border</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;border&#8203;(org.bukkit.inventory.ItemStack&nbsp;borderCorners,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;border&#8203;(org.bukkit.inventory.ItemStack&nbsp;borderCorners,
                       org.bukkit.inventory.ItemStack&nbsp;borderSides)</pre>
 </li>
 </ul>
@@ -760,7 +760,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setBordered</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setBordered&#8203;(boolean&nbsp;bordered)</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setBordered&#8203;(boolean&nbsp;bordered)</pre>
 </li>
 </ul>
 <a id="center()">
@@ -769,7 +769,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>center</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;center()</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;center()</pre>
 </li>
 </ul>
 <a id="setCentered(boolean)">
@@ -778,7 +778,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setCentered</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setCentered&#8203;(boolean&nbsp;centered)</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setCentered&#8203;(boolean&nbsp;centered)</pre>
 </li>
 </ul>
 <a id="addItem(int,org.bukkit.inventory.ItemStack)">
@@ -787,19 +787,19 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
                        org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
 </li>
 </ul>
-<a id="addItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="addItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
                        org.bukkit.inventory.ItemStack&nbsp;itemStack,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">
@@ -808,36 +808,36 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
                        org.bukkit.inventory.ItemStack&nbsp;itemStack,
                        java.lang.String&nbsp;name,
                        java.lang.String...&nbsp;lore)</pre>
 </li>
 </ul>
-<a id="addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
                        org.bukkit.inventory.ItemStack&nbsp;itemStack,
                        java.lang.String&nbsp;name,
                        java.lang.String[]&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
-<a id="addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="addItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(int&nbsp;page,
                        org.bukkit.inventory.ItemStack&nbsp;itemStack,
                        java.lang.String&nbsp;name,
                        java.lang.String&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="addItem(org.bukkit.inventory.ItemStack)">
@@ -846,17 +846,17 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
 </li>
 </ul>
-<a id="addItem(org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="addItem(org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack,
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">
@@ -865,33 +865,33 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
                        java.lang.String&nbsp;name,
                        java.lang.String...&nbsp;lore)</pre>
 </li>
 </ul>
-<a id="addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="addItem(org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;addItem&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemstack,
                        java.lang.String&nbsp;name,
                        java.lang.String&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
-<a id="setItem(int,int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
                        int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="setItem(int,int,org.bukkit.inventory.ItemStack)">
@@ -900,7 +900,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
                        int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item)</pre>
 </li>
@@ -911,39 +911,39 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
                        int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String...&nbsp;lore)</pre>
 </li>
 </ul>
-<a id="setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
                        int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String[]&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
-<a id="setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;page,
                        int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="setItem(int,org.bukkit.inventory.ItemStack)">
@@ -952,19 +952,19 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item)</pre>
 </li>
 </ul>
-<a id="setItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,org.bukkit.inventory.ItemStack,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String...)">
@@ -973,36 +973,36 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String...&nbsp;lore)</pre>
 </li>
 </ul>
-<a id="setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String,me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
-<a id="setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setItem(int,org.bukkit.inventory.ItemStack,java.lang.String,java.lang.String[],me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;setItem&#8203;(int&nbsp;slot,
                        org.bukkit.inventory.ItemStack&nbsp;item,
                        java.lang.String&nbsp;name,
                        java.lang.String[]&nbsp;lore,
-                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+                       <a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="build()">
@@ -1011,7 +1011,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>build</h4>
-<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.menus.inventory">MenuGUI</a>&nbsp;build()</pre>
+<pre class="methodSignature">public&nbsp;<a href="MenuGUI.html" title="class in me.bimmr.bimmcore.gui.inventory">MenuGUI</a>&nbsp;build()</pre>
 </li>
 </ul>
 <a id="open(org.bukkit.entity.Player)">
@@ -1085,7 +1085,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getClickEvent</h4>
-<pre class="methodSignature">public&nbsp;<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;getClickEvent()</pre>
+<pre class="methodSignature">public&nbsp;<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;getClickEvent()</pre>
 </li>
 </ul>
 <a id="getClickEvent(org.bukkit.inventory.ItemStack)">
@@ -1094,16 +1094,16 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getClickEvent</h4>
-<pre class="methodSignature">public&nbsp;<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;getClickEvent&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
+<pre class="methodSignature">public&nbsp;<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;getClickEvent&#8203;(org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
 </li>
 </ul>
-<a id="setClickEvent(me.bimmr.bimmcore.menus.inventory.ClickEvent)">
+<a id="setClickEvent(me.bimmr.bimmcore.gui.inventory.ClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setClickEvent</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;setClickEvent&#8203;(<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.menus.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setClickEvent&#8203;(<a href="ClickEvent.html" title="class in me.bimmr.bimmcore.gui.inventory">ClickEvent</a>&nbsp;clickEvent)</pre>
 </li>
 </ul>
 <a id="getSize()">

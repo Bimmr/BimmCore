@@ -1,8 +1,9 @@
 package me.bimmr.bimmcore.scoreboard;
 
 import com.google.common.base.Splitter;
-import me.bimmr.bimmcore.StringUtil;
-import me.bimmr.bimmcore.events.timing.TimedEvent;
+import me.bimmr.bimmcore.utils.StringUtil;
+import me.bimmr.bimmcore.timed.TimedObject;
+import me.bimmr.bimmcore.timed.TimedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
@@ -12,7 +13,7 @@ import java.util.Iterator;
 /**
  * A Line on a Board
  */
-public class BoardLine {
+public class BoardLine extends TimedObject {
 
     private Team   team;
     private String key;
@@ -24,7 +25,6 @@ public class BoardLine {
     private int   value;
 
     private Board      board;
-    private TimedEvent timedEvent;
 
     /**
      * Create a BoardLine
@@ -32,7 +32,7 @@ public class BoardLine {
      * @param text
      */
     public BoardLine(String text) {
-        this(text, -1, null);
+        this(text, -1, null, false);
     }
 
     /**
@@ -44,7 +44,7 @@ public class BoardLine {
      * @param value
      */
     public BoardLine(String text, int value) {
-        this(text, value, null);
+        this(text, value, null, false);
     }
 
     /**
@@ -56,7 +56,20 @@ public class BoardLine {
      * @param timedEvent
      */
     public BoardLine(String text, TimedEvent timedEvent) {
-        this(text, -1, timedEvent);
+        this(text, -1, timedEvent, false);
+    }
+
+    /**
+     * Create a BoardLine
+     * <p>
+     * value = -1
+     *
+     * @param text
+     * @param timedEvent
+     * @param autoStartTimedEvent
+     */
+    public BoardLine(String text, TimedEvent timedEvent, boolean autoStartTimedEvent) {
+        this(text, -1, timedEvent, autoStartTimedEvent);
     }
 
     /**
@@ -67,9 +80,20 @@ public class BoardLine {
      * @param timedEvent
      */
     public BoardLine(String text, int value, TimedEvent timedEvent) {
+        this(text, value, timedEvent, false);
+    }
+    /**
+     * Create a BoardLine
+     *
+     * @param text
+     * @param value
+     * @param timedEvent
+     * @param autoStartTimedEvent
+     */
+    public BoardLine(String text, int value, TimedEvent timedEvent, boolean autoStartTimedEvent) {
         this.text = text.substring(0, Math.min(30, text.length()));
         setValue(value);
-        setTimedEvent(timedEvent);
+        setTimedEvent(timedEvent, autoStartTimedEvent);
     }
 
     /**
@@ -132,28 +156,6 @@ public class BoardLine {
         if (score != null)
             this.score.setScore(value);
     }
-
-    /**
-     * Get the TimedEvent
-     *
-     * @return
-     */
-    public TimedEvent getTimedEvent() {
-        return this.timedEvent;
-    }
-
-    /**
-     * Set the TimedEvent
-     *
-     * @param timedEvent
-     */
-    public void setTimedEvent(TimedEvent timedEvent) {
-        if (timedEvent != null) {
-            this.timedEvent = timedEvent;
-            this.timedEvent.setAttachedObject(this);
-        }
-    }
-
 
     /**
      * Build the BoardLine

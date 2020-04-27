@@ -1,8 +1,8 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.Scroller;
-import me.bimmr.bimmcore.events.timing.TimedEvent;
+import me.bimmr.bimmcore.timed.TimedEvent;
+import me.bimmr.bimmcore.misc.Scroller;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.entity.Player;
@@ -44,15 +44,13 @@ class ActionBarExample {
 
 public class ActionBar extends MessageDisplay {
 
-    private static boolean useOld;
-
     private static HashMap<String, BukkitTask> tasks = new HashMap<>();
     private static HashMap<String, ActionBar>  bars  = new HashMap<>();
 
     /**
      * Create an actionbar
      *
-     * @param text
+     * @param text The Text
      */
     public ActionBar(String text) {
         this(text, 2, null);
@@ -61,8 +59,8 @@ public class ActionBar extends MessageDisplay {
     /**
      * Create an actionbar
      *
-     * @param text
-     * @param time
+     * @param text The Text
+     * @param time The Time
      */
     public ActionBar(String text, int time) {
         this(text, time, null);
@@ -71,35 +69,54 @@ public class ActionBar extends MessageDisplay {
     /**
      * Create an actionbar
      *
-     * @param text
-     * @param timedEvent
+     * @param text The Text
+     * @param timedEvent The TimedEvent
      */
     public ActionBar(String text, TimedEvent timedEvent) {
-        this(text, 2, timedEvent);
+        this(text, 2, timedEvent, false);
     }
 
     /**
      * Create an actionbar
      *
-     * @param text
-     * @param time
-     * @param timedEvent
+     * @param text The Text
+     * @param timedEvent The TimedEvent
+     * @param autoStartTimedEvent If the TimedEvent autostarts
      */
-    public ActionBar(String text, int time, TimedEvent timedEvent) {
-        this.text = text;
-        this.time = time;
-
-        if (Reflection.getVersion().startsWith("v1_7_") || Reflection.getVersion().startsWith("v1_8_") || Reflection.getVersion().startsWith("v1_9_") || Reflection.getVersion().startsWith("v1_10_"))
-            useOld = true;
-
-        setTimedEvent(timedEvent);
+    public ActionBar(String text, TimedEvent timedEvent, boolean autoStartTimedEvent) {
+        this(text, 2, timedEvent, autoStartTimedEvent);
     }
 
     /**
-     * Check if a title is being sent to the player
+     * Create an actionbar
      *
-     * @param player
-     * @return
+     * @param text The text
+     * @param time The time
+     * @param timedEvent If the TimedEvent Autostarts
+     */
+    public ActionBar(String text, int time, TimedEvent timedEvent) {
+        this(text,time,timedEvent, false);
+    }
+    /**
+     * Create an actionbar
+     *
+     * @param text The Text
+     * @param time The time
+     * @param timedEvent The TimedEvent
+     * @param autoStartTimedEvent If the TimedEvent autostarts
+     */
+    public ActionBar(String text, int time, TimedEvent timedEvent, boolean autoStartTimedEvent) {
+        this.text = text;
+        this.time = time;
+
+        setTimedEvent(timedEvent, autoStartTimedEvent);
+    }
+
+    /**
+     *
+     *
+     * @param player The player
+     * @return Check if a title is being sent to the player
      */
     private static boolean isRunning(Player player) {
         return tasks.containsKey(player.getName());
@@ -108,14 +125,14 @@ public class ActionBar extends MessageDisplay {
     /**
      * Clear the player's title
      *
-     * @param player
+     * @param player The Player
      */
     public static void clear(Player player) {
         if (isRunning(player)) {
-            if (useOld)
-                ActionBarAPIOld.sendActionBar(player, "");
-            else
+            if (BimmCore.supports(11))
                 ActionBarAPI.sendActionBar(player, "");
+            else
+                ActionBarAPIOld.sendActionBar(player, "");
 
             tasks.get(player.getName()).cancel();
             tasks.remove(player.getName());
@@ -124,10 +141,10 @@ public class ActionBar extends MessageDisplay {
     }
 
     /**
-     * Get the actionbar that is being played for the player
      *
-     * @param player
-     * @return
+     *
+     * @param player The player
+     * @return Get the actionbar that is being played for the player
      */
     public static ActionBar getPlayingActionBar(Player player) {
         if (isRunning(player))
@@ -137,9 +154,9 @@ public class ActionBar extends MessageDisplay {
     }
 
     /**
-     * Get the text
      *
-     * @return
+     *
+     * @return Get the text
      */
     @Override
     public String getText() {
@@ -149,7 +166,7 @@ public class ActionBar extends MessageDisplay {
     /**
      * Set the text
      *
-     * @param text
+     * @param text The text to set
      */
     @Override
     public void setText(String text) {
@@ -157,9 +174,9 @@ public class ActionBar extends MessageDisplay {
     }
 
     /**
-     * Get the time
      *
-     * @return
+     *
+     * @return Get the time
      */
     @Override
     public int getTime() {
@@ -167,9 +184,9 @@ public class ActionBar extends MessageDisplay {
     }
 
     /**
-     * Get the TimedEvent
      *
-     * @return
+     *
+     * @return Get the TimedEvent
      */
     @Override
     public TimedEvent getTimedEvent() {
@@ -177,9 +194,9 @@ public class ActionBar extends MessageDisplay {
     }
 
     /**
-     * A function that gets called every second that the BossBar is active for
+     * Set the TimedEvent
      *
-     * @param timedEvent
+     * @param timedEvent The TimedEvent
      */
     @Override
     public void setTimedEvent(TimedEvent timedEvent) {
@@ -192,7 +209,7 @@ public class ActionBar extends MessageDisplay {
     /**
      * Stop showing the actionbar
      *
-     * @param player
+     * @param player The player
      */
     @Override
     public void stop(Player player) {
@@ -202,7 +219,7 @@ public class ActionBar extends MessageDisplay {
     /**
      * Send the player an title
      *
-     * @param player
+     * @param player The Player
      */
     @Override
     public void send(final Player player) {
@@ -220,10 +237,11 @@ public class ActionBar extends MessageDisplay {
                     clear(player);
 
                 else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    if (useOld)
-                        ActionBarAPIOld.sendActionBar(player, text);
-                    else
+                    if (BimmCore.supports(11))
                         ActionBarAPI.sendActionBar(player, text);
+                    else
+                        ActionBarAPIOld.sendActionBar(player, text);
+
                 timeLeft--;
             }
         }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));

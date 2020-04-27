@@ -1,156 +1,255 @@
 package me.bimmr.bimmcore.npc;
 
 import com.mojang.authlib.GameProfile;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import me.bimmr.bimmcore.Viewer;
+import com.mojang.authlib.properties.Property;
+import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.hologram.Viewer;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.*;
+
+@Deprecated
 public class NPC {
-    private static List<NPC> npcs = new ArrayList<>();
-
-    private int id;
 
     private GameProfile gameProfile;
-
-    private int entityID;
-
     private String name;
+    private Location location;
+    private HashMap<ItemSlots, ItemStack> equipment = new HashMap<>();
 
     private Object entityPlayer;
-
     private Viewer viewer;
-
-    public static void addNPC(NPC npc) {
-        npcs.add(npc);
-    }
-
-    public static void removeNPC(NPC npc) {
-        npcs.remove(npc);
-    }
-
-    public static NPC getNPC(int id) {
-        for (NPC npc : npcs) {
-            if (npc.id == id)
-                return npc;
-        }
-        return null;
-    }
-
-    private HashMap<ItemSlots, ItemStack> equipment = new HashMap<>();
 
     private NPCClickEvent npcClickEvent;
 
-    private Location location;
-
+    /**
+     * Create a NPC
+     *
+     * @param name     The Name
+     * @param location The Location
+     */
     public NPC(String name, Location location) {
         this.name = name;
         this.location = location;
         this.gameProfile = new GameProfile(UUID.randomUUID(), name);
-        this.entityPlayer = NPCAPI.create(this);
-        this.id = NPCAPI.getEntityID(this.entityPlayer);
+
+        create();
         this.viewer = new Viewer() {
+
             public void update(Player p) {
+                NPC.NPCAPI.destroy(NPC.this, p);
                 NPC.NPCAPI.show(NPC.this.entityPlayer, p);
+                NPC.NPCAPI.setRotation(NPC.this.entityPlayer, p, NPC.this.location.getYaw());
                 for (Map.Entry<NPC.ItemSlots, ItemStack> e : NPC.this.getEquipment().entrySet())
                     NPC.NPCAPI.equip(NPC.this.entityPlayer, p, e.getKey(), e.getValue());
             }
 
-            public void onAddToView(Player p) {}
+            public void onAddToView(Player p) {
+            }
 
-            public void onRemoveFromView(Player p) {}
+            public void onRemoveFromView(Player p) {
+                destroy();
+            }
         };
-        teleport(location);
-        addNPC(this);
     }
 
+    /**
+     * Set the NPCClickEvent
+     *
+     * @param npcClickEvent The ClickEvent
+     */
     public void setNPCClickEvent(NPCClickEvent npcClickEvent) {
-        this.npcClickEvent = npcClickEvent;
-        this.npcClickEvent.setup(this);
-    }
-
-    public void removeNPCClickEvent() {
-        if (this.npcClickEvent != null)
+        if (this.npcClickEvent != null && npcClickEvent == null)
             HandlerList.unregisterAll(this.npcClickEvent);
-        this.npcClickEvent = null;
+
+        this.npcClickEvent = npcClickEvent;
+        if (this.npcClickEvent != null)
+            this.npcClickEvent.setup(this);
     }
 
+    /**
+     * Remove The NPCClickEvent
+     * Calls {@link #setNPCClickEvent(NPCClickEvent)}
+     */
+    public void removeNPCClickEvent() {
+        setNPCClickEvent(null);
+    }
+
+    /**
+     * @return The Property from the GameProfile
+     */
+    public Property getSkin() {
+        if (this.gameProfile.getProperties().isEmpty())
+            return null;
+        return (Property) this.gameProfile.getProperties().get("textures").toArray()[0];
+    }
+
+    /**
+     * @return Get a HashMap of the NPC's Equipment
+     */
     public HashMap<ItemSlots, ItemStack> getEquipment() {
         return this.equipment;
     }
 
+    /**
+     * Show the NPC to the player
+     *
+     * @param player The Player
+     */
     public void show(Player player) {
         this.viewer.addPlayer(player.getName());
         this.viewer.update(player);
     }
 
+    public void setName(String name) {
+        destroy();
+        this.name = name;
+
+        Property skin = this.getSkin();
+        this.gameProfile = new GameProfile(this.gameProfile.getId(), this.name);
+        if (skin != null)
+            this.gameProfile.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
+
+        create();
+    }
+
+    //TODO: Find out why this doesn't work
+    public void setSkin(String value) {
+        destroy();
+        System.out.println(value);
+        if (value.startsWith("http://") || value.startsWith("https://")) {
+
+            System.out.println("Creating URL Skin: " + value);
+            this.gameProfile.getProperties().put("textures", new Property("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + value + "\"}}}")));
+        } else {
+            System.out.println("Creating Temp Player for skin: " + value);
+            GameProfile temp = new GameProfile(UUID.randomUUID(), value);
+            Property skin = (Property) temp.getProperties().get("textures").toArray()[0];
+            if (skin != null)
+                this.gameProfile.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
+        }
+
+        create();
+    }
+
+    private void create() {
+        System.out.println("Creating New NPC");
+        this.entityPlayer = NPCAPI.create(this);
+        System.out.println("New Entity: " + this.entityPlayer);
+        NPCAPI.setLocation(this.entityPlayer, this.location);
+
+        if (this.viewer != null)
+            this.viewer.update();
+
+        if (this.npcClickEvent != null) {
+            HandlerList.unregisterAll(this.npcClickEvent);
+            this.npcClickEvent.setup(this);
+        }
+    }
+
+    /**
+     * Hide the NPC from the player
+     *
+     * @param player The Player
+     */
     public void hide(Player player) {
         this.viewer.removePlayer(player.getName());
     }
 
-    public void teleport(Location location) {
-        this.location = location;
-        NPCAPI.teleport(this.entityPlayer, location);
-        this.viewer.update();
+    /**
+     * Destroy the NPC for all players
+     */
+    private void destroy() {
+        System.out.println("Destroying");
+        for (String p : this.viewer.getPlayers())
+            NPCAPI.destroy(this, Bukkit.getPlayer(p));
     }
 
+    /**
+     * Teleport the NPC
+     *
+     * @param location The Location
+     */
+    public void setLocation(Location location) {
+        this.location = location;
+        NPCAPI.setLocation(this.entityPlayer, location);
+        if (this.viewer != null)
+            this.viewer.update();
+    }
+
+    /**
+     * Set NPC's Equipment
+     *
+     * @param equipment The Equipment HashMap
+     */
+    public void setEquipment(HashMap<ItemSlots, ItemStack> equipment) {
+        this.equipment = equipment;
+    }
+
+    /**
+     * Equip the NPC
+     *
+     * @param slot      The Slot
+     * @param itemStack The ItemStack
+     */
     public void equip(ItemSlots slot, ItemStack itemStack) {
         this.equipment.put(slot, itemStack);
         this.viewer.update();
     }
 
+    /**
+     * Get the NPC's GameProfile
+     *
+     * @return
+     */
     public GameProfile getGameProfile() {
         return this.gameProfile;
     }
 
+    /**
+     * Set the NPC's GameProfile
+     *
+     * @param gameProfile The GameProfile
+     */
     public void setGameProfile(GameProfile gameProfile) {
         this.gameProfile = gameProfile;
     }
 
-    public int getEntityID() {
-        return this.entityID;
+    /**
+     * @return Get The NPC's Id
+     */
+    public int getId() {
+        return Reflection.getEntityID(entityPlayer.getClass(), this.entityPlayer);
     }
 
-    public void setEntityID(int entityID) {
-        this.entityID = entityID;
-    }
-
+    /**
+     * @return Get the NPC's Location
+     */
     public Location getLocation() {
         return this.location;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
 
+    /**
+     * @return Get the NPC's Name
+     */
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public class NPCListener implements Listener {
-        @EventHandler
-        public void join(PlayerJoinEvent e) {}
-    }
-
+    /**
+     * ItemSlots NPC ENUM
+     */
     public enum ItemSlots {
         MAINHAND(0),
         OFFHAND(1),
@@ -167,150 +266,113 @@ public class NPC {
     }
 
     private static class NPCAPI {
+
         private static Class<?> craftServerClass = Reflection.getCraftClass("CraftServer");
-
         private static Class<?> craftWorldClass = Reflection.getCraftClass("CraftWorld");
-
-        private static Class<?> worldClass = Reflection.getNMSClass("World");
-
         private static Class<?> playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
-
         private static Class<?> worldServerClass = Reflection.getNMSClass("WorldServer");
-
         private static Class<?> minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
-
         private static Class<?> entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
-
         private static Class<?> entityClass = Reflection.getNMSClass("Entity");
+        private static Class<?> enumPlayerInfoActionClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
+        private static Class<?> entityHumanClass = Reflection.getNMSClass("EntityHuman");
+        private static Class<?> packetPlayOutNamedEntitySpawnClass = Reflection.getNMSClass("PacketPlayOutNamedEntitySpawn");
+        private static Class<?> packetPlayOutEntityEquipmentClass = Reflection.getNMSClass("PacketPlayOutEntityEquipment");
+        private static Class<?> packetPlayOutEntityDestroyClass = Reflection.getNMSClass("PacketPlayOutEntityDestroy");
+        private static Class<?> packetPlayOutEntityHeadRotationClass = Reflection.getNMSClass("PacketPlayOutEntityHeadRotation");
+        private static Class<?> craftItemStackClass = Reflection.getCraftClass("inventory.CraftItemStack");
+        private static Class<?> itemStackClass = Reflection.getNMSClass("ItemStack");
+        private static Class<?> enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
+        private static Class<?> packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
 
-        private static Class<?> craftItemStackClass;
+        private static Constructor<?> playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldServerClass);
+        private static Constructor<?> entityConstructor = Reflection.getConstructor(entityPlayerClass, minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
+        private static Constructor<?> packetPlayOutEntityHeadRotationConstructor = Reflection.getConstructor(packetPlayOutEntityHeadRotationClass, entityClass, byte.class);
+        private static Constructor<?> packetPlayOutNamedEntitySpawnConstructor = Reflection.getConstructor(packetPlayOutNamedEntitySpawnClass, entityHumanClass);
+        private static Constructor<?> packetPlayOutEntityEquipmentConstructor = Reflection.getConstructor(packetPlayOutEntityEquipmentClass, int.class, enumItemSlotClass, itemStackClass);
+        private static Constructor<?> playOutEntityDestroyConstructor = Reflection.getConstructor(packetPlayOutEntityDestroyClass, int[].class);
 
-        private static Class<?> itemStackClass;
-
-        private static Constructor<?> playerInteractManagerConstructor;
-
-        private static Constructor<?> entityConstructor;
-
-        private static Method asNMSCopy;
-
-        private static Method setLocation = Reflection.getMethod(entityPlayerClass, "setLocation", new Class[] { double.class, double.class, double.class, float.class, float.class });
-
-        private static Method setEquipment;
-
-        private static Class<?> enumItemSlotClass;
+        private static Method asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
+        private static Method setLocation = Reflection.getMethod(entityPlayerClass, "setLocation", double.class, double.class, double.class, float.class, float.class);
 
         private static Object itemSlotEnumMainHand;
-
         private static Object itemSlotEnumOffHand;
-
         private static Object itemSlotEnumFeet;
-
         private static Object itemSlotEnumLegs;
-
         private static Object itemSlotEnumChest;
-
         private static Object itemSlotEnumHead;
 
-        private static Class<?> packetPlayOutPlayerInfoClass;
-
-        private static Class<?> enumPlayerInfoActionClass;
-
-        private static Class<?> entityHumanClass;
-
-        private static Class<?> packetPlayOutNamedEntitySpawnClass;
-
-        private static Class<?> packetPlayOutEntityEquipmentClass;
-
-        private static Class<?> packetPlayOutEntityHeadRotationClass;
-
         private static Object playerInfoActionEnumAdd;
-
         private static Object playerInfoActionEnumRemove;
 
         static {
-            craftItemStackClass = Reflection.getCraftClass("inventory.CraftItemStack");
-            itemStackClass = Reflection.getNMSClass("ItemStack");
-            asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
-            enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
             itemSlotEnumMainHand = enumItemSlotClass.getEnumConstants()[0];
             itemSlotEnumOffHand = enumItemSlotClass.getEnumConstants()[1];
             itemSlotEnumFeet = enumItemSlotClass.getEnumConstants()[2];
             itemSlotEnumLegs = enumItemSlotClass.getEnumConstants()[3];
             itemSlotEnumChest = enumItemSlotClass.getEnumConstants()[4];
             itemSlotEnumHead = enumItemSlotClass.getEnumConstants()[5];
-            setEquipment = Reflection.getMethod(entityPlayerClass, "setEquipment", enumItemSlotClass, itemStackClass);
-            packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
-            enumPlayerInfoActionClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
-            packetPlayOutEntityHeadRotationClass = Reflection.getNMSClass("PacketPlayOutEntityHeadRotation");
             playerInfoActionEnumAdd = enumPlayerInfoActionClass.getEnumConstants()[0];
             playerInfoActionEnumRemove = enumPlayerInfoActionClass.getEnumConstants()[4];
-            entityHumanClass = Reflection.getNMSClass("EntityHuman");
-            packetPlayOutNamedEntitySpawnClass = Reflection.getNMSClass("PacketPlayOutNamedEntitySpawn");
-            packetPlayOutEntityEquipmentClass = Reflection.getNMSClass("PacketPlayOutEntityEquipment");
         }
 
+        /**
+         * Set the Entity's Yaw Rotation then send to player
+         *
+         * @param entity The Entity
+         * @param player The Player
+         * @param yaw    The Yaw
+         */
         public static void setRotation(Object entity, Player player, float yaw) {
-            try {
-                Constructor<?> packetPlayOutEntityHeadRotationConstructor = packetPlayOutEntityHeadRotationClass.getConstructor(entityClass, byte.class );
-                Object packetPlayOutEntityHeadRotation = packetPlayOutEntityHeadRotationConstructor.newInstance(entity, Byte.valueOf(getFixRotation(yaw)) );
-                Packets.sendPacket(player, packetPlayOutEntityHeadRotation);
-            } catch (NoSuchMethodException|InstantiationException|IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            Object packetPlayOutEntityHeadRotation = Reflection.newInstance(packetPlayOutEntityHeadRotationConstructor, entity, (byte) ((yaw * 256.0F) / 360.0F));
+            Packets.sendPacket(player, packetPlayOutEntityHeadRotation);
         }
 
-        public static void teleport(Object entity, Location location) {
-            try {
-                setLocation.invoke(entity,Double.valueOf(location.getX()), Double.valueOf(location.getY()), Double.valueOf(location.getZ()), Float.valueOf(location.getYaw()), Float.valueOf(location.getPitch()) );
-            } catch (IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
-                e.printStackTrace();
-            }
+        /**
+         * Set Entity's Location
+         *
+         * @param entity   The Entity
+         * @param location The Location
+         */
+        public static void setLocation(Object entity, Location location) {
+            Reflection.invokeMethod(setLocation, entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
 
-        private static byte getFixRotation(float yawpitch) {
-            return (byte)(int)(yawpitch * 256.0F / 360.0F);
-        }
-
-        public static int getEntityID(Object entity) {
-            return (Integer) Reflection.invokeMethod(entityPlayerClass, "getId", entity);
-        }
-
+        /**
+         * Show the Entity to the player
+         *
+         * @param entity The Entity
+         * @param player The Player
+         */
         public static void show(Object entity, Player player) {
-            try {
-                Object[] entities = (Object[])Array.newInstance(entityPlayerClass, 1);
-                entities[0] = entity;
-                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor( enumPlayerInfoActionClass, entities.getClass() );
-                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(playerInfoActionEnumAdd, entities );
-                Packets.sendPacket(player, packetPlayOutPlayerInfo);
-                Constructor<?> packetPlayOutNamedEntitySpawnConstructor = packetPlayOutNamedEntitySpawnClass.getConstructor(entityHumanClass );
-                Object packetPlayOutNamedEntitySpawn = packetPlayOutNamedEntitySpawnConstructor.newInstance(entity);
-                Packets.sendPacket(player, packetPlayOutNamedEntitySpawn);
-            } catch (InstantiationException|java.lang.reflect.InvocationTargetException|IllegalAccessException|NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            Object[] entities = (Object[]) Array.newInstance(entityPlayerClass, 1);
+            entities[0] = entity;
+            Constructor<?> packetPlayOutPlayerInfoConstructor = Reflection.getConstructor(packetPlayOutPlayerInfoClass, enumPlayerInfoActionClass, entities.getClass());
+            Object packetPlayOutPlayerInfoAdd = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumAdd, entities);
+            Object packetPlayOutNamedEntitySpawn = Reflection.newInstance(packetPlayOutNamedEntitySpawnConstructor, entity);
+            Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
+            Packets.sendPacket(player, packetPlayOutPlayerInfoAdd, packetPlayOutNamedEntitySpawn);
+
+            Bukkit.getScheduler().runTaskLater(BimmCore.getInstance(), () ->
+                    Packets.sendPacket(player, packetPlayOutPlayerInfoRemove), 200);
         }
 
-        public static void hide(Object entity, Player player) {
-            try {
-                Object[] entities = (Object[])Array.newInstance(entityPlayerClass, 1);
-                entities[0] = entity;
-                Constructor<?> packetPlayOutPlayerInfoConstructor = packetPlayOutPlayerInfoClass.getConstructor( enumPlayerInfoActionClass, entities.getClass());
-                Object packetPlayOutPlayerInfo = packetPlayOutPlayerInfoConstructor.newInstance(playerInfoActionEnumRemove, entities);
-                Packets.sendPacket(player, packetPlayOutPlayerInfo);
-            } catch (InstantiationException|java.lang.reflect.InvocationTargetException|IllegalAccessException|NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
-
+        /**
+         * @param itemStack The ItemStack
+         * @return Get the Itemstack as a CraftItemStack
+         */
         private static Object getCraftItemStack(ItemStack itemStack) {
-            try {
-                return asNMSCopy.invoke(craftItemStackClass,  itemStack);
-            } catch (IllegalAccessException|java.lang.reflect.InvocationTargetException e) {
-                e.printStackTrace();
-                return null;
-            }
+            return Reflection.invokeMethod(asNMSCopy, craftItemStackClass, itemStack);
         }
 
+        /**
+         * Equip the Entity for the Player
+         *
+         * @param entity The Entity
+         * @param player The Player
+         * @param slot   The Slot
+         * @param item   The Item
+         */
         public static void equip(Object entity, Player player, NPC.ItemSlots slot, ItemStack item) {
             Object oSlot = itemSlotEnumMainHand;
             switch (slot) {
@@ -330,31 +392,39 @@ public class NPC {
                     oSlot = itemSlotEnumHead;
                     break;
             }
-            try {
-                Object craftItem = getCraftItemStack(item);
-                Constructor<?> packetPlayOutEntityEquipmentConstructor = packetPlayOutEntityEquipmentClass.getConstructor(int.class, enumItemSlotClass, itemStackClass );
-                Object packetPlayOutEntityEquipment = packetPlayOutEntityEquipmentConstructor.newInstance(Integer.valueOf(getEntityID(entity)), oSlot, craftItem );
-                Packets.sendPacket(player, packetPlayOutEntityEquipment);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Object craftItem = getCraftItemStack(item);
+            int id = Reflection.getEntityID(entityHumanClass, entity);
+            Object packetPlayOutEntityEquipment = Reflection.newInstance(packetPlayOutEntityEquipmentConstructor, id, oSlot, craftItem);
+            Packets.sendPacket(player, packetPlayOutEntityEquipment);
         }
 
+        /**
+         * @param npc The NPC
+         * @return Get the Created Entity
+         */
         public static Object create(NPC npc) {
-            try {
-                Object craftWorld = craftWorldClass.cast(npc.getLocation().getWorld());
-                Object worldHandle = Reflection.getHandle(craftWorld);
-                playerInteractManagerConstructor = playerInteractManagerClass.getConstructor(worldServerClass );
-                Object craftServer = craftServerClass.cast(Bukkit.getServer());
-                Object minecraftServer = Reflection.invokeMethod(craftServerClass, "getServer", craftServer);
-                Object playerInteractManager = playerInteractManagerConstructor.newInstance(worldHandle );
-                entityConstructor = entityPlayerClass.getConstructor(minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass );
-                Object entityPlayer = entityConstructor.newInstance( minecraftServer, worldHandle, npc.getGameProfile(), playerInteractManager );
-                return entityPlayer;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+            Object craftWorld = craftWorldClass.cast(npc.getLocation().getWorld());
+            Object worldHandle = Reflection.getHandle(craftWorld);
+            Object craftServer = craftServerClass.cast(Bukkit.getServer());
+            Object minecraftServer = Reflection.invokeMethod(craftServerClass, "getServer", craftServer);
+            Object playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, worldHandle);
+            Object entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldHandle, npc.getGameProfile(), playerInteractManager);
+            return entityPlayer;
+        }
+
+        /**
+         * Destroy the NPC for the Player
+         *
+         * @param npc    The NPC
+         * @param player The Player
+         */
+        public static void destroy(NPC npc, Player player) {
+            Object[] entities = (Object[]) Array.newInstance(entityPlayerClass, 1);
+            entities[0] = npc.entityPlayer;
+            Constructor<?> packetPlayOutPlayerInfoConstructor = Reflection.getConstructor(packetPlayOutPlayerInfoClass, enumPlayerInfoActionClass, entities.getClass());
+            Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
+            Object playOutEntityDestroyPacket = Reflection.newInstance(playOutEntityDestroyConstructor, new int[]{npc.getId()});
+            Packets.sendPacket(player, packetPlayOutPlayerInfoRemove, playOutEntityDestroyPacket);
         }
     }
 }

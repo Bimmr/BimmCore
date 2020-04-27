@@ -1,6 +1,6 @@
 package me.bimmr.bimmcore.commands;
 
-import me.bimmr.bimmcore.messages.FancyMessage;
+import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

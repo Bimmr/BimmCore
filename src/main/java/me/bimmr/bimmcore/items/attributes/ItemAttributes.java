@@ -7,23 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Randy on 05/12/16.
- * <p>
- * ItemStack item;
- * ItemAttributes ia = new ItemAttributes(item);
- * ia.add(new Attribute());
- * item = ia.build();
+ * ItemAttributes
+ * Used from 1.8.8 - 1.13
  */
-class Example {
-    public Example() {
-        ItemStack stack = new ItemStack(Material.DIAMOND_SWORD);
-        ItemAttributes ia = new ItemAttributes(stack);
-        ia.addAttribute(new Attribute(AttributeType.ATTACK_DAMAGE, Slot.MAIN_HAND, 10, Operation.ADD_NUMBER));
-        ia.addAttribute(new Attribute(AttributeType.ATTACK_SPEED, Slot.MAIN_HAND, 100, Operation.ADD_PERCENTAGE));
-        stack = ia.build();
-    }
-}
-
+@Deprecated
 public class ItemAttributes {
 
     private List<Attribute> attributes = new ArrayList<>();
@@ -32,32 +19,23 @@ public class ItemAttributes {
     /**
      * Create an ItemAttributes
      *
-     * @param itemStack
+     * @param itemStack The ItemStack
      */
     public ItemAttributes(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
     /**
-     * Load the attributes that are already on the ItemStack
-     */
-    public void loadAttributes() {
-
-    }
-
-    /**
      * Set an itemstack
      *
-     * @param itemStack
+     * @param itemStack The ItemStack
      */
     public void setItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
     /**
-     * Get all the Attributes
-     *
-     * @return
+     * @return Get all the Attributes
      */
     public List<Attribute> getAttributes() {
         return this.attributes;
@@ -66,8 +44,8 @@ public class ItemAttributes {
     /**
      * Add an Attribute
      *
-     * @param attribute
-     * @return
+     * @param attribute The Attribute to add
+     * @return The ItemAttribute
      */
     public ItemAttributes addAttribute(Attribute attribute) {
         attributes.add(attribute);
@@ -75,9 +53,7 @@ public class ItemAttributes {
     }
 
     /**
-     * Build the ItemStack with the attributes
-     *
-     * @return
+     * @return Build the ItemStack with the attributes
      */
     public ItemStack build() {
         return new ItemModifier(this.itemStack, this).build();

@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.commands;
 
-import me.bimmr.bimmcore.messages.FancyMessage;
+import me.bimmr.bimmcore.commands.helpers.TabCompletionHelper;
+import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
