@@ -3,8 +3,8 @@ package me.bimmr.bimmcore.scoreboard;
 import java.util.ArrayList;
 import java.util.List;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.TimedObject;
-import me.bimmr.bimmcore.events.timing.TimedEvent;
+import me.bimmr.bimmcore.timed.TimedObject;
+import me.bimmr.bimmcore.timed.TimedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -41,12 +41,13 @@ public class Board extends TimedObject {
 
     private String name;
 
+    @SuppressWarnings("deprecation")
     public Board(String name, int size, TimedEvent timedEvent, boolean startTimedEvent) {
-        if (!BimmCore.oldAPI) {
+        if (BimmCore.supports(13))
             this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy", name);
-        } else {
+         else
             this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
-        }
+
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(name);
         this.name = name;
@@ -137,7 +138,7 @@ public class Board extends TimedObject {
     public void setTitle(String title) {
         this.objective.setDisplayName(title);
     }
-
+    @SuppressWarnings("deprecation")
     public void reset() {
         if (this.objective != null) {
             for (BoardLine line : this.lines) {
@@ -150,11 +151,11 @@ public class Board extends TimedObject {
             this.objective = null;
         }
         this.lines.clear();
-        if (!BimmCore.oldAPI) {
+        if (BimmCore.supports(13))
             this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), "dummy", this.name);
-        } else {
+        else
             this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), "dummy");
-        }
+
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(getName());
     }

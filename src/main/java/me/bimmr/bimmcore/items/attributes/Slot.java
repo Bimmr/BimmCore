@@ -1,8 +1,10 @@
 package me.bimmr.bimmcore.items.attributes;
 
 /**
- * Created by Randy on 05/12/16.
+ * Attribute Slots
+ * Used from 1.8.8 - 1.13
  */
+@Deprecated
 public enum Slot {
     MAIN_HAND("mainhand"),
     OFF_HAND("offhand"),
@@ -17,6 +19,9 @@ public enum Slot {
         this.name = name;
     }
 
+    /**
+     * @return Get Slot name
+     */
     public String getName() {
         return this.name;
     }

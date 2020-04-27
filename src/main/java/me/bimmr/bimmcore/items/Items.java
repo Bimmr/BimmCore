@@ -1,51 +1,53 @@
 package me.bimmr.bimmcore.items;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Level;
-
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.StringUtil;
-import me.bimmr.bimmcore.items.attributes.Attribute;
+import me.bimmr.bimmcore.items.helpers.GlowEnchant;
+import me.bimmr.bimmcore.items.helpers.Items_Crackshot;
+import me.bimmr.bimmcore.items.helpers.Items_QualityArmory;
+import me.bimmr.bimmcore.utils.StringUtil;
 import me.bimmr.bimmcore.items.attributes.AttributeType;
 import me.bimmr.bimmcore.items.attributes.ItemAttributes;
 import me.bimmr.bimmcore.items.attributes.Operation;
 import me.bimmr.bimmcore.items.attributes.Slot;
-import me.zombie_striker.qg.api.QualityArmory;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Material;
+import me.bimmr.bimmcore.reflection.Reflection;
+import org.bukkit.*;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.enchantments.EnchantmentWrapper;
+import org.bukkit.entity.TropicalFish;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.*;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import java.util.*;
 
 class Example {
     public Example() {
-        String itemCode = "id:Leather_Sword data:100 name:&5Sword lore:This|Is|Sparta color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
+        String itemCode = "id:LEATHER_SWORD damage:100 name:&5Sword lore:This lore:Is lore:Sparta leather-color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
         Items item = new Items(itemCode);
         ItemStack itemStack = item.getItem();
     }
 }
 
 public class Items {
-    private ItemStack item = new ItemStack(Material.AIR);
 
+    private ItemStack item = new ItemStack(Material.AIR);
+    private ItemMeta itemMeta;
     private ItemAttributes itemAttributes;
 
     public Items(ItemStack stack) {
         this.item = stack;
+        if (this.item.hasItemMeta())
+            itemMeta = this.item.getItemMeta();
     }
 
     public Items(String string) {
@@ -56,10 +58,766 @@ public class Items {
         this.item = new ItemStack(Material.AIR);
     }
 
-    public String toString() {
 
+    /**
+     * Load the item from a string
+     * <p>
+     * item:TYPE | gun:GUNNAME
+     * amount:AMOUNT
+     * damage:DAMAGE
+     * name:NAME
+     * lore:LORE
+     * enchantment:ENCHANTMENT,VALUE
+     * flag:FLAG
+     * display:DISPLAY
+     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION
+     * potion:POTION,DURATION|EXTENDED,STRENGTH|UPGRADED
+     * leather-colour:RRR,GGG,BBB
+     * book-author:BOOK_AUTHOR
+     * book-title:BOOK_TITLE
+     * book-page:BOOK_PAGE
+     * banner:PATTERN,COLOR
+     * firework:FIREWORK,TRAIL,FLICKER
+     * firework-color:RRR,GGG,BBB
+     * firework-fade-color:RRR,GGG,BBB
+     * owner:OWNER
+     * stored-enchantment:STORED_ENCHANTMENT,VALUE
+     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR
+     * unbreakable
+     * glow
+     *
+     * @param string The Item Code
+     * @return Items
+     */
+    public Items fromString(String string) {
+
+        if (string == null || string.length() == 0)
+            return this;
+
+        string += " ";
+
+        for (String data : string.split(" ")) {
+
+            try {
+                String[] dataSplit = data.split(":", 2);
+                String prefix = dataSplit[0];
+                String value = dataSplit.length > 1 ? StringUtil.addColor(dataSplit[1]) : "";
+
+                //Crackshot or QualityArmory
+                if (StringUtil.equalsStrings(prefix, "gun", "weapon")) {
+                    if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null)
+                        this.item = Items_Crackshot.getGunItemStack(value);
+                    if (Bukkit.getServer().getPluginManager().getPlugin("QualityArmory") != null)
+                        this.item = Items_QualityArmory.getGunItemStack(value);
+                }
+
+                //Material
+                else if (StringUtil.equalsStrings(prefix, "id", "item", "material", "type")) {
+                    if (Material.matchMaterial(value) != null)
+                        this.item = new ItemStack(Material.matchMaterial(value));
+                    else {
+                        this.item = new ItemStack(BimmCore.supports(13) ? Material.getMaterial("PLAYER_HEAD") : Material.getMaterial("SKULL_ITEM"));
+                        setDamage(3);
+                        setDisplayName("Unknown Item");
+                        setSkullOwner("MHF_Question");
+                        return this;
+                    }
+                }
+                //Amount
+                else if (StringUtil.equalsStrings(prefix, "amount", "quantity", "number", "count")) {
+                    getItem().setAmount(Integer.parseInt(value));
+                }
+
+                //Damage
+                else if (StringUtil.equalsStrings(prefix, "data", "damage", "durability")) {
+                    setDamage(Integer.parseInt(value));
+                }
+
+                //Enchantments
+                else if (StringUtil.equalsStrings(prefix, "enchantment", "enchant")) {
+                    String[] valueSplit = value.split(",");
+                    if (valueSplit.length < 2)
+                        valueSplit = value.split("-");
+
+                    String name = valueSplit[0];
+                    int level = valueSplit.length >= 2 ? Integer.parseInt(valueSplit[1]) : 1;
+                    Enchantment enchantment = null;
+
+                    if (Enchantment.getByName(name.toUpperCase()) != null)
+                        enchantment = Enchantment.getByName(name.toUpperCase());
+                    else if (BimmCore.supports(13))
+                        enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
+
+                    if (enchantment != null)
+                        addEnchantment(enchantment, level - 1);
+                }
+
+                //Custom Glow Enchantment
+                else if (StringUtil.equalsStrings(prefix, "glow", "glowing")) {
+                    addGlow();
+                }
+
+                //Display Name
+                else if (StringUtil.equalsStrings(prefix, "name", "displayname", "display-name", "customname", "custom-name")) {
+                    setDisplayName(value.replaceAll("_", " "));
+                }
+
+                //Lore
+                else if (StringUtil.equalsStrings(prefix, "lore", "desc", "description")) {
+                    if (value.contains("|")) {
+                        for (String item : value.split("\\|"))
+                            addLore(item.replaceAll("_", " "));
+                    } else
+                        addLore(value.replaceAll("_", " "));
+                }
+
+                //Player Skull
+                else if (StringUtil.equalsStrings(prefix, "owner", "player", "uuid", "skin")) {
+                    setSkullOwner(value);
+                }
+                //Potion
+                else if (StringUtil.equalsStrings(prefix, "potion", "effect")) {
+                    String[] valueSplit = value.split(",");
+                    PotionMeta potionMeta = (PotionMeta) getItemMeta();
+                    if (BimmCore.supports(12) && StringUtil.equalsStrings(valueSplit[1], "true", "false")) {
+                        if (PotionType.valueOf(valueSplit[0].toUpperCase()) != null)
+                            potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(valueSplit[0].toUpperCase()), Boolean.parseBoolean(valueSplit[1]), Boolean.parseBoolean(valueSplit[2])));
+                        setItemMeta(potionMeta);
+                    } else if (PotionEffectType.getByName(valueSplit[0]) != null)
+                        addPotionEffect(new PotionEffect(PotionEffectType.getByName(valueSplit[0].toUpperCase()), Integer.parseInt(valueSplit[1]) * 20, Integer.parseInt(valueSplit[2]) - 1));
+                }
+
+                //Splash Potion
+                else if (StringUtil.equalsStrings(prefix, "splash", "splashPotion", " splash-potion")) {
+                    getItem().setType(Material.SPLASH_POTION);
+                }
+
+                //Author
+                else if (StringUtil.equalsStrings(prefix, "author", "authour", "book-author", "book-authour")) {
+                    setBookAuthor(value.replaceAll("_", " "));
+                }
+
+                //Title
+                else if (StringUtil.equalsStrings(prefix, "title", "book-title")) {
+                    setBookTitle(value.replaceAll("_", " "));
+                }
+
+                //Pages
+                else if (StringUtil.equalsStrings(prefix, "page, book-page", "pages", "book-pages")) {
+                    if (value.contains("|")) {
+                        for (String item : value.split("\\|"))
+                            addPage(item.replaceAll("_", " "));
+                    } else
+                        addPage(value.replaceAll("_", " "));
+                }
+
+                //Colored Leather
+                else if (StringUtil.equalsStrings(prefix, "color", "colour", "leather-color", "leather-colour")) {
+                    if (value.contains(",")) {
+                        String[] valueSplit = value.split(",");
+                        setLeatherColor(Integer.parseInt(valueSplit[0]), Integer.parseInt(valueSplit[1]), Integer.parseInt(valueSplit[2]));
+                    } else
+                        setLeatherColor(Integer.parseInt(value));
+                }
+
+                //Banners
+                else if (StringUtil.equalsStrings(prefix, "banner", "pattern", "bannerpattern", "banner-pattern")) {
+                    String[] valueSplit = value.split(",");
+                    addBannerPattern(new Pattern(DyeColor.valueOf(valueSplit[1]), PatternType.valueOf(valueSplit[0])));
+                }
+
+                //Fireworks
+                else if (StringUtil.equalsStrings(prefix, "firework")) {
+                    String[] valueSplit = value.split(",");
+
+                    FireworkEffect.Builder fireworkEffect = FireworkEffect.builder();
+                    fireworkEffect.with(FireworkEffect.Type.valueOf(valueSplit[0]));
+                    fireworkEffect.trail(Boolean.parseBoolean(valueSplit[1]));
+                    fireworkEffect.flicker(Boolean.parseBoolean(valueSplit[2]));
+                    addFireworkEffect(fireworkEffect.build());
+                }
+
+                //Firework Colours
+                else if (StringUtil.equalsStrings("fireworkcolor", "firework-color", "fireworkcolour", "firework-colour")) {
+                    FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) getItemMeta();
+                    String[] valueSplit = value.split(",");
+                    fireworkEffectMeta.getEffect().getColors().add(Color.fromRGB(Integer.parseInt(valueSplit[0]), Integer.parseInt(valueSplit[1]), Integer.parseInt(valueSplit[2])));
+                }
+
+                //Firework Fade Colors
+                else if (StringUtil.equalsStrings("fireworkfadecolor", "firework-fadecolor", "fireworkfade-color", "firework-fade-colour", "fireworkfadecolour", "firework-fadecolour", "fireworkfade-colour", "firework-fade-colour")) {
+                    FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) getItemMeta();
+                    String[] valueSplit = value.split(",");
+                    fireworkEffectMeta.getEffect().getFadeColors().add(Color.fromRGB(Integer.parseInt(valueSplit[0]), Integer.parseInt(valueSplit[1]), Integer.parseInt(valueSplit[2])));
+                }
+
+                //Unbreakable
+                else if (StringUtil.equalsStrings(prefix, "unbreakable", "invincible", "nobreak", "no-break")) {
+                    setUnbreakable(true);
+                }
+
+                //Tropical Fish Bucket
+                else if (StringUtil.equalsStrings(prefix, "fish", "tropicalfish", "tropical-fish")) {
+                    TropicalFishBucketMeta tropicalFishBucketMeta = (TropicalFishBucketMeta) getItemMeta();
+                    String[] valueSplit = value.split(",");
+                    tropicalFishBucketMeta.setBodyColor(DyeColor.getByColor(Color.fromRGB(Integer.parseInt(valueSplit[0]))));
+                    tropicalFishBucketMeta.setPattern(TropicalFish.Pattern.valueOf(valueSplit[1]));
+                    tropicalFishBucketMeta.setPatternColor(DyeColor.getByColor(Color.fromRGB(Integer.parseInt(valueSplit[2]))));
+                }
+
+                //Enchantment Storage
+                else if (StringUtil.equalsStrings(prefix, "storedenchantment", "stored-enchantment", "storedenchant", "stored-enchant", "enchantmentstorage", "enchantment-storage", "enchantstorage", "enchant-storage")) {
+                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) getItemMeta();
+                    String[] valueSplit = value.split(",");
+                    if (Enchantment.getByKey(NamespacedKey.minecraft(valueSplit[0])) != null)
+                        enchantmentStorageMeta.addStoredEnchant(Enchantment.getByKey(NamespacedKey.minecraft(valueSplit[0])), Integer.parseInt(valueSplit[1]), true);
+                }
+
+                //Item Flags
+                else if (StringUtil.equalsStrings(prefix, "flag", "flags")) {
+                    try {
+                        addFlag(ItemFlag.valueOf(value.toUpperCase()));
+                    } catch (IllegalArgumentException e) {
+                        Bukkit.getLogger().severe("An invalid flag name has been entered in an item: " + value);
+                    }
+                }
+
+                //Display
+                else if (StringUtil.equalsStrings(prefix, "display", "model", "custommodel", "custom-model")) {
+                    ItemMeta itemMeta = getItemMeta();
+                    itemMeta.setCustomModelData(Integer.parseInt(value));
+                    setItemMeta(itemMeta);
+                }
+
+                //Attributes
+                else if (StringUtil.equalsStrings(prefix, "attribute")) {
+                    String[] valueSplit = value.split(",");
+                    String attribute = valueSplit[0];
+                    String slot = valueSplit[1];
+                    Double level = Double.parseDouble(valueSplit[2]);
+                    String operation = valueSplit[3];
+                    if (BimmCore.supports(13)) {
+                        if (this.itemAttributes == null)
+                            this.itemAttributes = new ItemAttributes(getItem());
+                        addAttribute(attribute, slot, level, operation);
+                    }
+                }
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage("Error while parsing " + ChatColor.RED + data + ChatColor.GRAY + " from " + ChatColor.RED + string);
+                e.printStackTrace();
+            }
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Get the item
+     *
+     * @return ItemStack
+     */
+    public ItemStack getItem() {
+        if (this.itemMeta != null)
+            this.item.setItemMeta(itemMeta);
+        return this.item;
+    }
+
+    public ItemMeta getItemMeta() {
+        if (this.itemMeta == null)
+            this.itemMeta = getItem().getItemMeta();
+        return this.itemMeta;
+    }
+
+    public void setItemMeta(ItemMeta itemMeta) {
+        this.itemMeta = itemMeta;
+    }
+
+    public boolean hasItemMeta() {
+        return this.itemMeta != null;
+    }
+
+    /**
+     * Add FireworkEffect
+     *
+     * @param fireworkEffect FireworkEffect
+     * @return Items
+     */
+    public Items addFireworkEffect(FireworkEffect fireworkEffect) {
+        FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) getItemMeta();
+        fireworkEffectMeta.setEffect(fireworkEffect);
+        setItemMeta(fireworkEffectMeta);
+        return this;
+    }
+
+    /**
+     * Add Banner Pattern
+     *
+     * @param pattern Pattern
+     * @return Items
+     */
+    public Items addBannerPattern(Pattern pattern) {
+        BannerMeta bannerMeta = (BannerMeta) getItemMeta();
+        bannerMeta.addPattern(pattern);
+        setItemMeta(bannerMeta);
+        return this;
+    }
+
+    /**
+     * Add Item to Pages
+     *
+     * @param value Page as a string
+     * @return Items
+     */
+    public Items addPage(String value) {
+        if (!(getItemMeta() instanceof BookMeta))
+            return this;
+
+        BookMeta bookMeta = (BookMeta) getItemMeta();
+        List<String> pages = bookMeta.hasPages() ? bookMeta.getPages() : new ArrayList<>();
+        pages.add(value);
+        setItemMeta(bookMeta);
+        return this;
+    }
+
+    /**
+     * Set Item Pages
+     *
+     * @param value Pages as a list
+     * @return Items
+     */
+    public Items setPages(List<String> value) {
+        if (!(getItemMeta() instanceof BookMeta))
+            return this;
+
+        BookMeta bookMeta = (BookMeta) getItemMeta();
+        bookMeta.setPages(value);
+        setItemMeta(bookMeta);
+        return this;
+    }
+
+    /**
+     * Set Item Pages
+     * Calls {@link #setPages(List)}
+     *
+     * @param value Pages as an array
+     * @return Items
+     */
+    public Items setPages(String... value) {
+        return setPages(Arrays.asList(value));
+    }
+
+    /**
+     * Set Book Title
+     *
+     * @param value The book's title
+     * @return Items
+     */
+    public Items setBookTitle(String value) {
+        if (!(getItemMeta() instanceof BookMeta))
+            return this;
+
+        BookMeta bookMeta = (BookMeta) getItemMeta();
+        bookMeta.setTitle(value);
+        setItemMeta(bookMeta);
+        return this;
+    }
+
+    /**
+     * Set Book Author
+     *
+     * @param value The book's author
+     * @return Items
+     */
+    public Items setBookAuthor(String value) {
+        if (!(getItemMeta() instanceof BookMeta))
+            return this;
+
+        BookMeta bookMeta = (BookMeta) getItemMeta();
+        bookMeta.setAuthor(value);
+        setItemMeta(bookMeta);
+        return this;
+    }
+
+    /**
+     * Set Item unbreakable
+     * Only supports versions since MC 1.12
+     *
+     * @param value Boolean
+     * @return Items
+     */
+    public Items setUnbreakable(boolean value) {
+        ItemMeta itemMeta = getItemMeta();
+        if (BimmCore.supports(12))
+            itemMeta.setUnbreakable(value);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Set Leather Color
+     *
+     * @param red   The red
+     * @param green The green
+     * @param blue  The blue
+     * @return Items
+     */
+    public Items setLeatherColor(int red, int green, int blue) {
+        if (!(getItemMeta() instanceof LeatherArmorMeta))
+            return this;
+
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(red, green, blue));
+        setItemMeta(leatherArmorMeta);
+        return this;
+    }
+
+    /**
+     * Set Leather Color
+     *
+     * @param value The RGB Color
+     * @return Items
+     */
+    public Items setLeatherColor(int value) {
+        if (!(getItemMeta() instanceof LeatherArmorMeta))
+            return this;
+
+        LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) getItemMeta();
+        leatherArmorMeta.setColor(Color.fromRGB(value));
+        setItemMeta(leatherArmorMeta);
+        return this;
+    }
+
+    /**
+     * Set Amount
+     *
+     * @param value The amount
+     * @return Items
+     */
+    public Items setAmount(int value) {
+        getItem().setAmount(value);
+        return this;
+    }
+
+    /**
+     * Add Enchantment
+     *
+     * @param value Enchantment
+     * @param level The level
+     * @return Items
+     */
+    public Items addEnchantment(Enchantment value, int level) {
+        //ItemMeta itemMeta = getItemMeta();
+        getItem().addUnsafeEnchantment(value, level);
+        //setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Add PotionEffect
+     *
+     * @param value PotionEffect
+     * @return Items
+     */
+    public Items addPotionEffect(PotionEffect value) {
+        if (!(getItemMeta() instanceof PotionMeta))
+            return this;
+
+        PotionMeta potionMeta = (PotionMeta) getItemMeta();
+        potionMeta.addCustomEffect(value, true);
+        setItemMeta(potionMeta);
+        return this;
+    }
+
+    /**
+     * Add Item glow
+     * Only supports versions since MC 1.13
+     *
+     * @return Items
+     */
+    public Items addGlow() {
+        ItemMeta itemMeta = getItemMeta();
+        if (GlowEnchant.getGlowEnchantment() != null)
+            itemMeta.addEnchant(GlowEnchant.getGlowEnchantment(), 1, true);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Add Item to Lore
+     * Calls {@link #addLore(String...)}
+     *
+     * @param value Lore as a String
+     * @return Items
+     */
+    public Items addLore(String value) {
+        return addLore(new String[]{value});
+    }
+
+    /**
+     * Add Item to Lore
+     *
+     * @param value Lore as an Array
+     * @return Items
+     */
+    public Items addLore(String... value) {
+        ItemMeta itemMeta = getItemMeta();
+        List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
+        lore.addAll(Arrays.asList(value));
+        itemMeta.setLore(lore);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Set Item Lore
+     *
+     * @param value Lore as a list
+     * @return Items
+     */
+    public Items setLore(List<String> value) {
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.setLore(value);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Ste Item Lore
+     * Calls {@link #setLore(List)}
+     *
+     * @param value Lore as an array
+     * @return Items
+     */
+    public Items setLore(String... value) {
+        return setLore(value != null ? Arrays.asList(value) : new ArrayList<String>());
+    }
+
+    /**
+     * Add Item Attribute
+     *
+     * @param attribute Attribute's Name
+     * @param slot      Attribute's Slot
+     * @param level     Attribute's Level
+     * @param operation Attribute's Operation
+     * @return Items
+     */
+    public Items addAttribute(String attribute, String slot, double level, String operation) {
+        ItemMeta itemMeta = getItemMeta();
+        if (BimmCore.supports(13)) {
+            itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
+
+        } else {
+            if (this.itemAttributes == null)
+                this.itemAttributes = new ItemAttributes(getItem());
+            this.itemAttributes.addAttribute(new me.bimmr.bimmcore.items.attributes.Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), level, Operation.valueOf(operation)));
+        }
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Add Item Attribute using BimmCore
+     *
+     * @param attribute AttributeType
+     * @param slot      Attribute's Slot
+     * @param level     Attribute's level
+     * @param operation Attribute's Operation
+     * @return Items
+     */
+    public Items addAttribute(AttributeType attribute, Slot slot, double level, Operation operation) {
+
+        if (this.itemAttributes == null)
+            this.itemAttributes = new ItemAttributes(getItem());
+        this.itemAttributes.addAttribute(new me.bimmr.bimmcore.items.attributes.Attribute(attribute, slot, level, operation));
+        return this;
+    }
+
+    /**
+     * Add Item Attribute using Bukkit
+     *
+     * @param attribute Attribute
+     * @param slot      Attribute's EquipmentSlot
+     * @param level     Attribute's level
+     * @param operation Attribute's Operation
+     * @return Items
+     */
+    public Items addAttribute(org.bukkit.attribute.Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, operation, slot));
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Set Skull Owner (Supports UUID and Names)
+     *
+     * @param value The Owner's name or UUID
+     * @return Items
+     */
+    public Items setSkullOwner(String value) {
+        if (!(getItemMeta() instanceof SkullMeta))
+            return this;
+        if (value.startsWith("http://") || value.startsWith("https://"))
+            return setSkullSkin(value);
+        else {
+            SkullMeta skullMeta = (SkullMeta) getItemMeta();
+            if (BimmCore.supports(13)) {
+                if (value.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
+                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(value)));
+                else
+                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(value));
+            } else
+                skullMeta.setOwner(value);
+            setItemMeta(skullMeta);
+        }
+        return this;
+    }
+
+    /**
+     * Set Skull Owner
+     * Calls {@link #setSkullOwner(String)}
+     *
+     * @param value Owner's UUID
+     * @return Items
+     */
+    public Items setSkullOwner(UUID value) {
+        return setSkullOwner(value.toString());
+    }
+
+    /**
+     * Set Skull Owner to a Custom URL
+     *
+     * @param url The URL
+     * @return Items
+     */
+    public Items setSkullSkin(String url) {
+        SkullMeta meta = (SkullMeta) getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        profile.getProperties().put("textures", new Property("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + url + "\"}}}")));
+
+        Reflection.setField(meta.getClass(), "profile", meta, profile);
+        setItemMeta(meta);
+        return this;
+    }
+
+    /**
+     * Set Item Durability
+     * Use {@link #setDamage(int)} instead
+     *
+     * @param value durability
+     * @return Items
+     */
+    @Deprecated
+    public Items setDurability(int value) {
+        return setDamage(value);
+    }
+
+    /**
+     * Set Damage
+     *
+     * @param value damage
+     * @return Items
+     */
+    public Items setDamage(int value) {
+        if (BimmCore.supports(13)) {
+
+            if (!(getItemMeta() instanceof Damageable))
+                return this;
+
+            Damageable damageable = (Damageable) getItemMeta();
+            damageable.setDamage(value);
+            setItemMeta((ItemMeta) damageable);
+        } else
+            getItem().setDurability((short) value);
+        return this;
+    }
+
+    /**
+     * Set Item Display Name
+     *
+     * @param value Name
+     * @return Items
+     */
+    public Items setDisplayName(String value) {
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.setDisplayName(value);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Add a Flag to an Item
+     *
+     * @param flag ItemFlag to add
+     * @return Items
+     */
+    public Items addFlag(ItemFlag flag) {
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.addItemFlags(flag);
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    /**
+     * Check if 2 items are equal
+     *
+     * @param item    Items to check against
+     * @param useLore check using item's lore
+     * @return If the items match
+     */
+    public boolean equals(Items item, boolean useLore) {
+        if (useLore)
+            try {
+                Items i1 = (Items) clone();
+                Items i2 = (Items) item.clone();
+                ItemMeta im1 = i1.getItemMeta();
+                ItemMeta im2 = i2.getItemMeta();
+                List<String> nothing = new ArrayList<>();
+                im1.setLore(nothing);
+                im2.setLore(nothing);
+                i1.setItemMeta(im1);
+                i2.setItemMeta(im2);
+                return i1.equals(i2);
+            } catch (CloneNotSupportedException e) {
+                return false;
+            }
+        return equals(item);
+    }
+
+    /**
+     * Get the item as a string
+     * <p>
+     * item:TYPE | gun:GUNNAME
+     * amount:AMOUNT
+     * damage:DAMAGE
+     * name:NAME
+     * lore:LORE
+     * enchantment:ENCHANTMENT,VALUE
+     * flag:FLAG
+     * display:DISPLAY
+     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION
+     * potion:POTION,DURATION|EXTENDED,STRENGTH|UPGRADED
+     * leather-colour:RRR,GGG,BBB
+     * book-author:BOOK_AUTHOR
+     * book-title:BOOK_TITLE
+     * book-page:BOOK_PAGE
+     * banner:PATTERN,COLOR
+     * firework:FIREWORK,TRAIL,FLICKER
+     * firework-color:RRR,GGG,BBB
+     * firework-fade-color:RRR,GGG,BBB
+     * owner:OWNER
+     * stored-enchantment:STORED_ENCHANTMENT,VALUE
+     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR
+     * unbreakable
+     * glow
+     *
+     * @return Get the item as a string
+     */
+    public String toString() {
         StringBuilder string = new StringBuilder("item:AIR");
-        if (this.item == null || this.item.getType() == null)
+
+        if (getItem() == null || getItem().getType() == Material.AIR)
             return string.toString();
 
         //Check Crackshot
@@ -68,485 +826,179 @@ public class Items {
 
         //Check QualityArmory
         if (Bukkit.getServer().getPluginManager().getPlugin("QualityArmory") != null && Items_QualityArmory.getGunName(getItem()) != null)
-            return Items_Crackshot.getGunName(getItem());
+            return Items_QualityArmory.getGunName(getItem());
 
-        //Make sure item isn't air
-        if (getItem().getType() != Material.AIR) {
+        string = new StringBuilder("item:" + getItem().getType().name());
 
-            //Add Item
-            string = new StringBuilder("item:" + getItem().getType().name());
+        if (getItem().getAmount() > 1)
+            string.append(" amount:").append(getItem().getAmount());
 
-            //Make sure item has ItemMeta
-            if (getItem().hasItemMeta()) {
+        if (hasItemMeta()) {
+            ItemMeta itemMeta = getItemMeta();
 
-                //Add Item name
-                if (getItem().getItemMeta().hasDisplayName())
-                    string.append(" name:").append(StringUtil.replaceToYAMLFriendlyColors(getItem().getItemMeta().getDisplayName()));
+            //Durability/Damage
+            if (itemMeta instanceof Damageable) {
+                Damageable damageable = (Damageable) itemMeta;
+                if (damageable.hasDamage())
+                    string.append(" data:").append(damageable.getDamage());
+            } else if (BimmCore.supports(13)) {
+                if (getItem().getDurability() != 0)
+                    string.append(" data:").append(getItem().getDurability());
 
-                //Add Item Lore
-                if (getItem().getItemMeta().hasLore() && getItem().getType() != Material.POTION) {
-                    string.append(" lore:");
-                    for (String line : getItem().getItemMeta().getLore())
-                        string.append(StringUtil.replaceToYAMLFriendlyColors(line.replaceAll(" ", "_") + "|"));
-                    string = new StringBuilder(string.substring(0, string.length() - 1));
-                }
-            }
-            //If the item has a durability
-            if (getItem().getDurability() > 0 && !isPotion())
-                string.append(" data:").append(getItem().getDurability());
-
-            //Get the amount
-            if (getItem().getAmount() > 1)
-                string.append(" amount:").append(getItem().getAmount());
-
-            //Add Glow
-            if (EnchantGlow.isGlow(getItem()))
-                string.append(" Glow");
-
-            //Add Enchantments
-            if (!getItem().getEnchantments().isEmpty())
-                for (Map.Entry<Enchantment, Integer> enchantment : (Iterable<Map.Entry<Enchantment, Integer>>) getItem().getEnchantments().entrySet()) {
-                    if (!((Enchantment) enchantment.getKey()).getName().equals("Glow"))
-                        string.append(" enchantment:").append(((Enchantment) enchantment.getKey()).getName()).append((((Integer) enchantment.getValue()).intValue() > 1) ? ("-" + enchantment.getValue()) : "");
-                }
-
-            //If potion
-            if (isPotion()) {
-                PotionMeta pm = (PotionMeta) getItem().getItemMeta();
-
-                //Add potion effects
-                if (pm.getBasePotionData() != null)
-                    string.append(" potion:").append(pm.getBasePotionData().getType().name()).append(",").append(pm.getBasePotionData().isExtended()).append(",").append(pm.getBasePotionData().isUpgraded());
-                if (pm.hasCustomEffects())
-                    for (PotionEffect p : pm.getCustomEffects())
-                        string.append(" potion:").append(p.getType().getName()).append(",").append(p.getDuration() / 20).append(",").append(p.getAmplifier() + 1);
             }
 
-            //Add Leather Colour options
-            if (getItem().getType().name().contains("LEATHER_") && ((LeatherArmorMeta) getItem().getItemMeta()).getColor() != null) {
-                LeatherArmorMeta im = (LeatherArmorMeta) getItem().getItemMeta();
-                string.append(" color:").append(im.getColor().getRed()).append(",").append(im.getColor().getGreen()).append(",").append(im.getColor().getBlue());
+            //Custom Name
+            if (itemMeta.hasDisplayName())
+                string.append(" name:").append(itemMeta.getDisplayName().replaceAll(" ", "_"));
+
+            //Custom Lore
+            if (itemMeta.hasLore()) {
+                for (String line : itemMeta.getLore())
+                    string.append(" lore:").append(StringUtil.replaceToYAMLFriendlyColors(line.replaceAll(" ", "_")));
             }
 
-            //Add written book
-            if (getItem().getType() == Material.WRITTEN_BOOK) {
-                BookMeta im = (BookMeta) getItem().getItemMeta();
+            //Enchantments
+            if (getItem().getEnchantments().size() > 0) {
 
-                //Add author
-                if (im.hasAuthor())
-                    string.append(" author:").append(im.getAuthor());
+                //Test names first
+                for (Map.Entry<Enchantment, Integer> entry : getItem().getEnchantments().entrySet())
+                    if (!entry.getKey().getName().equals("bimmcore_glow"))
+                        string.append(" enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
+                    else
+                        string.append(" glow");
 
-                //Add title
-                if (im.hasTitle())
-                    string.append(" title:").append(im.getTitle().replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&"));
+                //Then test Keys
+                for (Map.Entry<Enchantment, Integer> entry : getItem().getEnchantments().entrySet())
+                    if (!entry.getKey().getKey().getKey().equals("bimmcore_glow"))
+                        string.append(" enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
+                    else
+                        string.append(" glow");
 
-                //Add Pages
-                if (im.hasPages()) {
-                    string.append(" pages:");
-                    for (String page : im.getPages())
-                        string.append(page.replaceAll(" ", "_").replaceAll("" + ChatColor.COLOR_CHAR, "&")).append("|");
+            }
 
-                    string = new StringBuilder(string.substring(0, string.length() - 1));
-                }
-                try {
-                    if (im.isUnbreakable())
-                        string.append(" unbreakable");
-                } catch (Exception e) {
-                    BimmCore.getInstance().getLogger().log(Level.INFO, "Due to old API, Unable to check for unbreakable tag");
-                }
-                //Add Flags
-                if (!im.getItemFlags().isEmpty()) {
-                    string.append(" flags:");
-                    for (ItemFlag flag : im.getItemFlags())
-                        string.append(flag.name());
-                }
+            if (itemMeta.getItemFlags().size() != 0)
+                for (ItemFlag itemFlag : itemMeta.getItemFlags())
+                    string.append(" flag:").append(itemFlag.name());
 
-                //Add Item Attributes
+            if (BimmCore.supports(12) && itemMeta.isUnbreakable())
+                string.append(" unbreakable");
+
+            if (BimmCore.supports(14) && itemMeta.hasCustomModelData()) {
+                string.append(" display:").append(itemMeta.getCustomModelData());
+            }
+
+            if (BimmCore.supports(13)) {
                 if (this.itemAttributes != null)
-                    for (Attribute attribute : this.itemAttributes.getAttributes())
-                        string.append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
-
-            }
-        }
-        return string.toString();
-    }
-
-    public Items fromString(String string) {
-
-        try {
-            if (string != null)
-                if (string.contains(" ")) {
-                    String[] line = string.split(" ");
-                    for (String data : line) {
-                        if (data.startsWith("gun")) {
-                            if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null) {
-                                String name = data.split(":", 2)[1];
-                                this.item = Items_Crackshot.getGunItemStack(name);
-                            } else if (Bukkit.getServer().getPluginManager().getPlugin("QualityArmory") != null) {
-                                String name = data.split(":", 2)[1];
-                                this.item = Items_QualityArmory.getGunItemStack(name);
-                            }
-                        } else if (data.startsWith("id") || data.startsWith("item")) {
-                            Material mat = null;
-                            String itemName = data.split(":", 2)[1];
-                            if (Material.getMaterial(itemName.toUpperCase()) != null) {
-                                mat = Material.getMaterial(itemName.toUpperCase());
-                            } else if (itemName.toUpperCase().contains("POTION")) {
-                                mat = Material.POTION;
-                            } else {
-                                mat = Material.AIR;
-                            }
-                            this.item.setType(mat);
-                        } else if (data.startsWith("amount") || data.startsWith("quantity")) {
-                            setAmount(Integer.parseInt(data.split(":", 2)[1]));
-                        } else if (data.startsWith("data") || data.startsWith("durability") || data.startsWith("damage")) {
-                            setDurability(Short.parseShort(data.split(":", 2)[1]));
-                        } else if (data.startsWith("enchantment") || data.startsWith("enchant")) {
-                            String s = data.split(":", 2)[1];
-                            Enchantment enchantment = Enchantment.getByName(s.split("-")[0].toUpperCase());
-                            if (enchantment != null)
-                                if (s.contains("-")) {
-                                    addEnchantment(enchantment, Integer.parseInt(s.split("-")[1]));
-                                } else {
-                                    addEnchantment(enchantment, 1);
-                                }
-                        } else if (data.startsWith("glow")) {
-                            if (!BimmCore.oldAPI) {
-                                addGlow();
-                            } else {
-                                BimmCore.getInstance().getLogger().log(Level.INFO, "Due to old API, Custom Glow has been disabled");
-                            }
-                        } else if (data.startsWith("name") || data.startsWith("title")) {
-                            setDisplayName(StringUtil.addColor(data.split(":", 2)[1]).replaceAll("_", " "));
-                        } else if (data.startsWith("owner") || data.startsWith("player")) {
-                            String v = data.split(":", 2)[1];
-                            try {
-                                UUID id = UUID.fromString(v);
-                                setSkullOwner(id);
-                            } catch (Exception e) {
-                                setSkullOwner(data.split(":", 2)[1]);
-                            }
-                        } else if (data.startsWith("color") || data.startsWith("colour")) {
-                            try {
-                                String[] s = data.replaceAll("color:", "").replaceAll("colour:", "").split(",");
-                                setLeatherColor(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
-                            } catch (ClassCastException notLeather) {
-                                Bukkit.getLogger().severe("An item that is not leather has attempted to be dyed in the item: " + string);
-                            }
-                        } else if (data.startsWith("potion")) {
-                            String[] s = data.replaceAll("potion:", "").split(",");
-                            PotionEffectType type = PotionEffectType.SPEED;
-                            try {
-                                type = PotionEffectType.getById(Integer.valueOf(s[0]).intValue());
-                            } catch (NumberFormatException e) {
-                                if (PotionEffectType.getByName(s[0].toUpperCase()) != null)
-                                    type = PotionEffectType.getByName(s[0].toUpperCase());
-                            }
-                            if (type != null) {
-                                if (string.contains("splash"))
-                                    try {
-                                        Potion potion = new Potion(PotionType.getByEffect(type));
-                                        potion.setSplash(true);
-                                        potion.apply(this.item);
-                                    } catch (Exception e) {
-                                        Bukkit.getLogger().severe("Spigot 1.9 and newer doesn't support the splash tag in the item: " + string);
-                                        if (!BimmCore.oldAPI)
-                                            this.item.setType(Material.SPLASH_POTION);
-                                    }
-                                try {
-                                    int time = Integer.parseInt(s[1]) * 20;
-                                    int level = Integer.parseInt(s[2]) - 1;
-                                    addPotionEffect(new PotionEffect(type, time, level));
-                                } catch (Exception e) {
-                                    boolean extended = Boolean.valueOf(s[1]);
-                                    boolean upgraded = Boolean.valueOf(s[2]);
-                                    PotionMeta pm = (PotionMeta) getItem().getItemMeta();
-                                    pm.setBasePotionData(new PotionData(PotionType.valueOf(s[0].toUpperCase()), extended, upgraded));
-                                    getItem().setItemMeta(pm);
-                                }
-                            }
-                        } else if (data.startsWith("lore") || data.startsWith("desc") || data.startsWith("description")) {
-                            String s = data.split(":", 2)[1];
-                            for (String lore : s.split("\\|"))
-                                addLore(StringUtil.addColor(lore.replaceAll("_", " ")));
-                        } else if (data.startsWith("page") || data.startsWith("pages")) {
-                            String s = data.split(":", 2)[1];
-                            List<String> pages = new ArrayList<>();
-                            for (String lore : s.split("\\|"))
-                                pages.add(StringUtil.addColor(lore.replaceAll("_", " ")));
-                            BookMeta meta = (BookMeta) this.item.getItemMeta();
-                            meta.setPages(pages);
-                            this.item.setItemMeta((ItemMeta) meta);
-                        } else if (data.startsWith("author") || data.startsWith("writter")) {
-                            setBookAuthor(StringUtil.addColor(data.split(":", 2)[1]));
-                        } else if (data.startsWith("title")) {
-                            setBookTitle(StringUtil.addColor(data.split(":", 2)[1]));
-                        } else if (data.startsWith("unbreakable")) {
-                            setUnbreakable(true);
-                        } else if (data.startsWith("flag")) {
-                            try {
-                                addFlag(ItemFlag.valueOf(data.split(":")[1].toUpperCase()));
-                            } catch (IllegalArgumentException notflag) {
-                                Bukkit.getLogger().severe("An invalid flag name has been entered in the item: " + string);
-                            }
-                        } else if (data.startsWith("attribute")) {
-                            String[] elements = data.split(":", 2)[1].split(",");
-                            String attribute = elements[0];
-                            String slot = elements[1];
-                            Double value = Double.valueOf(Double.parseDouble(elements[2]));
-                            String operation = elements[3];
-                            addAttribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), value.doubleValue(), Operation.valueOf(operation));
-                        }
-                    }
-                } else if (string.startsWith("id") || string.startsWith("item")) {
-                    Material mat;
-                    String itemName = string.split(":", 2)[1];
-                    if (Material.getMaterial(itemName.toUpperCase()) != null) {
-                        mat = Material.getMaterial(itemName.toUpperCase());
-                    } else {
-                        mat = Material.AIR;
-                    }
-                    this.item.setType(mat);
-                } else if (string.startsWith("gun")) {
-                    if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null) {
-                        String name = string.split(":", 2)[1];
-                        this.item = Items_Crackshot.getGunItemStack(name);
-                    }
-                    if (Bukkit.getServer().getPluginManager().getPlugin("QualityArmory") != null) {
-                        String name = string.split(":", 2)[1];
-                        this.item = Items_QualityArmory.getGunItemStack(name);
+                    for (me.bimmr.bimmcore.items.attributes.Attribute attribute : this.itemAttributes.getAttributes())
+                        string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
+            } else {
+                if (itemMeta.hasAttributeModifiers()) {
+                    for (Map.Entry<org.bukkit.attribute.Attribute, AttributeModifier> entry : itemMeta.getAttributeModifiers().entries()) {
+                        AttributeModifier attributeModifier = entry.getValue();
+                        string.append(" attribute:").append(attributeModifier.getName()).append(",").append(attributeModifier.getSlot()).append(",").append(attributeModifier.getAmount()).append(",").append(attributeModifier.getOperation().name());
                     }
                 }
-        } catch (Exception e) {
-            Bukkit.getLogger().log(Level.SEVERE, "BimmCore is unable to get the item from: " + string);
-            e.printStackTrace();
-            this.item = new ItemStack(Material.AIR);
-        }
-        return this;
-    }
-
-
-    /**
-     * Get Item
-     *
-     * @return the itemstack
-     */
-    public ItemStack getItem() {
-        if (this.itemAttributes != null) {
-            this.itemAttributes.setItemStack(this.item);
-            this.item = this.itemAttributes.build();
-        }
-        return this.item;
-    }
-
-    /**
-     * Set the item's displayname
-     *
-     * @param name
-     * @return the item
-     */
-    public Items setDisplayName(String name) {
-        ItemMeta im = getItem().getItemMeta();
-        if (im != null) {
-            im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-            getItem().setItemMeta(im);
-        }
-        return this;
-    }
-
-    public Items setSkullOwner(String owner) {
-        SkullMeta im = (SkullMeta) this.item.getItemMeta();
-        if (!BimmCore.oldAPI) {
-            im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
-        } else {
-            im.setOwner(owner);
-        }
-        this.item.setItemMeta((ItemMeta) im);
-        return this;
-    }
-
-    public Items setSkullOwner(UUID owner) {
-        SkullMeta im = (SkullMeta) this.item.getItemMeta();
-        if (!BimmCore.oldAPI)
-            im.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
-        this.item.setItemMeta((ItemMeta) im);
-        return this;
-    }
-
-    public Items setBookTitle(String title) {
-        BookMeta im = (BookMeta) this.item.getItemMeta();
-        im.setTitle(title);
-        this.item.setItemMeta((ItemMeta) im);
-        return this;
-    }
-
-    public Items setBookAuthor(String author) {
-        BookMeta im = (BookMeta) this.item.getItemMeta();
-        im.setAuthor(author);
-        this.item.setItemMeta((ItemMeta) im);
-        return this;
-    }
-
-    public Items setUnbreakable(boolean unbreakable) {
-        ItemMeta im = getItem().getItemMeta();
-        im.setUnbreakable(unbreakable);
-
-        getItem().setItemMeta(im);
-        return this;
-    }
-
-    public Items setLeatherColor(int red, int green, int blue) {
-        LeatherArmorMeta im = (LeatherArmorMeta) this.item.getItemMeta();
-        im.setColor(Color.fromRGB(red, green, blue));
-        this.item.setItemMeta((ItemMeta) im);
-        return this;
-    }
-
-    public Items setAmount(int amount) {
-        getItem().setAmount(amount);
-        return this;
-    }
-
-    public Items setDurability(int durability) {
-        getItem().setDurability((short) durability);
-        return this;
-    }
-
-    public Items addEnchantment(Enchantment enchantment, int level) {
-        getItem().addUnsafeEnchantment(enchantment, level);
-        return this;
-    }
-
-    public Items addPotionEffect(PotionEffect potionEffect) {
-        if (potionEffect != null) {
-            PotionMeta potionMeta = (PotionMeta) getItem().getItemMeta();
-            potionMeta.addCustomEffect(potionEffect, true);
-            getItem().setItemMeta((ItemMeta) potionMeta);
-        }
-        return this;
-    }
-
-    public boolean isPotion() {
-        Material material = getItem().getType();
-        return material.name().contains("POTION");
-    }
-
-    public Items addLore(String line) {
-        ItemMeta im = getItem().getItemMeta();
-        List<String> lore = new ArrayList<>();
-        if (im.hasLore())
-            lore = im.getLore();
-        lore.add(ChatColor.translateAlternateColorCodes('&', line));
-        im.setLore(lore);
-        getItem().setItemMeta(im);
-        return this;
-    }
-
-    public Items setLore(List<String> lore) {
-        ItemMeta im = getItem().getItemMeta();
-        im.setLore(lore);
-        getItem().setItemMeta(im);
-        return this;
-    }
-
-    public void addAttribute(AttributeType attribute, Slot slot, double value, Operation operation) {
-        if (this.itemAttributes == null)
-            this.itemAttributes = new ItemAttributes(getItem());
-        this.itemAttributes.addAttribute(new Attribute(attribute, slot, value, operation));
-    }
-
-    public Items addGlow() {
-        if (!BimmCore.oldAPI) {
-            EnchantGlow.addGlow(getItem());
-        } else {
-            BimmCore.getInstance().getLogger().log(Level.INFO, "Due to old API, Custom Glow has been disabled");
-        }
-        return this;
-    }
-
-    public boolean equals(Items item, boolean useLore) {
-        if (useLore)
-            try {
-                Items i1 = (Items) clone();
-                Items i2 = (Items) item.clone();
-                ItemMeta im1 = i1.getItem().getItemMeta();
-                ItemMeta im2 = i2.getItem().getItemMeta();
-                List<String> nothing = new ArrayList<>();
-                im1.setLore(nothing);
-                im2.setLore(nothing);
-                i1.getItem().setItemMeta(im1);
-                i2.getItem().setItemMeta(im2);
-                return i1.equals(i2);
-            } catch (CloneNotSupportedException e) {
-                return false;
             }
-        return equals(item);
-    }
 
-    public Items addFlag(ItemFlag flag) {
-        ItemMeta im = getItem().getItemMeta();
-        im.addItemFlags(new ItemFlag[]{flag});
-        getItem().setItemMeta(im);
-        return this;
-    }
+            //Potions
+            if (itemMeta instanceof PotionMeta) {
+                PotionMeta potionMeta = (PotionMeta) itemMeta;
+                if (BimmCore.supports(12))
+                    string.append(" potion:").append(potionMeta.getBasePotionData().getType().name()).append(",").append(potionMeta.getBasePotionData().isExtended()).append(",").append(potionMeta.getBasePotionData().isUpgraded());
+                if (potionMeta.hasCustomEffects())
+                    for (PotionEffect p : potionMeta.getCustomEffects())
+                        string.append(" potion:").append(p.getType().getName()).append(",").append(p.getDuration() / 20).append(",").append(p.getAmplifier() + 1);
 
-    private static class EnchantGlow extends EnchantmentWrapper {
-        private static Enchantment glow;
-
-        public EnchantGlow(String id) {
-            super(id);
-        }
-
-        public static void addGlow(ItemStack item) {
-            Enchantment glow = getGlow();
-            if (!item.containsEnchantment(glow))
-                item.addEnchantment(glow, 1);
-        }
-
-        public static Enchantment getGlow() {
-            if (glow != null)
-                return glow;
-            try {
-                Field f = Enchantment.class.getDeclaredField("acceptingNew");
-                f.setAccessible(true);
-                f.set(null, Boolean.valueOf(true));
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-            glow = (Enchantment) new EnchantGlow("bcoreglow");
-            try {
-                Enchantment.registerEnchantment(glow);
-            } catch (IllegalArgumentException illegalArgumentException) {
+
+            //Leather Armour Color
+            if (itemMeta instanceof LeatherArmorMeta) {
+                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
+                string.append(" leather-color:").append(leatherArmorMeta.getColor().getRed()).append(",").append(leatherArmorMeta.getColor().getBlue()).append(",").append(leatherArmorMeta.getColor().getGreen());
             }
-            return glow;
+
+            //Books
+            if (itemMeta instanceof BookMeta) {
+                BookMeta bookMeta = (BookMeta) itemMeta;
+                if (bookMeta.hasAuthor())
+                    string.append(" book-author:").append(bookMeta.getAuthor());
+
+                if (bookMeta.hasTitle())
+                    string.append(" book-title:").append(StringUtil.replaceToYAMLFriendlyColors(bookMeta.getTitle().replaceAll(" ", "_")));
+
+                if (bookMeta.hasPages()) {
+                    for (String page : bookMeta.getPages())
+                        string.append(" book-page:").append(StringUtil.replaceToYAMLFriendlyColors(page.replaceAll(" ", "_")));
+                }
+            }
+            //Banners
+            if (itemMeta instanceof BannerMeta) {
+                BannerMeta bannerMeta = (BannerMeta) itemMeta;
+                if (bannerMeta.getPatterns().size() != 0)
+                    for (Pattern pattern : bannerMeta.getPatterns())
+                        string.append(" banner:").append(pattern.getPattern().name()).append(",").append(pattern.getColor().name());
+            }
+
+            //Fireworks
+            if (itemMeta instanceof FireworkEffectMeta) {
+                FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) itemMeta;
+                FireworkEffect fireworkEffect = fireworkEffectMeta.getEffect();
+                string.append(" firework:").append(fireworkEffect.getType().name()).append(",").append(fireworkEffect.hasTrail()).append(",").append(fireworkEffect.hasFlicker()).append(",");
+                for (Color fireworkColor : fireworkEffect.getColors())
+                    string.append(" firework-color:").append(fireworkColor.getRed()).append(",").append(fireworkColor.getGreen()).append(",").append(fireworkColor.getBlue()).append(",");
+                for (Color fireworkFadeColor : fireworkEffect.getFadeColors())
+                    string.append(" firework-fade-color:").append(fireworkFadeColor.getRed()).append(",").append(fireworkFadeColor.getGreen()).append(",").append(fireworkFadeColor.getBlue()).append(",");
+            }
+
+            //Skulls
+            if (itemMeta instanceof SkullMeta) {
+                SkullMeta skullMeta = (SkullMeta) itemMeta;
+                if (skullMeta.hasOwner())
+                    if (BimmCore.supports(12))
+                        string.append(" owner:").append(skullMeta.getOwningPlayer().getUniqueId());
+                    else
+                        string.append(" owner:").append(Bukkit.getOfflinePlayer(skullMeta.getOwner()).getUniqueId());
+
+            }
+
+            //Enchantment Storage
+            if (itemMeta instanceof EnchantmentStorageMeta) {
+                EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) itemMeta;
+
+                if (BimmCore.supports(13)) {
+                    for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
+                        string.append(" stored-enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
+                } else {
+                    for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
+                        string.append(" stored-enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
+                }
+            }
+
+            //Tropical Fish
+            if (BimmCore.supports(13) && itemMeta instanceof TropicalFishBucketMeta) {
+                TropicalFishBucketMeta tropicalFishBucketMeta = (TropicalFishBucketMeta) itemMeta;
+                string.append(" tropical-fish:").append(tropicalFishBucketMeta.getBodyColor().name()).append(",").append(tropicalFishBucketMeta.getPattern().name()).append(",").append(tropicalFishBucketMeta.getPatternColor());
+            }
+
+            if (itemMeta instanceof MapMeta) {
+                MapMeta mapMeta = (MapMeta) itemMeta;
+                //TODO: MapMeta
+            }
+            if (BimmCore.supports(14) && itemMeta instanceof CrossbowMeta) {
+                CrossbowMeta crossbowMeta = (CrossbowMeta) itemMeta;
+                //TODO: CrossbowMeta
+            }
+            if (BimmCore.supports(12) && itemMeta instanceof SpawnEggMeta) {
+                SpawnEggMeta spawnEggMeta = (SpawnEggMeta) itemMeta;
+                //TODO: SpawnEggMeta
+            }
+
+            if (BimmCore.supports(15) && itemMeta instanceof SuspiciousStewMeta) {
+                SuspiciousStewMeta suspiciousStewMeta = (SuspiciousStewMeta) itemMeta;
+                //TODO: SuspiciousStewMeta
+            }
         }
 
-        public static boolean isGlow(ItemStack item) {
-            return item.getEnchantments().containsKey(glow);
-        }
-
-        public boolean canEnchantItem(ItemStack item) {
-            return true;
-        }
-
-        public boolean conflictsWith(Enchantment other) {
-            return false;
-        }
-
-        public EnchantmentTarget getItemTarget() {
-            return null;
-        }
-
-        public int getMaxLevel() {
-            return 10;
-        }
-
-        public String getName() {
-            return "Glow";
-        }
-
-        public int getStartLevel() {
-            return 1;
-        }
+        return string.toString();
     }
 }

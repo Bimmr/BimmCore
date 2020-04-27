@@ -1,217 +1,322 @@
 package me.bimmr.bimmcore.hologram;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.TimedObject;
-import me.bimmr.bimmcore.events.timing.TimedEvent;
+import me.bimmr.bimmcore.timed.TimedObject;
+import me.bimmr.bimmcore.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
-import net.minecraft.server.v1_15_R1.Entity;
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
-import net.minecraft.server.v1_15_R1.PacketPlayOutEntityMetadata;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+/**
+ * HologramLine Class - Should only be used by Holograms
+ */
 public class HologramLine extends TimedObject {
     private int id;
+    private Hologram hologram;
 
     private Object hologramObject;
-
     private String text;
-
     private Location location;
 
-    public HologramLine(boolean showToAll, Location location, String text) {
-        this(showToAll, location, text, (TimedEvent) null);
+
+    /**
+     * Create a HologramLine - Should only be used by Holograms
+     * TimedEvent is null
+     *
+     * @param hologram  The Hologram
+     * @param location  The location for the hologram line
+     * @param text      The text for the hologram line
+     */
+    public HologramLine(Hologram hologram, Location location, String text) {
+        this(hologram,  location, text, null, false);
     }
 
-    public HologramLine(Location location, String text) {
-        this(true, location, text, (TimedEvent) null);
+    /**
+     * Create a HologramLine - Should only be used by Holograms
+     * Doesn't start TimedEvent right away
+     *
+     * @param hologram  The Hologram
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line
+     * @param timedEvent The timed event to run
+     */
+    public HologramLine(Hologram hologram,  Location location, String text, TimedEvent timedEvent) {
+        this(hologram, location, text, timedEvent, false);
     }
 
-    public HologramLine(Location location, String text, TimedEvent timedEvent) {
-        this(true, location, text, timedEvent);
-    }
-
-    public HologramLine(Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
-        this(true, location, text, timedEvent, startTimedEvent);
-    }
-
-    public HologramLine(boolean showToAll, Location location, String text, TimedEvent timedEvent) {
-        this(showToAll, location, text, timedEvent, false);
-    }
-
-    public HologramLine(boolean showToAll, Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
+    /**
+     * Create a HologramLine - Should only be used by Holograms
+     *
+     * @param hologram  The Hologram
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line
+     * @param timedEvent      The timed event to run
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public HologramLine(Hologram hologram, Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
+        this.hologram = hologram;
         this.text = text;
         this.location = location;
-        Object[] holoAPI = HologramAPI.createHologram(location, text);
-        this.id = ((Integer) holoAPI[0]).intValue();
+        Object[] holoAPI = HologramAPI.createHologram(location);
+        this.id = (Integer) holoAPI[0];
         this.hologramObject = holoAPI[1];
-        setTimedEvent(timedEvent);
-        if (startTimedEvent)
-            startTask();
+        HologramAPI.setText(hologramObject, text);
+        setTimedEvent(timedEvent, startTimedEvent);
     }
 
+    /**
+     * @return Get Bukiit Entity's ID
+     */
     public int getId() {
         return this.id;
     }
 
+    /**
+     * @return Get the HologramAPI Object
+     */
     public Object getHologramObject() {
         return this.hologramObject;
     }
 
+    /**
+     * @return Get the HologramLine's Location
+     */
     public Location getLocation() {
         return this.location;
     }
 
+    /**
+     * @return Get the HologramLine's Text
+     */
     public String getText() {
         return this.text;
     }
 
+    /**
+     * Set the HologramLine's text
+     *
+     * @param text The Text to set
+     */
     public void setText(String text) {
         this.text = text;
-        HologramAPI.setText(this.hologramObject, text);
+        HologramAPI.setText(this.hologramObject, this.text);
+        this.hologram.getViewer().update();
     }
 
+    /**
+     * Show the HologramLine to the player
+     * Calls {@link #showPlayer(Player)}
+     *
+     * @param player Player's Name
+     */
     public void showPlayer(String player) {
-        HologramAPI.deleteHologram(this.id, Bukkit.getPlayer(player));
-        HologramAPI.showToPlayer(this.hologramObject, Bukkit.getPlayer(player));
+        showPlayer(Bukkit.getPlayer(player));
     }
 
+    /**
+     * Show the HologramLine to the player
+     *
+     * @param player The player
+     */
+    public void showPlayer(Player player) {
+        HologramAPI.deleteHologram(this.id, player);
+        HologramAPI.showToPlayer(this.hologramObject, player);
+    }
+
+    /**
+     * Remove the HologramLine from every player
+     */
     public void remove() {
         HologramAPI.deleteHologram(this.id);
     }
 
+    /**
+     * Remove the HologramLine from a specific player
+     * Calls {@link #removePlayer(Player)}
+     *
+     * @param player The player's name
+     */
     public void removePlayer(String player) {
-        HologramAPI.deleteHologram(this.id, Bukkit.getPlayer(player));
+        removePlayer(Bukkit.getPlayer(player));
     }
 
+    /**
+     * Remove the HologramLine from a specific player
+     *
+     * @param player The player
+     */
+    public void removePlayer(Player player) {
+        HologramAPI.deleteHologram(this.id, player);
+    }
+
+
+    /**
+     * HologramAPI Class
+     */
     private static class HologramAPI {
         private static Class<?> chatComponentText = Reflection.getNMSClass("ChatComponentText");
         private static Class<?> chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
-        private static Constructor chatComponentTextConstructor;
         private static Class<?> craftWorldClass = Reflection.getCraftClass("CraftWorld");
         private static Class<?> nmsEntityClass = Reflection.getNMSClass("Entity");
+        private static Class<?> nmsEntityLivingClass = Reflection.getNMSClass("EntityLiving");
         private static Class<?> nmsWorldClass = Reflection.getNMSClass("World");
         private static Class<?> nmsArmorStandClass = Reflection.getNMSClass("EntityArmorStand");
-        private static Class<?> nmsEntityLivingClass = Reflection.getNMSClass("EntityLiving");
         private static Class<?> nmsDataWatcherClass = Reflection.getNMSClass("DataWatcher");
 
         private static Class<?> packetPlayOutSpawnEntityLivingClass = Reflection.getNMSClass("PacketPlayOutSpawnEntityLiving");
         private static Class<?> packetPlayOutEntityDestroyClass = Reflection.getNMSClass("PacketPlayOutEntityDestroy");
         private static Class<?> packetPlayOutEntityMetadataClass = Reflection.getNMSClass("PacketPlayOutEntityMetadata");
+
+        private static Constructor chatComponentTextConstructor = Reflection.getConstructor(chatComponentText, String.class);
+        private static Constructor packetPlayOutSpawnEntityLivingConstructor = Reflection.getConstructor(packetPlayOutSpawnEntityLivingClass, nmsEntityLivingClass);
+        private static Constructor packetPlayOutEntityDestroyConstructor = Reflection.getConstructor(packetPlayOutEntityDestroyClass, int[].class);
         private static Constructor armorStandConstructor;
-        private static Constructor packetPlayOutSpawnEntityLivingConstructor;
-        private static Constructor packetPlayOutEntityDestroyConstructor;
         private static Constructor packetPlayOutEntityMetadataConstructor;
-        private static Method entityGetIdMethod;
+
+        private static Method setCustomNameVisibleMethod = Reflection.getMethod(nmsEntityClass, "setCustomNameVisible", boolean.class);
+        private static Method setInvisibleMethod = Reflection.getMethod(nmsEntityClass, "setInvisible", boolean.class);
+
         private static Method setCustomNameMethod;
-        private static Method setCustomNameVisibleMethod;
         private static Method setNoGravityMethod;
-        private static Method setLocationMethod;
-        private static Method setInvisibleMethod;
+        private static Method setLocationMethod = Reflection.getMethod(nmsEntityClass, "setLocation", double.class, double.class, double.class, float.class, float.class);
         private static Method getDataWatcherMethod;
 
         static {
-            try {
-                chatComponentTextConstructor = chatComponentText.getConstructor(String.class);
-                if (!BimmCore.oldAPI) {
-                    armorStandConstructor = nmsArmorStandClass.getConstructor(nmsWorldClass, double.class, double.class, double.class);
-                } else {
-                    armorStandConstructor = nmsArmorStandClass.getConstructor(nmsWorldClass);
-                }
-                packetPlayOutSpawnEntityLivingConstructor = packetPlayOutSpawnEntityLivingClass.getConstructor(nmsEntityLivingClass);
-                packetPlayOutEntityDestroyConstructor = packetPlayOutEntityDestroyClass.getConstructor(int[].class);
-                packetPlayOutEntityMetadataConstructor = packetPlayOutEntityMetadataClass.getConstructor(int.class, nmsDataWatcherClass, boolean.class);
-
-                entityGetIdMethod = nmsArmorStandClass.getMethod("getId");
-                setCustomNameVisibleMethod = nmsEntityClass.getMethod("setCustomNameVisible", boolean.class);
-                setInvisibleMethod = nmsEntityClass.getMethod("setInvisible", boolean.class);
-
-                if (!BimmCore.oldAPI) {
-                    getDataWatcherMethod = nmsEntityClass.getMethod("getDataWatcher");
-                    setCustomNameMethod = nmsEntityClass.getMethod("setCustomName", chatBaseComponent);
-                    setNoGravityMethod = nmsEntityClass.getMethod("setNoGravity", boolean.class);
-                } else {
-                    setLocationMethod = nmsEntityClass.getMethod("setLocation", double.class, double.class, double.class, float.class, float.class);
-                    setCustomNameMethod = nmsEntityClass.getMethod("setCustomName", String.class);
-                }
-
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            if (BimmCore.supports(13)) {
+                armorStandConstructor = Reflection.getConstructor(nmsArmorStandClass, nmsWorldClass, double.class, double.class, double.class);
+                setCustomNameMethod = Reflection.getMethod(nmsEntityClass, "setCustomName", chatBaseComponent);
+                setNoGravityMethod = Reflection.getMethod(nmsEntityClass, "setNoGravity", boolean.class);
+            } else {
+                armorStandConstructor = Reflection.getConstructor(nmsArmorStandClass, nmsWorldClass);
+                setCustomNameMethod = Reflection.getMethod(nmsEntityClass, "setCustomName", String.class);
+            }
+            if (BimmCore.supports(15)) {
+                packetPlayOutEntityMetadataConstructor = Reflection.getConstructor(packetPlayOutEntityMetadataClass, int.class, nmsDataWatcherClass, boolean.class);
+                getDataWatcherMethod = Reflection.getMethod(nmsEntityClass, "getDataWatcher");
             }
         }
 
+        /**
+         * Set the ArmorStand's Custom Name
+         *
+         * @param entityArmorStand The ArmorStand
+         * @param text             The name
+         */
         private static void setText(Object entityArmorStand, String text) {
-            try {
-                Object itext;
-                if (BimmCore.oldAPI) {
-                    itext = text;
-                } else {
-                    itext = chatComponentTextConstructor.newInstance(text);
-                }
-                setCustomNameMethod.invoke(entityArmorStand, itext);
-            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException | InstantiationException e) {
-                e.printStackTrace();
-            }
+            Object iText;
+            if (BimmCore.supports(13))
+                iText = Reflection.newInstance(chatComponentTextConstructor, text);
+            else
+                iText = text;
+
+            Reflection.invokeMethod(setCustomNameMethod, entityArmorStand, iText);
         }
 
-        private static Object[] createHologram(Location location, String text) {
-            try {
-                Object entityArmorStand, craftWorld = craftWorldClass.cast(location.getWorld());
-                Object worldHandle = Reflection.getHandle(craftWorld);
-                if (!BimmCore.oldAPI) {
-                    entityArmorStand = armorStandConstructor.newInstance(worldHandle, location.getX(), location.getY(), location.getZ());
-                } else {
-                    entityArmorStand = armorStandConstructor.newInstance(worldHandle);
-                    setLocationMethod.invoke(entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
-                }
-                Object id = entityGetIdMethod.invoke(entityArmorStand);
+        /**
+         * Create the ArmorStand Object
+         *
+         * @param location The location
+         * @return Array with [EntityID, NMS ArmorStandObject]
+         */
+        private static Object[] createHologram(Location location) {
 
-                if (!BimmCore.oldAPI) {
-                    setNoGravityMethod.invoke(entityArmorStand, true);
-                }
+            Object entityArmorStand;
+            Object craftWorld = craftWorldClass.cast(location.getWorld());
+            Object worldHandle = Reflection.getHandle(craftWorld);
 
-                setCustomNameVisibleMethod.invoke(entityArmorStand, true);
-                setText(entityArmorStand, text);
-                setInvisibleMethod.invoke(entityArmorStand, true);
-                return new Object[]{id, entityArmorStand};
-            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException | InstantiationException e) {
-                e.printStackTrace();
-                return null;
+            if (BimmCore.supports(13)) {
+                entityArmorStand = Reflection.newInstance(armorStandConstructor, worldHandle, location.getX(), location.getY(), location.getZ());
+            } else {
+                entityArmorStand = Reflection.newInstance(armorStandConstructor, worldHandle);
+                Reflection.invokeMethod(setLocationMethod, entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
             }
+
+            if (BimmCore.supports(13)){
+                Reflection.invokeMethod(setCustomNameVisibleMethod, entityArmorStand, true);
+                Reflection.invokeMethod(setInvisibleMethod, entityArmorStand, true);
+            }else {
+                Reflection.invokeMethod(setNoGravityMethod, entityArmorStand, true);
+            }
+
+            Object id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+            return new Object[]{id, entityArmorStand};
         }
 
+        /**
+         * Show the ArmorStand to the player
+         *
+         * @param entityArmorStand The ArmorStand object
+         * @param p                The player
+         */
         public static void showToPlayer(Object entityArmorStand, Player p) {
-            try {
-                Object packetPlayOutSpawnEntityLiving = packetPlayOutSpawnEntityLivingConstructor.newInstance(entityArmorStand);
-                Packets.sendPacket(p, packetPlayOutSpawnEntityLiving);
+            Object packetPlayOutSpawnEntityLiving = Reflection.newInstance(packetPlayOutSpawnEntityLivingConstructor, entityArmorStand);
+            Packets.sendPacket(p, packetPlayOutSpawnEntityLiving);
 
-                if(!BimmCore.oldAPI && !Reflection.getVersion().startsWith("v1_13") && !Reflection.getVersion().startsWith("v1_14")) {
-                    Object packetPlayOutEntityMetaData = packetPlayOutEntityMetadataConstructor.newInstance(entityGetIdMethod.invoke(entityArmorStand), getDataWatcherMethod.invoke(entityArmorStand), true);
-                    Packets.sendPacket(p, packetPlayOutEntityMetaData);
-                }
+            showMetaDataToPlayer(entityArmorStand, p);
+        }
 
-            } catch (InstantiationException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-                e.printStackTrace();
+        /**
+         * Show the ArmorStand's MetaData to the player
+         *
+         * @param entityArmorStand The ArmorStand object
+         * @param p                The player
+         */
+        public static void showMetaDataToPlayer(Object entityArmorStand, Player p) {
+            if (BimmCore.supports(15)) {
+                Object id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+                Object dataWatcher = Reflection.invokeMethod(getDataWatcherMethod, entityArmorStand);
+                Object packetPlayOutEntityMetaData = Reflection.newInstance(packetPlayOutEntityMetadataConstructor, id, dataWatcher, true);
+                Packets.sendPacket(p, packetPlayOutEntityMetaData);
+
             }
         }
 
+        /**
+         * Send DestroyPacket's for the ArmorStandObject
+         *
+         * @param id The ID of the ArmorStand
+         */
         public static void deleteHologram(int id) {
             for (Player p : Bukkit.getOnlinePlayers())
                 deleteHologram(id, p);
         }
 
+        /**
+         * Send DestroyPacket's for the ArmorStandObject
+         *
+         * @param entityArmorStand The ArmorStand
+         */
+        public static void deleteHologram(Object entityArmorStand) {
+            int id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+            for (Player p : Bukkit.getOnlinePlayers())
+                deleteHologram(id, p);
+        }
+
+        /**
+         * Send DestroyPacket's for the ArmorStandObject to a player
+         * Calls {@link #deleteHologram(int, Player)}
+         *
+         * @param entityArmorStand The ArmorStand object
+         * @param p                The player
+         */
+        public static void deleteHologram(Object entityArmorStand, Player p) {
+            deleteHologram(Reflection.getEntityID(nmsArmorStandClass, entityArmorStand), p);
+        }
+
+        /**
+         * Send DestroyPacket's for the ArmorStandObject to a player
+         *
+         * @param id The ArmorStand's ID
+         * @param p  The player
+         */
         public static void deleteHologram(int id, Player p) {
-            try {
-                Object packetPlayOutEntityDestroy = packetPlayOutEntityDestroyConstructor.newInstance(new int[]{id});
-                Packets.sendPacket(p, packetPlayOutEntityDestroy);
-            } catch (InstantiationException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            Object packetPlayOutEntityDestroy = Reflection.newInstance(packetPlayOutEntityDestroyConstructor, new int[]{id});
+            Packets.sendPacket(p, packetPlayOutEntityDestroy);
         }
     }
 }
