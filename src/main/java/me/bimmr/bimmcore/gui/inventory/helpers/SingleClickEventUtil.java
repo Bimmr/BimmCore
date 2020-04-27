@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.menus.inventory.helpers;
+package me.bimmr.bimmcore.gui.inventory.helpers;
 
 import me.bimmr.bimmcore.BimmCore;
 import org.bukkit.NamespacedKey;

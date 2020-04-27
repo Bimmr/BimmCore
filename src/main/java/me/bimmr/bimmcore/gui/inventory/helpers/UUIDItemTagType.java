@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.menus.inventory.helpers;
+package me.bimmr.bimmcore.gui.inventory.helpers;
 
 import org.bukkit.inventory.meta.tags.ItemTagAdapterContext;
 import org.bukkit.inventory.meta.tags.ItemTagType;
@@ -7,8 +7,9 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
- * Created by Randy on 5/22/2019.
+ * Single Item ClickEvent Helper for 1.12 - 1.14.2
  */
+@Deprecated
 public class UUIDItemTagType implements ItemTagType<byte[], UUID> {
 
     @Override
