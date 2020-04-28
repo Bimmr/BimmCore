@@ -12,12 +12,20 @@ import java.util.ArrayList;
  */
 public class BlockCrawler {
 
+    /**
+     * The constant ADJ_LOC.
+     */
     public static final int[][] ADJ_LOC = new int[][]{new int[]{-1, 0, 0}, new int[]{1, 0, 0}, new int[]{0, -1, 0}, new int[]{0, 1, 0}, new int[]{0, 0, -1},
             new int[]{0, 0, 1}};
     private int   maxSize;
     private Block mOrigBlock;
     private ArrayList<Location> mProcessedBlocks = new ArrayList<Location>();
 
+    /**
+     * Instantiates a new Block crawler.
+     *
+     * @param maxSize the max size
+     */
     public BlockCrawler(int maxSize) {
         this.maxSize = maxSize;
     }
@@ -39,8 +47,8 @@ public class BlockCrawler {
     /**
      * Will return a list of the location of all blocks that match the block's type and are adjacent to it
      *
-     * @param origBlock
-     * @return
+     * @param origBlock the orig block
+     * @return array list
      */
     public ArrayList<Location> start(Block origBlock) {
         this.mOrigBlock = origBlock;

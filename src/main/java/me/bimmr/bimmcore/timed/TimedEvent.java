@@ -8,12 +8,23 @@ public abstract class TimedEvent implements Cloneable {
     private Object attachedObject;
     private int    ticks;
 
+    /**
+     * Instantiates a new Timed event.
+     *
+     * @param ticks          the ticks
+     * @param attachedObject the attached object
+     */
     public TimedEvent(int ticks, Object attachedObject) {
         this.ticks = ticks;
         this.attachedObject = attachedObject;
     }
 
 
+    /**
+     * Instantiates a new Timed event.
+     *
+     * @param ticks the ticks
+     */
     public TimedEvent(int ticks) {
         this.ticks = ticks;
     }
@@ -21,7 +32,7 @@ public abstract class TimedEvent implements Cloneable {
     /**
      * Get the object this TimedEvent is attached to
      *
-     * @return
+     * @return attached object
      */
     public Object getAttachedObject() {
         return this.attachedObject;
@@ -30,7 +41,7 @@ public abstract class TimedEvent implements Cloneable {
     /**
      * Set the attached object
      *
-     * @param attachedObject
+     * @param attachedObject the attached object
      */
     public void setAttachedObject(Object attachedObject) {
         this.attachedObject = attachedObject;
@@ -39,7 +50,7 @@ public abstract class TimedEvent implements Cloneable {
     /**
      * Get the ticks
      *
-     * @return
+     * @return ticks
      */
     public int getTicks() {
         return this.ticks;
@@ -48,12 +59,15 @@ public abstract class TimedEvent implements Cloneable {
     /**
      * Set the ticks
      *
-     * @param ticks
+     * @param ticks the ticks
      */
     public void setTicks(int ticks) {
         this.ticks = ticks;
     }
 
+    /**
+     * Run.
+     */
     public abstract void run();
 
 

@@ -18,6 +18,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * The type Npc.
+ */
 @Deprecated
 public class NPC {
 
@@ -85,6 +88,8 @@ public class NPC {
     }
 
     /**
+     * Gets skin.
+     *
      * @return The Property from the GameProfile
      */
     public Property getSkin() {
@@ -94,6 +99,8 @@ public class NPC {
     }
 
     /**
+     * Gets equipment.
+     *
      * @return Get a HashMap of the NPC's Equipment
      */
     public HashMap<ItemSlots, ItemStack> getEquipment() {
@@ -110,6 +117,11 @@ public class NPC {
         this.viewer.update(player);
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         destroy();
         this.name = name;
@@ -122,7 +134,12 @@ public class NPC {
         create();
     }
 
-    //TODO: Find out why this doesn't work
+    /**
+     * Sets skin.
+     *
+     * @param value the value
+     */
+//TODO: Find out why this doesn't work
     public void setSkin(String value) {
         destroy();
         System.out.println(value);
@@ -209,7 +226,7 @@ public class NPC {
     /**
      * Get the NPC's GameProfile
      *
-     * @return
+     * @return game profile
      */
     public GameProfile getGameProfile() {
         return this.gameProfile;
@@ -225,6 +242,8 @@ public class NPC {
     }
 
     /**
+     * Gets id.
+     *
      * @return Get The NPC's Id
      */
     public int getId() {
@@ -232,6 +251,8 @@ public class NPC {
     }
 
     /**
+     * Gets location.
+     *
      * @return Get the NPC's Location
      */
     public Location getLocation() {
@@ -240,6 +261,8 @@ public class NPC {
 
 
     /**
+     * Gets name.
+     *
      * @return Get the NPC's Name
      */
     public String getName() {
@@ -251,11 +274,29 @@ public class NPC {
      * ItemSlots NPC ENUM
      */
     public enum ItemSlots {
+        /**
+         * Mainhand item slots.
+         */
         MAINHAND(0),
+        /**
+         * Offhand item slots.
+         */
         OFFHAND(1),
+        /**
+         * Feet item slots.
+         */
         FEET(2),
+        /**
+         * Legs item slots.
+         */
         LEGS(3),
+        /**
+         * Chest item slots.
+         */
         CHEST(4),
+        /**
+         * Head item slots.
+         */
         HEAD(5);
 
         private int id;
@@ -399,6 +440,8 @@ public class NPC {
         }
 
         /**
+         * Create object.
+         *
          * @param npc The NPC
          * @return Get the Created Entity
          */

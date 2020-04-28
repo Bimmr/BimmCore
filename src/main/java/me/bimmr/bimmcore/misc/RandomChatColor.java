@@ -13,8 +13,8 @@ public class RandomChatColor {
      * Gets a random ChatColor from the given ChatColors
      * (Black is not a possible outcome because black is hard to read)
      *
-     * @param validChatcolors
-     * @return
+     * @param validChatcolors the valid chatcolors
+     * @return color
      */
     public static ChatColor getColor(ChatColor... validChatcolors) {
         Random r = new Random(System.nanoTime());
@@ -34,8 +34,8 @@ public class RandomChatColor {
     /**
      * Get a random ChatColor(Format) from the given ChatColor(Format)s
      *
-     * @param chatFormats
-     * @return
+     * @param chatFormats the chat formats
+     * @return format
      */
     public static ChatColor getFormat(ChatColor... chatFormats) {
         Random r = new Random(System.nanoTime());

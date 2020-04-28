@@ -14,10 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-/**
- * Created by Randy on 05/09/16.
- */
-
 //class TitleExample {
 //
 //        //Create a scroller so the timed event has something to do
@@ -40,17 +36,20 @@ import java.util.HashMap;
 //
 //}
 
+/**
+ * The type Title.
+ */
 public class Title extends MessageDisplay {
-    private static HashMap<String, BukkitTask> tasks    = new HashMap<>();
-    private static HashMap<String, Title>      titles   = new HashMap<>();
-    private        String                      subTitle = "";
-    private        int                         fadeIn   = 0;
-    private        int                         fadeOut  = 0;
+    private static HashMap<String, BukkitTask> tasks = new HashMap<>();
+    private static HashMap<String, Title> titles = new HashMap<>();
+    private String subTitle = "";
+    private int fadeIn = 0;
+    private int fadeOut = 0;
 
     /**
      * Create a title
      *
-     * @param title
+     * @param title the title
      */
     public Title(String title) {
         this(title, "", 0, 2, 0, null);
@@ -59,8 +58,8 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param show
+     * @param title the title
+     * @param show  the show
      */
     public Title(String title, int show) {
         this(title, "", 0, show, 0, null);
@@ -69,8 +68,8 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
+     * @param title    the title
+     * @param subTitle the sub title
      */
     public Title(String title, String subTitle) {
         this(title, subTitle, 0, 2, 0, null);
@@ -79,9 +78,9 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param show
+     * @param title    the title
+     * @param subTitle the sub title
+     * @param show     the show
      */
     public Title(String title, String subTitle, int show) {
         this(title, subTitle, 0, show, 0, null);
@@ -90,10 +89,10 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param animationTime
-     * @param show
+     * @param title         the title
+     * @param subTitle      the sub title
+     * @param animationTime the animation time
+     * @param show          the show
      */
     public Title(String title, String subTitle, int animationTime, int show) {
         this(title, subTitle, animationTime, show, animationTime, null);
@@ -102,11 +101,11 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param fadeIn
-     * @param show
-     * @param fadeOut
+     * @param title    the title
+     * @param subTitle the sub title
+     * @param fadeIn   the fade in
+     * @param show     the show
+     * @param fadeOut  the fade out
      */
     public Title(String title, String subTitle, int fadeIn, int show, int fadeOut) {
         this(title, subTitle, fadeIn, show, fadeOut, null);
@@ -115,8 +114,8 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param timedEvent
+     * @param title      the title
+     * @param timedEvent the timed event
      */
     public Title(String title, TimedEvent timedEvent) {
         this(title, "", 0, 2, 0, timedEvent);
@@ -125,9 +124,9 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param show
-     * @param timedEvent
+     * @param title      the title
+     * @param show       the show
+     * @param timedEvent the timed event
      */
     public Title(String title, int show, TimedEvent timedEvent) {
         this(title, "", 0, show, 0, timedEvent);
@@ -136,9 +135,9 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param timedEvent
+     * @param title      the title
+     * @param subTitle   the sub title
+     * @param timedEvent the timed event
      */
     public Title(String title, String subTitle, TimedEvent timedEvent) {
         this(title, subTitle, 0, 2, 0, timedEvent);
@@ -147,10 +146,10 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param show
-     * @param timedEvent
+     * @param title      the title
+     * @param subTitle   the sub title
+     * @param show       the show
+     * @param timedEvent the timed event
      */
     public Title(String title, String subTitle, int show, TimedEvent timedEvent) {
         this(title, subTitle, 0, show, 0, timedEvent);
@@ -159,11 +158,11 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param animationTime
-     * @param show
-     * @param timedEvent
+     * @param title         the title
+     * @param subTitle      the sub title
+     * @param animationTime the animation time
+     * @param show          the show
+     * @param timedEvent    the timed event
      */
     public Title(String title, String subTitle, int animationTime, int show, TimedEvent timedEvent) {
         this(title, subTitle, animationTime, show, animationTime, timedEvent);
@@ -172,12 +171,12 @@ public class Title extends MessageDisplay {
     /**
      * Create a title
      *
-     * @param title
-     * @param subTitle
-     * @param fadeIn
-     * @param show
-     * @param fadeOut
-     * @param timedEvent
+     * @param title      the title
+     * @param subTitle   the sub title
+     * @param fadeIn     the fade in
+     * @param show       the show
+     * @param fadeOut    the fade out
+     * @param timedEvent the timed event
      */
     public Title(String title, String subTitle, int fadeIn, int show, int fadeOut, TimedEvent timedEvent) {
         this.text = title;
@@ -201,7 +200,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the SubTitle text
      *
-     * @return
+     * @return sub title
      */
     public String getSubTitle() {
         return this.subTitle;
@@ -210,7 +209,7 @@ public class Title extends MessageDisplay {
     /**
      * Set the SubTitle text
      *
-     * @param text
+     * @param text the text
      */
     public void setSubTitle(String text) {
         this.subTitle = text;
@@ -239,7 +238,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the FadeIn time
      *
-     * @return
+     * @return fade in
      */
     public int getFadeIn() {
         return this.fadeIn;
@@ -248,7 +247,7 @@ public class Title extends MessageDisplay {
     /**
      * Set the FadeIn time
      *
-     * @param fadeIn
+     * @param fadeIn the fade in
      */
     public void setFadeIn(int fadeIn) {
         this.fadeIn = fadeIn;
@@ -257,7 +256,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the FadeOut time
      *
-     * @return
+     * @return fade out
      */
     public int getFadeOut() {
         return this.fadeOut;
@@ -266,7 +265,7 @@ public class Title extends MessageDisplay {
     /**
      * Set the FadeOut time
      *
-     * @param fadeOut
+     * @param fadeOut the fade out
      */
     public void setFadeOut(int fadeOut) {
         this.fadeOut = fadeOut;
@@ -346,7 +345,7 @@ public class Title extends MessageDisplay {
     /**
      * Clear the title off the player's screen
      *
-     * @param player
+     * @param player the player
      */
     public void clear(Player player) {
 
@@ -358,15 +357,18 @@ public class Title extends MessageDisplay {
         }
     }
 
+    /**
+     * The type Title api.
+     */
     public static class TitleAPI {
 
-        private static Class<?>       chatSerializer;
-        private static Method         serializer;
-        private static Class<?>       chatBaseComponent;
+        private static Class<?> chatSerializer;
+        private static Method serializer;
+        private static Class<?> chatBaseComponent;
         private static Constructor<?> chatConstructor;
         private static Constructor<?> timeConstructor;
-        private static Class<?>       titleAction;
-        private static Object         timeEnum, titleEnum, subEnum, resetEnum;
+        private static Class<?> titleAction;
+        private static Object timeEnum, titleEnum, subEnum, resetEnum;
 
         static {
             chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
@@ -396,6 +398,16 @@ public class Title extends MessageDisplay {
 
         }
 
+        /**
+         * Send title.
+         *
+         * @param player   the player
+         * @param title    the title
+         * @param subTitle the sub title
+         * @param fadeIn   the fade in
+         * @param show     the show
+         * @param fadeOut  the fade out
+         */
         public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int show, int fadeOut) {
             try {
                 Object lengthPacket = timeConstructor.newInstance(timeEnum, null, fadeIn, show, fadeOut);
@@ -416,6 +428,11 @@ public class Title extends MessageDisplay {
             }
         }
 
+        /**
+         * Reset.
+         *
+         * @param player the player
+         */
         public static void reset(Player player) {
             try {
                 if (resetEnum == null)

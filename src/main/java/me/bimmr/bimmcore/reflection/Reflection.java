@@ -19,7 +19,7 @@ public class Reflection {
     /**
      * Get the server's version
      *
-     * @return
+     * @return version
      */
     public static String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
@@ -31,8 +31,8 @@ public class Reflection {
      * Get a craft class
      * (net.minecraft.server)
      *
-     * @param name
-     * @return
+     * @param name the name
+     * @return nms class
      */
     public static Class<?> getNMSClass(String name) {
         try {
@@ -48,8 +48,8 @@ public class Reflection {
      * Get a bukkit class
      * (org.bukkit.craftbukkit)
      *
-     * @param name
-     * @return
+     * @param name the name
+     * @return craft class
      */
     public static Class<?> getCraftClass(String name) {
         try {
@@ -63,8 +63,8 @@ public class Reflection {
     /**
      * Get the handle of the passed object
      *
-     * @param object
-     * @return
+     * @param object the object
+     * @return handle
      */
     public static Object getHandle(Object object) {
         try {
@@ -79,9 +79,9 @@ public class Reflection {
     /**
      * Get the EntityID of the entity
      *
-     * @param c
-     * @param entity
-     * @return
+     * @param c      the c
+     * @param entity the entity
+     * @return entity id
      */
     public static int getEntityID(Class<?> c, Object entity) {
         return (Integer) Reflection.invokeMethod(c, "getId", entity);
@@ -90,9 +90,9 @@ public class Reflection {
     /**
      * Get Constructor from class
      *
-     * @param c
-     * @param types
-     * @return
+     * @param c     the c
+     * @param types the types
+     * @return constructor
      */
     public static Constructor getConstructor(Class<?> c, Class<?>... types) {
         try {
@@ -106,9 +106,9 @@ public class Reflection {
     /**
      * Get a method from the class
      *
-     * @param c
-     * @param methodName
-     * @return
+     * @param c          the c
+     * @param methodName the method name
+     * @return method
      */
     public static Method getMethod(Class<?> c, String methodName) {
         for (Method method : c.getMethods())
@@ -120,10 +120,10 @@ public class Reflection {
     /**
      * Get a method from a class with specific parameter types
      *
-     * @param c
-     * @param methodName
-     * @param parameterTypes
-     * @return
+     * @param c              the c
+     * @param methodName     the method name
+     * @param parameterTypes the parameter types
+     * @return method
      */
     public static Method getMethod(Class<?> c, String methodName, Class<?>... parameterTypes) {
         try {
@@ -137,10 +137,11 @@ public class Reflection {
     /**
      * Invoke a method
      *
-     * @param c
-     * @param methodName
-     * @param parameterTypes
-     * @param parameter
+     * @param c              the c
+     * @param methodName     the method name
+     * @param parameterTypes the parameter types
+     * @param parameter      the parameter
+     * @return the object
      */
     public static Object invokeMethod(Class<?> c, String methodName, Class<?>[] parameterTypes, Object[] parameter) {
         return invokeMethod(c, methodName, null, parameterTypes, parameter);
@@ -149,15 +150,18 @@ public class Reflection {
     /**
      * Invoke a method on an object
      *
-     * @param c
-     * @param methodName
-     * @param object
+     * @param c          the c
+     * @param methodName the method name
+     * @param object     the object
+     * @return the object
      */
     public static Object invokeMethod(Class<?> c, String methodName, Object object) {
         return invokeMethod(c, methodName, object, null, null);
     }
 
     /**
+     * Invoke method object.
+     *
      * @param c              The Class
      * @param methodName     The MethodName
      * @param object         The Object
@@ -176,6 +180,8 @@ public class Reflection {
     }
 
     /**
+     * Invoke method object.
+     *
      * @param method The Method
      * @param object The Object
      * @param args   The Args
@@ -192,6 +198,8 @@ public class Reflection {
 
 
     /**
+     * New instance object.
+     *
      * @param constructor The Constructor
      * @param args        The args
      * @return Get a new instance from a constructor
@@ -240,6 +248,8 @@ public class Reflection {
     }
 
     /**
+     * Gets field.
+     *
      * @param c         The Class
      * @param fieldName The FieldName
      * @return Get the field from the class
@@ -257,6 +267,8 @@ public class Reflection {
 
 
     /**
+     * Get object.
+     *
      * @param field  The field
      * @param object The Object
      * @return Get the Object from the Field
@@ -291,6 +303,8 @@ public class Reflection {
     }
 
     /**
+     * Get online players player [ ].
+     *
      * @return Get Array of online players regardless of Mc Version
      */
     public static Player[] getOnlinePlayers() {

@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * A Utilities class to create a scrolling message
  */
-
 public class Scroller {
 
     private String originalMessage;
@@ -21,6 +20,13 @@ public class Scroller {
     private int          position;
     private List<String> positions;
 
+    /**
+     * Instantiates a new Scroller.
+     *
+     * @param message      the message
+     * @param width        the width
+     * @param spaceBetween the space between
+     */
     public Scroller(String message, int width, int spaceBetween) {
         this.positions = new ArrayList<>();
         this.originalMessage = StringUtil.addColor(message);
@@ -54,6 +60,11 @@ public class Scroller {
 
     }
 
+    /**
+     * Current string.
+     *
+     * @return the string
+     */
     public String current() {
         return last;
     }
@@ -61,7 +72,7 @@ public class Scroller {
     /**
      * Get the next originalMessage
      *
-     * @return
+     * @return string
      */
     public String next() {
         StringBuilder line = new StringBuilder(getNext());
@@ -74,6 +85,12 @@ public class Scroller {
 
         return last = chatColor + line.toString();
     }
+
+    /**
+     * Previous string.
+     *
+     * @return the string
+     */
     public String previous() {
         StringBuilder line = new StringBuilder(getPrevious());
         if (line.charAt(line.length() - 1) == ChatColor.COLOR_CHAR)

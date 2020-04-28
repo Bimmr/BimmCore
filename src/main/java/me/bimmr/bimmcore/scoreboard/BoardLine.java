@@ -29,7 +29,7 @@ public class BoardLine extends TimedObject {
     /**
      * Create a BoardLine
      *
-     * @param text
+     * @param text the text
      */
     public BoardLine(String text) {
         this(text, -1, null, false);
@@ -40,8 +40,8 @@ public class BoardLine extends TimedObject {
      * <p>
      * value = -1
      *
-     * @param text
-     * @param value
+     * @param text  the text
+     * @param value the value
      */
     public BoardLine(String text, int value) {
         this(text, value, null, false);
@@ -52,8 +52,8 @@ public class BoardLine extends TimedObject {
      * <p>
      * value = -1
      *
-     * @param text
-     * @param timedEvent
+     * @param text       the text
+     * @param timedEvent the timed event
      */
     public BoardLine(String text, TimedEvent timedEvent) {
         this(text, -1, timedEvent, false);
@@ -64,9 +64,9 @@ public class BoardLine extends TimedObject {
      * <p>
      * value = -1
      *
-     * @param text
-     * @param timedEvent
-     * @param autoStartTimedEvent
+     * @param text                the text
+     * @param timedEvent          the timed event
+     * @param autoStartTimedEvent the auto start timed event
      */
     public BoardLine(String text, TimedEvent timedEvent, boolean autoStartTimedEvent) {
         this(text, -1, timedEvent, autoStartTimedEvent);
@@ -75,20 +75,21 @@ public class BoardLine extends TimedObject {
     /**
      * Create a BoardLine
      *
-     * @param text
-     * @param value
-     * @param timedEvent
+     * @param text       the text
+     * @param value      the value
+     * @param timedEvent the timed event
      */
     public BoardLine(String text, int value, TimedEvent timedEvent) {
         this(text, value, timedEvent, false);
     }
+
     /**
      * Create a BoardLine
      *
-     * @param text
-     * @param value
-     * @param timedEvent
-     * @param autoStartTimedEvent
+     * @param text                the text
+     * @param value               the value
+     * @param timedEvent          the timed event
+     * @param autoStartTimedEvent the auto start timed event
      */
     public BoardLine(String text, int value, TimedEvent timedEvent, boolean autoStartTimedEvent) {
         this.text = text.substring(0, Math.min(30, text.length()));
@@ -99,7 +100,7 @@ public class BoardLine extends TimedObject {
     /**
      * Set the board that this BoardLine belongs to
      *
-     * @param board
+     * @param board the board
      */
     public void setBoard(Board board) {
         this.board = board;
@@ -120,7 +121,7 @@ public class BoardLine extends TimedObject {
     /**
      * Get the text
      *
-     * @return
+     * @return text
      */
     public String getText() {
         return this.text;
@@ -129,7 +130,7 @@ public class BoardLine extends TimedObject {
     /**
      * Set the text
      *
-     * @param text
+     * @param text the text
      */
     public void setText(String text) {
         this.text = text.substring(0, Math.min(30, text.length()));
@@ -139,7 +140,7 @@ public class BoardLine extends TimedObject {
     /**
      * Get the value
      *
-     * @return
+     * @return value
      */
     public int getValue() {
         return this.value;
@@ -148,7 +149,7 @@ public class BoardLine extends TimedObject {
     /**
      * Set the value
      *
-     * @param value
+     * @param value the value
      */
     public void setValue(int value) {
         this.value = value;
@@ -204,7 +205,7 @@ public class BoardLine extends TimedObject {
     /**
      * Get the team
      *
-     * @return
+     * @return team
      */
     public Team getTeam() {
         return this.team;
@@ -213,7 +214,7 @@ public class BoardLine extends TimedObject {
     /**
      * Set the Line's team
      *
-     * @param team
+     * @param team the team
      */
     public void setTeam(Team team) {
         this.team = team;

@@ -38,22 +38,38 @@ import java.util.*;
 //    }
 //}
 
+/**
+ * The type Items.
+ */
 public class Items {
 
     private ItemStack item = new ItemStack(Material.AIR);
     private ItemMeta itemMeta;
     private ItemAttributes itemAttributes;
 
+    /**
+     * Instantiates a new Items.
+     *
+     * @param stack the stack
+     */
     public Items(ItemStack stack) {
         this.item = stack;
         if (this.item.hasItemMeta())
             itemMeta = this.item.getItemMeta();
     }
 
+    /**
+     * Instantiates a new Items.
+     *
+     * @param string the string
+     */
     public Items(String string) {
         this.item = fromString(string).getItem();
     }
 
+    /**
+     * Instantiates a new Items.
+     */
     public Items() {
         this.item = new ItemStack(Material.AIR);
     }
@@ -87,7 +103,7 @@ public class Items {
      * glow
      *
      * @param string The Item Code
-     * @return Items
+     * @return Items items
      */
     public Items fromString(String string) {
 
@@ -313,9 +329,9 @@ public class Items {
 
 
     /**
-     * Get the item
+     * Gets item.
      *
-     * @return ItemStack
+     * @return Get the item
      */
     public ItemStack getItem() {
         if (this.itemMeta != null)
@@ -323,16 +339,31 @@ public class Items {
         return this.item;
     }
 
+    /**
+     * Gets item meta.
+     *
+     * @return Get the item meta
+     */
     public ItemMeta getItemMeta() {
         if (this.itemMeta == null)
             this.itemMeta = getItem().getItemMeta();
         return this.itemMeta;
     }
 
+    /**
+     * Set the Item Meta
+     *
+     * @param itemMeta The ItemMeta
+     */
     public void setItemMeta(ItemMeta itemMeta) {
         this.itemMeta = itemMeta;
     }
 
+    /**
+     * Has item meta boolean.
+     *
+     * @return Get if ItemMeta is valid
+     */
     public boolean hasItemMeta() {
         return this.itemMeta != null;
     }
@@ -341,7 +372,7 @@ public class Items {
      * Add FireworkEffect
      *
      * @param fireworkEffect FireworkEffect
-     * @return Items
+     * @return Items items
      */
     public Items addFireworkEffect(FireworkEffect fireworkEffect) {
         FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) getItemMeta();
@@ -354,7 +385,7 @@ public class Items {
      * Add Banner Pattern
      *
      * @param pattern Pattern
-     * @return Items
+     * @return Items items
      */
     public Items addBannerPattern(Pattern pattern) {
         BannerMeta bannerMeta = (BannerMeta) getItemMeta();
@@ -367,7 +398,7 @@ public class Items {
      * Add Item to Pages
      *
      * @param value Page as a string
-     * @return Items
+     * @return Items items
      */
     public Items addPage(String value) {
         if (!(getItemMeta() instanceof BookMeta))
@@ -384,7 +415,7 @@ public class Items {
      * Set Item Pages
      *
      * @param value Pages as a list
-     * @return Items
+     * @return Items pages
      */
     public Items setPages(List<String> value) {
         if (!(getItemMeta() instanceof BookMeta))
@@ -401,7 +432,7 @@ public class Items {
      * Calls {@link #setPages(List)}
      *
      * @param value Pages as an array
-     * @return Items
+     * @return Items pages
      */
     public Items setPages(String... value) {
         return setPages(Arrays.asList(value));
@@ -411,7 +442,7 @@ public class Items {
      * Set Book Title
      *
      * @param value The book's title
-     * @return Items
+     * @return Items book title
      */
     public Items setBookTitle(String value) {
         if (!(getItemMeta() instanceof BookMeta))
@@ -427,7 +458,7 @@ public class Items {
      * Set Book Author
      *
      * @param value The book's author
-     * @return Items
+     * @return Items book author
      */
     public Items setBookAuthor(String value) {
         if (!(getItemMeta() instanceof BookMeta))
@@ -444,7 +475,7 @@ public class Items {
      * Only supports versions since MC 1.12
      *
      * @param value Boolean
-     * @return Items
+     * @return Items unbreakable
      */
     public Items setUnbreakable(boolean value) {
         ItemMeta itemMeta = getItemMeta();
@@ -460,7 +491,7 @@ public class Items {
      * @param red   The red
      * @param green The green
      * @param blue  The blue
-     * @return Items
+     * @return Items leather color
      */
     public Items setLeatherColor(int red, int green, int blue) {
         if (!(getItemMeta() instanceof LeatherArmorMeta))
@@ -476,7 +507,7 @@ public class Items {
      * Set Leather Color
      *
      * @param value The RGB Color
-     * @return Items
+     * @return Items leather color
      */
     public Items setLeatherColor(int value) {
         if (!(getItemMeta() instanceof LeatherArmorMeta))
@@ -492,7 +523,7 @@ public class Items {
      * Set Amount
      *
      * @param value The amount
-     * @return Items
+     * @return Items amount
      */
     public Items setAmount(int value) {
         getItem().setAmount(value);
@@ -504,7 +535,7 @@ public class Items {
      *
      * @param value Enchantment
      * @param level The level
-     * @return Items
+     * @return Items items
      */
     public Items addEnchantment(Enchantment value, int level) {
         ItemMeta itemMeta = getItemMeta();
@@ -517,7 +548,7 @@ public class Items {
      * Add PotionEffect
      *
      * @param value PotionEffect
-     * @return Items
+     * @return Items items
      */
     public Items addPotionEffect(PotionEffect value) {
         if (!(getItemMeta() instanceof PotionMeta))
@@ -532,7 +563,7 @@ public class Items {
     /**
      * Add Item glow
      *
-     * @return Items
+     * @return Items items
      */
     public Items addGlow() {
         ItemMeta itemMeta = getItemMeta();
@@ -551,7 +582,7 @@ public class Items {
      * Calls {@link #addLore(String...)}
      *
      * @param value Lore as a String
-     * @return Items
+     * @return Items items
      */
     public Items addLore(String value) {
         return addLore(new String[]{value});
@@ -561,7 +592,7 @@ public class Items {
      * Add Item to Lore
      *
      * @param value Lore as an Array
-     * @return Items
+     * @return Items items
      */
     public Items addLore(String... value) {
         ItemMeta itemMeta = getItemMeta();
@@ -576,7 +607,7 @@ public class Items {
      * Set Item Lore
      *
      * @param value Lore as a list
-     * @return Items
+     * @return Items lore
      */
     public Items setLore(List<String> value) {
         ItemMeta itemMeta = getItemMeta();
@@ -590,7 +621,7 @@ public class Items {
      * Calls {@link #setLore(List)}
      *
      * @param value Lore as an array
-     * @return Items
+     * @return Items lore
      */
     public Items setLore(String... value) {
         return setLore(value != null ? Arrays.asList(value) : new ArrayList<String>());
@@ -603,7 +634,7 @@ public class Items {
      * @param slot      Attribute's Slot
      * @param level     Attribute's Level
      * @param operation Attribute's Operation
-     * @return Items
+     * @return Items items
      */
     public Items addAttribute(String attribute, String slot, double level, String operation) {
         ItemMeta itemMeta = getItemMeta();
@@ -626,7 +657,7 @@ public class Items {
      * @param slot      Attribute's Slot
      * @param level     Attribute's level
      * @param operation Attribute's Operation
-     * @return Items
+     * @return Items items
      */
     public Items addAttribute(AttributeType attribute, Slot slot, double level, Operation operation) {
 
@@ -643,7 +674,7 @@ public class Items {
      * @param slot      Attribute's EquipmentSlot
      * @param level     Attribute's level
      * @param operation Attribute's Operation
-     * @return Items
+     * @return Items items
      */
     public Items addAttribute(org.bukkit.attribute.Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
         ItemMeta itemMeta = getItemMeta();
@@ -656,7 +687,7 @@ public class Items {
      * Set Skull Owner (Supports UUID and Names)
      *
      * @param value The Owner's name or UUID
-     * @return Items
+     * @return Items skull owner
      */
     public Items setSkullOwner(String value) {
         if (!(getItemMeta() instanceof SkullMeta))
@@ -682,7 +713,7 @@ public class Items {
      * Calls {@link #setSkullOwner(String)}
      *
      * @param value Owner's UUID
-     * @return Items
+     * @return Items skull owner
      */
     public Items setSkullOwner(UUID value) {
         return setSkullOwner(value.toString());
@@ -692,7 +723,7 @@ public class Items {
      * Set Skull Owner to a Custom URL
      *
      * @param url The URL
-     * @return Items
+     * @return Items skull skin
      */
     public Items setSkullSkin(String url) {
         SkullMeta meta = (SkullMeta) getItemMeta();
@@ -709,7 +740,7 @@ public class Items {
      * Use {@link #setDamage(int)} instead
      *
      * @param value durability
-     * @return Items
+     * @return Items durability
      */
     @Deprecated
     public Items setDurability(int value) {
@@ -720,7 +751,7 @@ public class Items {
      * Set Damage
      *
      * @param value damage
-     * @return Items
+     * @return Items damage
      */
     public Items setDamage(int value) {
         if (BimmCore.supports(13)) {
@@ -740,7 +771,7 @@ public class Items {
      * Set Item Display Name
      *
      * @param value Name
-     * @return Items
+     * @return Items display name
      */
     public Items setDisplayName(String value) {
         ItemMeta itemMeta = getItemMeta();
@@ -753,7 +784,7 @@ public class Items {
      * Add a Flag to an Item
      *
      * @param flag ItemFlag to add
-     * @return Items
+     * @return Items items
      */
     public Items addFlag(ItemFlag flag) {
         ItemMeta itemMeta = getItemMeta();

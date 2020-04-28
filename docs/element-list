@@ -1,6 +1,7 @@
 me.bimmr.bimmcore
 me.bimmr.bimmcore.commands
 me.bimmr.bimmcore.commands.helpers
+me.bimmr.bimmcore.files
 me.bimmr.bimmcore.gui.anvil
 me.bimmr.bimmcore.gui.book
 me.bimmr.bimmcore.gui.chat

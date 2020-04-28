@@ -16,6 +16,16 @@ public class MySQLManager {
     private boolean          debug;
     private HikariDataSource hikari;
 
+    /**
+     * Instantiates a new My sql manager.
+     *
+     * @param plugin   the plugin
+     * @param host     the host
+     * @param port     the port
+     * @param database the database
+     * @param username the username
+     * @param password the password
+     */
     public MySQLManager(Plugin plugin, String host, String port, String database, String username, String password) {
         this.plugin = plugin;
 
@@ -33,7 +43,7 @@ public class MySQLManager {
     /**
      * Set if MySQL should debug or not
      *
-     * @param debug
+     * @param debug the debug
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
@@ -49,9 +59,9 @@ public class MySQLManager {
     /**
      * Create the table if it doesn't exist
      *
-     * @param table
-     * @param columns
-     * @throws SQLException
+     * @param table   the table
+     * @param columns the columns
+     * @throws SQLException the sql exception
      */
     public void loadTable(String table, Column... columns) throws SQLException {
         if (debug)
@@ -77,10 +87,10 @@ public class MySQLManager {
     /**
      * Get the top UUID's with values from the table
      *
-     * @param table
-     * @param column
-     * @param positions
-     * @return
+     * @param table     the table
+     * @param column    the column
+     * @param positions the positions
+     * @return top
      */
     public TreeMap<UUID, Integer> getTop(String table, String column, int positions) {
         if (debug)
@@ -103,10 +113,10 @@ public class MySQLManager {
     /**
      * Get a value from the table
      *
-     * @param table
-     * @param column
-     * @param uuid
-     * @return
+     * @param table  the table
+     * @param column the column
+     * @param uuid   the uuid
+     * @return object
      */
     public Object get(String table, final String column, UUID uuid) {
         if (debug)
@@ -126,8 +136,9 @@ public class MySQLManager {
     /**
      * Check if a UUID is in a table
      *
-     * @param uuid
-     * @return
+     * @param table the table
+     * @param uuid  the uuid
+     * @return boolean
      */
     public boolean isInTable(String table, UUID uuid) {
         if (debug)
@@ -139,10 +150,10 @@ public class MySQLManager {
     /**
      * Put a value into the table using the uuid as a key
      *
-     * @param table
-     * @param column
-     * @param uuid
-     * @param value
+     * @param table  the table
+     * @param column the column
+     * @param uuid   the uuid
+     * @param value  the value
      */
     public void set(String table, String column, UUID uuid, Object value) {
         if (debug)
@@ -157,9 +168,9 @@ public class MySQLManager {
     /**
      * Add multiple columns to the table at a single time
      *
-     * @param table
-     * @param uuid
-     * @param set
+     * @param table the table
+     * @param uuid  the uuid
+     * @param set   the set
      */
     public void addColumns(String table, UUID uuid, Map<String, Object> set) {
         if (debug)
@@ -185,8 +196,8 @@ public class MySQLManager {
     /**
      * Alter the table to add a column
      *
-     * @param table
-     * @param column
+     * @param table  the table
+     * @param column the column
      */
     public void addColumn(String table, Column column) {
         if (debug)
@@ -297,8 +308,16 @@ public class MySQLManager {
 
     private class ValueComparator implements Comparator<UUID> {
 
+        /**
+         * The Base.
+         */
         Map<UUID, Integer> base;
 
+        /**
+         * Instantiates a new Value comparator.
+         *
+         * @param base the base
+         */
         public ValueComparator(Map<UUID, Integer> base) {
             this.base = base;
         }

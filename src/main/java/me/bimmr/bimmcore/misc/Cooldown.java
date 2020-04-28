@@ -11,6 +11,11 @@ public class Cooldown {
     // Change time to how ever long you want
     private long time;
 
+    /**
+     * Instantiates a new Cooldown.
+     *
+     * @param time the time
+     */
     public Cooldown(long time) {
         this.time = time;
     }
@@ -18,7 +23,7 @@ public class Cooldown {
     /**
      * Add the player to the cooldown
      *
-     * @param player
+     * @param player the player
      */
     public void addToCooldown(String player) {
         cooldowns.put(player, System.currentTimeMillis());
@@ -27,8 +32,8 @@ public class Cooldown {
     /**
      * Get the remaining seconds
      *
-     * @param player
-     * @return
+     * @param player the player
+     * @return time remaining
      */
     public long getTimeRemaining(String player) {
         return time - ((System.currentTimeMillis() - cooldowns.get(player)) / 1000);
@@ -37,8 +42,8 @@ public class Cooldown {
     /**
      * Gets if the player's cooldown is over
      *
-     * @param player
-     * @return
+     * @param player the player
+     * @return boolean
      */
     public boolean isCooledDown(String player) {
         if (!cooldowns.containsKey(player) || (((System.currentTimeMillis() - cooldowns.get(player)) / 1000) >= time))

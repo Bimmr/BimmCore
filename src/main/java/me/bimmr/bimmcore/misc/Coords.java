@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple way to save/load a location
+ * The type Coords.
  */
 public class Coords {
 
@@ -17,6 +17,11 @@ public class Coords {
     private int x, y, z;
     private float pitch, yaw;
 
+    /**
+     * Instantiates a new Coords.
+     *
+     * @param loc the loc
+     */
     public Coords(Location loc) {
         setWorld(loc.getWorld().getName());
         setX(loc.getBlockX());
@@ -26,6 +31,11 @@ public class Coords {
         setPitch(loc.getPitch());
     }
 
+    /**
+     * Instantiates a new Coords.
+     *
+     * @param string the string
+     */
     public Coords(String string) {
         String[] list = string.split(",");
         this.world = list[0];
@@ -39,6 +49,14 @@ public class Coords {
         }
     }
 
+    /**
+     * Instantiates a new Coords.
+     *
+     * @param world the world
+     * @param x     the x
+     * @param y     the y
+     * @param z     the z
+     */
     public Coords(World world, int x, int y, int z) {
         setWorld(world.getName());
         setX(x);
@@ -46,6 +64,16 @@ public class Coords {
         setZ(z);
     }
 
+    /**
+     * Instantiates a new Coords.
+     *
+     * @param world the world
+     * @param x     the x
+     * @param y     the y
+     * @param z     the z
+     * @param yaw   the yaw
+     * @param pitch the pitch
+     */
     public Coords(World world, int x, int y, int z, float yaw, float pitch) {
         setWorld(world.getName());
         setX(x);
@@ -54,8 +82,10 @@ public class Coords {
     }
 
     /**
-     * @param list
-     * @return Get a list of <u>Coords</u> from a list of <u>Coords#toString</u>
+     * List from string array list.
+     *
+     * @param list the list
+     * @return the array list
      */
     public static ArrayList<Coords> listFromString(List<String> list) {
         ArrayList<Coords> coords = new ArrayList<Coords>();
@@ -65,8 +95,10 @@ public class Coords {
     }
 
     /**
-     * @param list
-     * @return Get a list of <u>Coords#toString</u> from a list of <u>Coords</u>
+     * List from coords array list.
+     *
+     * @param list the list
+     * @return the array list
      */
     public static ArrayList<String> listFromCoords(List<Coords> list) {
         ArrayList<String> coords = new ArrayList<String>();
@@ -76,87 +108,86 @@ public class Coords {
     }
 
     /**
-     * @return Get the location
+     * As location location.
+     *
+     * @return the location
      */
     public Location asLocation() {
         return new Location(Bukkit.getWorld(this.world), this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     /**
-     * @return Get a location ignoring the Yaw and Pitch
+     * As location ignore yaw and pitch location.
+     *
+     * @return the location
      */
     public Location asLocationIgnoreYawAndPitch() {
         return new Location(Bukkit.getWorld(this.world), this.x, this.y, this.z);
     }
 
-    /**
-     * worldName,x,y,z,yaw,pitch
-     *
-     * @return Gets the Coord as a nicely formatted String
-     */
     @Override
     public String toString() {
         return this.world + "," + this.x + "," + this.y + "," + this.z + "," + this.yaw + "," + this.pitch;
     }
 
     /**
-     * worldName,x,y,z
+     * To string ignore yaw and pitch string.
      *
-     * @return Gets the Coord as a nicely formatted String
+     * @return the string
      */
     public String toStringIgnoreYawAndPitch() {
         return this.world + "," + this.x + "," + this.y + "," + this.z;
     }
 
     /**
-     * Get the world's name
+     * Gets world.
      *
-     * @return
+     * @return the world
      */
     public String getWorld() {
         return this.world;
     }
 
     /**
-     * Set the world name
+     * Sets world.
      *
-     * @param world
+     * @param world the world
      */
     public void setWorld(String world) {
         this.world = world;
     }
 
     /**
-     * Get the x
+     * Gets x.
      *
-     * @return
+     * @return the x
      */
     public int getX() {
         return this.x;
     }
 
     /**
-     * Set the x
+     * Sets x.
      *
-     * @param x
+     * @param x the x
      */
     public void setX(int x) {
         this.x = x;
     }
 
     /**
-     * Get the Y
+     * Gets y.
      *
-     * @return
+     * @return the y
      */
     public int getY() {
         return this.y;
     }
 
     /**
-     * Set the Y
+     * Sets y.
      *
-     * @param y
+     * @param y the y
      */
     public void setY(int y) {
         this.y = y;
@@ -164,18 +195,18 @@ public class Coords {
 
 
     /**
-     * Get the Z
+     * Gets z.
      *
-     * @return
+     * @return the z
      */
     public int getZ() {
         return this.z;
     }
 
     /**
-     * Set the Z
+     * Sets z.
      *
-     * @param z
+     * @param z the z
      */
     public void setZ(int z) {
         this.z = z;
@@ -183,36 +214,36 @@ public class Coords {
 
 
     /**
-     * Get the pitch
+     * Gets pitch.
      *
-     * @return
+     * @return the pitch
      */
     public float getPitch() {
         return this.pitch;
     }
 
     /**
-     * Set the pitch
+     * Sets pitch.
      *
-     * @param pitch
+     * @param pitch the pitch
      */
     public void setPitch(float pitch) {
         this.pitch = pitch;
     }
 
     /**
-     * Get the Yaw
+     * Gets yaw.
      *
-     * @return
+     * @return the yaw
      */
     public float getYaw() {
         return this.yaw;
     }
 
     /**
-     * Set the Yaw
+     * Sets yaw.
      *
-     * @param yaw
+     * @param yaw the yaw
      */
     public void setYaw(float yaw) {
         this.yaw = yaw;
