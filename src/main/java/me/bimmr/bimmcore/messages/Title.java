@@ -18,30 +18,27 @@ import java.util.HashMap;
  * Created by Randy on 05/09/16.
  */
 
-class TitleExample {
-
-    public TitleExample() {
-
-        //Create a scroller so the timed event has something to do
-        final Scroller scroller = new Scroller("Testing Titles", 10, 3);
-
-        //Create the timed event
-        TimedEvent timedEvent = new TimedEvent(1) {
-            @Override
-            public void run() {
-                MessageDisplay display = (MessageDisplay) getAttachedObject();
-                display.setText(scroller.next());
-            }
-        };
-
-        //Create the title
-        MessageDisplay display = new Title(scroller.current(), 10, timedEvent);
-
-        //Send the title
-        display.send(null);
-    }
-
-}
+//class TitleExample {
+//
+//        //Create a scroller so the timed event has something to do
+//        final Scroller scroller = new Scroller("Testing Titles", 10, 3);
+//
+//        //Create the timed event
+//        TimedEvent timedEvent = new TimedEvent(1) {
+//            @Override
+//            public void run() {
+//                MessageDisplay display = (MessageDisplay) getAttachedObject();
+//                display.setText(scroller.next());
+//            }
+//        };
+//
+//        //Create the title
+//        MessageDisplay display = new Title(scroller.current(), 10, timedEvent);
+//
+//        //Send the title
+//        display.send(null);
+//
+//}
 
 public class Title extends MessageDisplay {
     private static HashMap<String, BukkitTask> tasks    = new HashMap<>();
