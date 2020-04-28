@@ -6,6 +6,7 @@ import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,16 +22,16 @@ import java.util.List;
  * Created by Randy on 02/06/17.
  */
 
-class BookExample {
-    public BookExample() {
-        Book book = new Book()
-                .addLine(new FancyMessage("Hello"))
-                .setLine(5, new FancyMessage("Line 5"))
-                .addBlankLine()
-                .addLine(new FancyMessage("Test"));
-
-    }
-}
+//class BookExample {
+//    public BookExample() {
+//        Book book = new Book()
+//                .addLine(new FancyMessage("Hello"))
+//                .setLine(5, new FancyMessage("Line 5"))
+//                .addBlankLine()
+//                .addLine(new FancyMessage("Test"));
+//
+//    }
+//}
 
 public class Book {
 
@@ -62,7 +63,7 @@ public class Book {
      * Add a line
      * Calls {@link #addLine(FancyMessage)}
      *
-     * @param line The Line
+     * @param line    The Line
      * @param message The Fancy Message
      * @return The Book
      */
@@ -168,7 +169,7 @@ public class Book {
         private static Class<?> chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
         private static Class<?> packetDataSerializer = Reflection.getNMSClass("PacketDataSerializer");
         private static Class<?> craftMetaBook = Reflection.getCraftClass("inventory.CraftMetaBook");
-        private static Class<?> packetPlayOutCustomPayLoad;
+        private static Class<?> packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
         private static Class<?> craftKeyClass;
         private static Class<?> enumHandClass;
         private static Class<?> packetPlayOutOpenBookClass;
@@ -192,12 +193,10 @@ public class Book {
                 Method value = Reflection.getMethod(enumHandClass, "valueOf", String.class);
                 mainHandEnum = Reflection.invokeMethod(value, null, "MAIN_HAND");
             } else if (BimmCore.supports(13)) {
-                packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
+                packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, craftKeyClass, packetDataSerializer);
                 craftKeyClass = Reflection.getNMSClass("MinecraftKey");
                 craftKeyConstructor = Reflection.getConstructor(craftKeyClass, String.class);
             } else {
-                packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, craftKeyClass, packetDataSerializer);
-                packetPlayOutCustomPayLoad = Reflection.getNMSClass("PacketPlayOutCustomPayload");
                 packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, String.class, packetDataSerializer);
             }
         }
@@ -243,10 +242,12 @@ public class Book {
                     sb = new StringBuilder();
                     sb.append(prefix);
                 }
+
+
                 FancyMessage fm = lines.get(i);
                 String part = fm.toJSON();
-
                 part = "[\"\", " + part + ",{\"text\":\"\\n\"}]";
+
                 if (i != lines.size() - 1)
                     part += ",";
                 sb.append(part);
