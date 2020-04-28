@@ -15,9 +15,10 @@ public class ChatOption {
 
     public ChatOption(String text, FancyClickEvent clickEvent) {
         this.text = text;
+        this.fancyMessage = new FancyMessage(text);
 
         if (clickEvent != null)
-            this.fancyMessage = new FancyMessage(text).onClick(clickEvent);
+            this.fancyMessage.onClick(clickEvent);
     }
 
     public String getText() {
