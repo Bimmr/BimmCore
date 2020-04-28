@@ -13,30 +13,23 @@ import org.bukkit.entity.Player;
 /**
  * Created by Randy on 9/23/2015.
  */
-class FancyMessageExample {
-    public FancyMessageExample() {
-        Player player = null;
-
-        //Create the fancy message
-        FancyMessage fancy = new FancyMessage("!").then("Click Here").suggest("Clicked");
-        fancy.then(" Hover Here").tooltip("Hovered");
-
-        //Send the fancy message
-        fancy.send(player);
-    }
-}
+//class FancyMessageExample {
+//    public FancyMessageExample() {
+//        Player player = null;
+//
+//        //Create the fancy message
+//        FancyMessage fancy = new FancyMessage("!").then("Click Here").suggest("Clicked");
+//        fancy.then(" Hover Here").tooltip("Hovered");
+//
+//        //Send the fancy message
+//        fancy.send(player);
+//    }
+//}
 
 public class FancyMessage {
 
     private BaseComponent[] built;
     private ComponentBuilder builder;
-
-    public static FancyMessage getFromJSON(String json) {
-        FancyMessage fm = new FancyMessage();
-
-
-        return fm;
-    }
 
     /**
      * Default Constructor
@@ -168,7 +161,9 @@ public class FancyMessage {
      * @return Get all the BaseComponents
      */
     public BaseComponent[] getBaseComponents() {
-        return this.builder.create();
+        if (built == null)
+            built = builder.create();
+        return this.built;
     }
 
     /**
@@ -197,11 +192,11 @@ public class FancyMessage {
     public String toPlainText() {
         if (built == null)
             built = builder.create();
-        String plainTxt = "";
+        StringBuilder plainTxt = new StringBuilder();
         for (BaseComponent component : built)
-            plainTxt += component.toPlainText();
+            plainTxt.append(component.toPlainText());
 
-        return plainTxt;
+        return plainTxt.toString();
     }
 
 
