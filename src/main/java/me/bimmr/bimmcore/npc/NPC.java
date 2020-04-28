@@ -1,28 +1,34 @@
 package me.bimmr.bimmcore.npc;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.hologram.Viewer;
+import me.bimmr.bimmcore.reflection.Viewer;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * The type Npc.
  */
-@Deprecated
 public class NPC {
+
+    private static HashMap<Object, String[]> skins = new HashMap<>();
 
     private GameProfile gameProfile;
     private String name;
@@ -30,6 +36,7 @@ public class NPC {
     private HashMap<ItemSlots, ItemStack> equipment = new HashMap<>();
 
     private Object entityPlayer;
+    private int id;
     private Viewer viewer;
 
     private NPCClickEvent npcClickEvent;
@@ -46,11 +53,12 @@ public class NPC {
         this.gameProfile = new GameProfile(UUID.randomUUID(), name);
 
         create();
+        setSkin(name);
         this.viewer = new Viewer() {
 
             public void update(Player p) {
                 NPC.NPCAPI.destroy(NPC.this, p);
-                NPC.NPCAPI.show(NPC.this.entityPlayer, p);
+                NPC.NPCAPI.show(NPC.this, p);
                 NPC.NPCAPI.setRotation(NPC.this.entityPlayer, p, NPC.this.location.getYaw());
                 for (Map.Entry<NPC.ItemSlots, ItemStack> e : NPC.this.getEquipment().entrySet())
                     NPC.NPCAPI.equip(NPC.this.entityPlayer, p, e.getKey(), e.getValue());
@@ -71,20 +79,9 @@ public class NPC {
      * @param npcClickEvent The ClickEvent
      */
     public void setNPCClickEvent(NPCClickEvent npcClickEvent) {
-        if (this.npcClickEvent != null && npcClickEvent == null)
-            HandlerList.unregisterAll(this.npcClickEvent);
-
         this.npcClickEvent = npcClickEvent;
         if (this.npcClickEvent != null)
             this.npcClickEvent.setup(this);
-    }
-
-    /**
-     * Remove The NPCClickEvent
-     * Calls {@link #setNPCClickEvent(NPCClickEvent)}
-     */
-    public void removeNPCClickEvent() {
-        setNPCClickEvent(null);
     }
 
     /**
@@ -123,7 +120,6 @@ public class NPC {
      * @param name the name
      */
     public void setName(String name) {
-        destroy();
         this.name = name;
 
         Property skin = this.getSkin();
@@ -131,46 +127,70 @@ public class NPC {
         if (skin != null)
             this.gameProfile.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
 
+    }
+
+    public void refresh() {
+        destroy();
         create();
     }
 
     /**
      * Sets skin.
      *
-     * @param value the value
+     * @param nameOrUUID The player's name or
      */
-//TODO: Find out why this doesn't work
-    public void setSkin(String value) {
-        destroy();
-        System.out.println(value);
-        if (value.startsWith("http://") || value.startsWith("https://")) {
-
-            System.out.println("Creating URL Skin: " + value);
-            this.gameProfile.getProperties().put("textures", new Property("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + value + "\"}}}")));
+    public void setSkin(String nameOrUUID) {
+        if (skins.containsKey(nameOrUUID)) {
+            this.gameProfile.getProperties().removeAll("textures");
+            this.gameProfile.getProperties().put("textures", new Property("textures", skins.get(nameOrUUID)[0], skins.get(nameOrUUID)[1]));
         } else {
-            System.out.println("Creating Temp Player for skin: " + value);
-            GameProfile temp = new GameProfile(UUID.randomUUID(), value);
-            Property skin = (Property) temp.getProperties().get("textures").toArray()[0];
-            if (skin != null)
-                this.gameProfile.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
-        }
+            try {
+                String value = nameOrUUID;
+                if (!value.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")) {
+                    URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + value);
+                    InputStreamReader reader = new InputStreamReader(url.openStream());
+                    value = new JsonParser().parse(reader).getAsJsonObject().get("id").getAsString();
+                    reader.close();
+                }
 
-        create();
+                URL url2 = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + value
+                        + "?unsigned=false");
+                InputStreamReader reader2 = new InputStreamReader(url2.openStream());
+                JsonObject prop = new JsonParser().parse(reader2).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
+                reader2.close();
+                String tex = prop.get("value").getAsString();
+                String sig = prop.get("signature").getAsString();
+                this.gameProfile.getProperties().removeAll("textures");
+                this.gameProfile.getProperties().put("textures", new Property("textures", tex, sig));
+                skins.put(nameOrUUID, new String[]{tex, sig});
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setSkin(String texture, String signature) {
+        this.gameProfile.getProperties().removeAll("textures");
+        this.gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
+    }
+
+
+    public NPCClickEvent getNpcClickEvent() {
+        return npcClickEvent;
     }
 
     private void create() {
-        System.out.println("Creating New NPC");
         this.entityPlayer = NPCAPI.create(this);
-        System.out.println("New Entity: " + this.entityPlayer);
+        this.id = NPCAPI.getEntityID(this.entityPlayer);
         NPCAPI.setLocation(this.entityPlayer, this.location);
 
         if (this.viewer != null)
             this.viewer.update();
 
-        if (this.npcClickEvent != null) {
-            HandlerList.unregisterAll(this.npcClickEvent);
+        if (this.npcClickEvent != null)
             this.npcClickEvent.setup(this);
-        }
+
+        NPCManager.register(this);
     }
 
     /**
@@ -186,9 +206,13 @@ public class NPC {
      * Destroy the NPC for all players
      */
     private void destroy() {
-        System.out.println("Destroying");
-        for (String p : this.viewer.getPlayers())
-            NPCAPI.destroy(this, Bukkit.getPlayer(p));
+        if (this.entityPlayer != null && this.viewer != null)
+            for (String p : this.viewer.getPlayers())
+                NPCAPI.destroy(this, Bukkit.getPlayer(p));
+
+        this.entityPlayer = null;
+
+        NPCManager.unregister(this);
     }
 
     /**
@@ -232,14 +256,6 @@ public class NPC {
         return this.gameProfile;
     }
 
-    /**
-     * Set the NPC's GameProfile
-     *
-     * @param gameProfile The GameProfile
-     */
-    public void setGameProfile(GameProfile gameProfile) {
-        this.gameProfile = gameProfile;
-    }
 
     /**
      * Gets id.
@@ -247,7 +263,7 @@ public class NPC {
      * @return Get The NPC's Id
      */
     public int getId() {
-        return Reflection.getEntityID(entityPlayer.getClass(), this.entityPlayer);
+        return this.id;
     }
 
     /**
@@ -267,6 +283,10 @@ public class NPC {
      */
     public String getName() {
         return this.name;
+    }
+
+    public boolean isShown(Player player) {
+        return this.entityPlayer != null && this.viewer.isViewing(player.getName());
     }
 
 
@@ -386,16 +406,20 @@ public class NPC {
          * @param player The Player
          */
         public static void show(Object entity, Player player) {
+            if (entity instanceof NPC)
+                entity = ((NPC) entity).entityPlayer;
+
             Object[] entities = (Object[]) Array.newInstance(entityPlayerClass, 1);
             entities[0] = entity;
             Constructor<?> packetPlayOutPlayerInfoConstructor = Reflection.getConstructor(packetPlayOutPlayerInfoClass, enumPlayerInfoActionClass, entities.getClass());
             Object packetPlayOutPlayerInfoAdd = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumAdd, entities);
             Object packetPlayOutNamedEntitySpawn = Reflection.newInstance(packetPlayOutNamedEntitySpawnConstructor, entity);
             Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
+//            PacketPlayOutEntityMetadata p = new PacketPlayOutEntityMetadata(getEntityID(entity), ((EntityPlayer)entity).getDataWatcher(), true);
             Packets.sendPacket(player, packetPlayOutPlayerInfoAdd, packetPlayOutNamedEntitySpawn);
 
             Bukkit.getScheduler().runTaskLater(BimmCore.getInstance(), () ->
-                    Packets.sendPacket(player, packetPlayOutPlayerInfoRemove), 200);
+                    Packets.sendPacket(player, packetPlayOutPlayerInfoRemove), 20);
         }
 
         /**
@@ -434,7 +458,7 @@ public class NPC {
                     break;
             }
             Object craftItem = getCraftItemStack(item);
-            int id = Reflection.getEntityID(entityHumanClass, entity);
+            int id = getEntityID(entity);
             Object packetPlayOutEntityEquipment = Reflection.newInstance(packetPlayOutEntityEquipmentConstructor, id, oSlot, craftItem);
             Packets.sendPacket(player, packetPlayOutEntityEquipment);
         }
@@ -468,6 +492,11 @@ public class NPC {
             Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
             Object playOutEntityDestroyPacket = Reflection.newInstance(playOutEntityDestroyConstructor, new int[]{npc.getId()});
             Packets.sendPacket(player, packetPlayOutPlayerInfoRemove, playOutEntityDestroyPacket);
+        }
+
+        public static int getEntityID(Object entityPlayer) {
+            int id = (int) Reflection.invokeMethod(entityPlayerClass, "getId", entityPlayer);
+            return id;
         }
     }
 }

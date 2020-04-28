@@ -1,6 +1,5 @@
 package me.bimmr.bimmcore.reflection;
 
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -74,17 +73,6 @@ public class Reflection {
         }
 
         return null;
-    }
-
-    /**
-     * Get the EntityID of the entity
-     *
-     * @param c      the c
-     * @param entity the entity
-     * @return entity id
-     */
-    public static int getEntityID(Class<?> c, Object entity) {
-        return (Integer) Reflection.invokeMethod(c, "getId", entity);
     }
 
     /**

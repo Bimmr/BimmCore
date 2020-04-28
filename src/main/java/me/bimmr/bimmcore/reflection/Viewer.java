@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.hologram;
+package me.bimmr.bimmcore.reflection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,5 +93,9 @@ public abstract class Viewer implements Listener {
     public void removePlayer(String player) {
         getPlayers().remove(player);
         onRemoveFromView(Bukkit.getPlayer(player));
+    }
+
+    public boolean isViewing(String player){
+        return getPlayers().contains(player);
     }
 }
