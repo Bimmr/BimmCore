@@ -1,6 +1,8 @@
 package me.bimmr.bimmcore;
 
 import me.bimmr.bimmcore.files.Config;
+import me.bimmr.bimmcore.items.Items;
+import me.bimmr.bimmcore.items.helpers.GlowEnchant;
 import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
 import me.bimmr.bimmcore.files.FileManager;
@@ -45,7 +47,7 @@ public class BimmCore extends JavaPlugin implements Listener {
     }
 
     /**
-     * @param plugin The Plugin's Insance
+     * @param plugin        The Plugin's Insance
      * @param versionNeeded The version needed
      * @return If the BimmCore version is equal or newer
      */
@@ -91,7 +93,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (e.getMessage().contains("BTest Menu")) {
+       /* if (e.getMessage().contains("BTest Menu")) {
             Menu menu = new Menu("Test");
             menu.addItem(new ItemStack(Material.GOLD_BLOCK), "Testing Add");
             menu.setItem(1, 3, new ItemStack(Material.BOOK), "Testing Set");
@@ -109,6 +111,7 @@ public class BimmCore extends JavaPlugin implements Listener {
             book.addLine("Test");
             book.addBlankLine();
             book.setLine(3, "testing Set");
+
             book.addLine(new FancyMessage("test").onClick(new FancyClickEvent() {
                 @Override
                 public void onClick() {
@@ -167,7 +170,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                     ((MessageDisplay) getAttachedObject()).setText(scroller.next());
                 }
             }).send(e.getPlayer());
-        }
+        }*/
 
     }
 
