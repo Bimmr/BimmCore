@@ -62,28 +62,28 @@ public class Items {
     /**
      * Load the item from a string
      * <p>
-     * item:TYPE | gun:GUNNAME
-     * amount:AMOUNT
-     * damage:DAMAGE
-     * name:NAME
-     * lore:LORE
-     * enchantment:ENCHANTMENT,VALUE
-     * flag:FLAG
-     * display:DISPLAY
-     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION
-     * potion:POTION,DURATION|EXTENDED,STRENGTH|UPGRADED
-     * leather-colour:RRR,GGG,BBB
-     * book-author:BOOK_AUTHOR
-     * book-title:BOOK_TITLE
-     * book-page:BOOK_PAGE
-     * banner:PATTERN,COLOR
-     * firework:FIREWORK,TRAIL,FLICKER
-     * firework-color:RRR,GGG,BBB
-     * firework-fade-color:RRR,GGG,BBB
-     * owner:OWNER
-     * stored-enchantment:STORED_ENCHANTMENT,VALUE
-     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR
-     * unbreakable
+     * item:TYPE | gun:GUNNAME<br>
+     * amount:AMOUNT<br>
+     * damage:DAMAGE<br>
+     * name:NAME<br>
+     * lore:LORE<br>
+     * enchantment:ENCHANTMENT,VALUE<br>
+     * flag:FLAG<br>
+     * display:DISPLAY<br>
+     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION<br>
+     * potion:POTION,[DURATION|EXTENDED],[STRENGTH|UPGRADED]<br>
+     * leather-colour:RRR,GGG,BBB<br>
+     * book-author:BOOK_AUTHOR<br>
+     * book-title:BOOK_TITLE<br>
+     * book-page:BOOK_PAGE<br>
+     * banner:PATTERN,COLOR<br>
+     * firework:FIREWORK,TRAIL,FLICKER<br>
+     * firework-color:RRR,GGG,BBB<br>
+     * firework-fade-color:RRR,GGG,BBB<br>
+     * owner:[OWNER|UUID|URL]<br>
+     * stored-enchantment:STORED_ENCHANTMENT,VALUE<br>
+     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR<br>
+     * unbreakable<br>
      * glow
      *
      * @param string The Item Code
@@ -791,29 +791,29 @@ public class Items {
     /**
      * Get the item as a string
      * <p>
-     * item:TYPE | gun:GUNNAME
-     * amount:AMOUNT
-     * damage:DAMAGE
-     * name:NAME
-     * lore:LORE
-     * enchantment:ENCHANTMENT,VALUE
-     * flag:FLAG
-     * display:DISPLAY
-     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION
-     * potion:POTION,DURATION|EXTENDED,STRENGTH|UPGRADED
-     * leather-colour:RRR,GGG,BBB
-     * book-author:BOOK_AUTHOR
-     * book-title:BOOK_TITLE
-     * book-page:BOOK_PAGE
-     * banner:PATTERN,COLOR
-     * firework:FIREWORK,TRAIL,FLICKER
-     * firework-color:RRR,GGG,BBB
-     * firework-fade-color:RRR,GGG,BBB
-     * owner:OWNER
-     * stored-enchantment:STORED_ENCHANTMENT,VALUE
-     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR
-     * unbreakable
-     * glow
+     * item:TYPE | gun:GUNNAME<br>
+     * amount:AMOUNT<br>
+     * damage:DAMAGE<br>
+     * name:NAME<br>
+     * lore:LORE<br>
+     * enchantment:ENCHANTMENT,VALUE<br>
+     * flag:FLAG<br>
+     * display:DISPLAY<br>
+     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION<br>
+     * potion:POTION,[DURATION|EXTENDED],[STRENGTH|UPGRADED]<br>
+     * leather-colour:RRR,GGG,BBB<br>
+     * book-author:BOOK_AUTHOR<br>
+     * book-title:BOOK_TITLE<br>
+     * book-page:BOOK_PAGE<br>
+     * banner:PATTERN,COLOR<br>
+     * firework:FIREWORK,TRAIL,FLICKER<br>
+     * firework-color:RRR,GGG,BBB<br>
+     * firework-fade-color:RRR,GGG,BBB<br>
+     * owner:[OWNER|UUID|URL]<br>
+     * stored-enchantment:STORED_ENCHANTMENT,VALUE<br>
+     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR<br>
+     * unbreakable<br>
+     * glow<br>
      *
      * @return Get the item as a string
      */
@@ -863,19 +863,18 @@ public class Items {
             //Enchantments
             if (getItem().getEnchantments().size() > 0) {
 
-                //Test names first
-                for (Map.Entry<Enchantment, Integer> entry : getItem().getEnchantments().entrySet())
-                    if (!entry.getKey().getName().equals("bimmcore_glow"))
-                        string.append(" enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
-                    else
-                        string.append(" glow");
-
-                //Then test Keys
-                for (Map.Entry<Enchantment, Integer> entry : getItem().getEnchantments().entrySet())
-                    if (!entry.getKey().getKey().getKey().equals("bimmcore_glow"))
-                        string.append(" enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
-                    else
-                        string.append(" glow");
+                if (BimmCore.supports(13))
+                    for (Map.Entry<Enchantment, Integer> entry : getItemMeta().getEnchants().entrySet())
+                        if (!entry.getKey().getKey().getKey().equals("bimmcore_glow"))
+                            string.append(" enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
+                        else
+                            string.append(" glow");
+                else
+                    for (Map.Entry<Enchantment, Integer> entry : getItemMeta().getEnchants().entrySet())
+                        if (!entry.getKey().getName().equals("bimmcore_glow"))
+                            string.append(" enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
+                        else
+                            string.append(" glow");
 
             }
 
@@ -969,13 +968,12 @@ public class Items {
             if (itemMeta instanceof EnchantmentStorageMeta) {
                 EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) itemMeta;
 
-                if (BimmCore.supports(13)) {
+                if (BimmCore.supports(13))
                     for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
                         string.append(" stored-enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
-                } else {
+                else
                     for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
                         string.append(" stored-enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
-                }
             }
 
             //Tropical Fish
