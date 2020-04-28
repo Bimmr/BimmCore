@@ -1,7 +1,8 @@
 package me.bimmr.bimmcore.hologram;
 
-import me.bimmr.bimmcore.timed.TimedObject;
-import me.bimmr.bimmcore.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
+import me.bimmr.bimmcore.utils.timed.TimedEvent;
+import me.bimmr.bimmcore.reflection.Viewer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

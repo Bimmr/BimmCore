@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.timed;
+package me.bimmr.bimmcore.utils.timed;
 
 /**
  * Created by Randy on 05/23/16.

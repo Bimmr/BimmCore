@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.timed;
+package me.bimmr.bimmcore.utils.timed;
 
 import me.bimmr.bimmcore.BimmCore;
 import org.bukkit.plugin.Plugin;

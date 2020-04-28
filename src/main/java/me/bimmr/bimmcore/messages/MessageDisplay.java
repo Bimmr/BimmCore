@@ -1,6 +1,6 @@
 package me.bimmr.bimmcore.messages;
 
-import me.bimmr.bimmcore.timed.TimedObject;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.entity.Player;
 
 /**

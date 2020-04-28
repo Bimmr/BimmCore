@@ -1,8 +1,7 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.timed.TimedEvent;
-import me.bimmr.bimmcore.misc.Scroller;
+import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.entity.Player;

@@ -2,8 +2,8 @@ package me.bimmr.bimmcore.scoreboard;
 
 import com.google.common.base.Splitter;
 import me.bimmr.bimmcore.utils.StringUtil;
-import me.bimmr.bimmcore.timed.TimedObject;
-import me.bimmr.bimmcore.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
+import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
