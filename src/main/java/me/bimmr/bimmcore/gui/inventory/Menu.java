@@ -46,6 +46,8 @@ public class Menu {
     private ArrayList<ArrayList<ItemStack>> pages = new ArrayList<>();
     private ArrayList<Inventory> inventories = new ArrayList<>();
     private HashMap<Integer[], ItemStack> toSetItems = new HashMap<>();
+
+    private HashMap<String, ClickEvent> oldClickEvent = new HashMap<>();
     private HashMap<UUID, ClickEvent> clickEvents = new HashMap<>();
 
     /**
@@ -314,7 +316,7 @@ public class Menu {
      *
      * @param page       The page to add the item to
      * @param itemStack  The ItemStack to add
-     * @param clickEvent The ClickEvent (Supported in versions since MC 1.13)
+     * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
     public Menu addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
@@ -323,7 +325,8 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
-            }
+            }else
+                this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
         while (page < this.pages.size() && ((this.bordered && (this.pages.get(page)).size() >= 28) || (!this.bordered && (this.pages.get(page)).size() >= 45)))
             page++;
         while (this.pages.size() < page)
@@ -809,6 +812,8 @@ public class Menu {
             UUID id = SingleClickEventUtil.getUUIDFromTag(itemStack);
             if (id != null)
                 return this.clickEvents.get(id);
+        }else{
+            return this.oldClickEvent.get(new Items(itemStack).toString());
         }
         return null;
     }
