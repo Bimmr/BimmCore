@@ -30,13 +30,13 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.util.*;
 
-class Example {
-    public Example() {
-        String itemCode = "id:LEATHER_SWORD damage:100 name:&5Sword lore:This lore:Is lore:Sparta leather-color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
-        Items item = new Items(itemCode);
-        ItemStack itemStack = item.getItem();
-    }
-}
+//class Example {
+//    public Example() {
+//        String itemCode = "id:LEATHER_SWORD damage:100 name:&5Sword lore:This lore:Is lore:Sparta leather-color:150,5,100 attribute:ATTACK_SPEED,MAIN_HAND,10,ADD_NUMBER";
+//        Items item = new Items(itemCode);
+//        ItemStack itemStack = item.getItem();
+//    }
+//}
 
 public class Items {
 
@@ -837,11 +837,11 @@ public class Items {
             ItemMeta itemMeta = getItemMeta();
 
             //Durability/Damage
-            if (itemMeta instanceof Damageable) {
+            if (BimmCore.supports(13) && itemMeta instanceof Damageable) {
                 Damageable damageable = (Damageable) itemMeta;
                 if (damageable.hasDamage())
                     string.append(" data:").append(damageable.getDamage());
-            } else if (BimmCore.supports(13)) {
+            } else {
                 if (getItem().getDurability() != 0)
                     string.append(" data:").append(getItem().getDurability());
 
@@ -888,15 +888,16 @@ public class Items {
             }
 
             if (BimmCore.supports(13)) {
-                if (this.itemAttributes != null)
-                    for (me.bimmr.bimmcore.items.attributes.Attribute attribute : this.itemAttributes.getAttributes())
-                        string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
-            } else {
                 if (itemMeta.hasAttributeModifiers()) {
                     for (Map.Entry<org.bukkit.attribute.Attribute, AttributeModifier> entry : itemMeta.getAttributeModifiers().entries()) {
                         AttributeModifier attributeModifier = entry.getValue();
                         string.append(" attribute:").append(attributeModifier.getName()).append(",").append(attributeModifier.getSlot()).append(",").append(attributeModifier.getAmount()).append(",").append(attributeModifier.getOperation().name());
                     }
+                } else {
+                    if (this.itemAttributes != null)
+                        for (me.bimmr.bimmcore.items.attributes.Attribute attribute : this.itemAttributes.getAttributes())
+                            string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
+
                 }
             }
 
