@@ -507,9 +507,9 @@ public class Items {
      * @return Items
      */
     public Items addEnchantment(Enchantment value, int level) {
-        //ItemMeta itemMeta = getItemMeta();
-        getItem().addUnsafeEnchantment(value, level);
-        //setItemMeta(itemMeta);
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.addEnchant(value, level, true);
+        setItemMeta(itemMeta);
         return this;
     }
 
@@ -531,14 +531,17 @@ public class Items {
 
     /**
      * Add Item glow
-     * Only supports versions since MC 1.13
      *
      * @return Items
      */
     public Items addGlow() {
         ItemMeta itemMeta = getItemMeta();
-        if (GlowEnchant.getGlowEnchantment() != null)
+        if (BimmCore.supports(13)) {
             itemMeta.addEnchant(GlowEnchant.getGlowEnchantment(), 1, true);
+        } else {
+            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            addEnchantment(Enchantment.values()[0], 1);
+        }
         setItemMeta(itemMeta);
         return this;
     }
