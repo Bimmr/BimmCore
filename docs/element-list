@@ -18,5 +18,5 @@ me.bimmr.bimmcore.mysql
 me.bimmr.bimmcore.npc
 me.bimmr.bimmcore.reflection
 me.bimmr.bimmcore.scoreboard
-me.bimmr.bimmcore.timed
+me.bimmr.bimmcore.utils.timed
 me.bimmr.bimmcore.utils
