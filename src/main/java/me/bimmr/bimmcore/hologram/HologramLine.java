@@ -1,8 +1,8 @@
 package me.bimmr.bimmcore.hologram;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.timed.TimedObject;
-import me.bimmr.bimmcore.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
+import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.Bukkit;
@@ -244,10 +244,12 @@ public class HologramLine extends TimedObject {
             Reflection.invokeMethod(setCustomNameVisibleMethod, entityArmorStand, true);
             Reflection.invokeMethod(setInvisibleMethod, entityArmorStand, true);
 
-            Object id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+            Object id = getEntityID(entityArmorStand);
             return new Object[]{id, entityArmorStand};
         }
-
+        public static int getEntityID(Object entityPlayer) {
+            return (int) Reflection.invokeMethod(nmsArmorStandClass, "getId", entityPlayer);
+        }
         /**
          * Show the ArmorStand to the player
          *
@@ -269,7 +271,7 @@ public class HologramLine extends TimedObject {
          */
         public static void showMetaDataToPlayer(Object entityArmorStand, Player p) {
             if (BimmCore.supports(15)) {
-                Object id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+                Object id = getEntityID(entityArmorStand);
                 Object dataWatcher = Reflection.invokeMethod(getDataWatcherMethod, entityArmorStand);
                 Object packetPlayOutEntityMetaData = Reflection.newInstance(packetPlayOutEntityMetadataConstructor, id, dataWatcher, true);
                 Packets.sendPacket(p, packetPlayOutEntityMetaData);
@@ -293,7 +295,7 @@ public class HologramLine extends TimedObject {
          * @param entityArmorStand The ArmorStand
          */
         public static void deleteHologram(Object entityArmorStand) {
-            int id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
+            int id = getEntityID(entityArmorStand);
             for (Player p : Bukkit.getOnlinePlayers())
                 deleteHologram(id, p);
         }
@@ -306,7 +308,7 @@ public class HologramLine extends TimedObject {
          * @param p                The player
          */
         public static void deleteHologram(Object entityArmorStand, Player p) {
-            deleteHologram(Reflection.getEntityID(nmsArmorStandClass, entityArmorStand), p);
+            deleteHologram(getEntityID(entityArmorStand), p);
         }
 
         /**
