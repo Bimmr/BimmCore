@@ -25,9 +25,9 @@ public class SingleClickEventUtil {
         UUIDItemTagType uUIDItemTagType = new UUIDItemTagType();
         ItemMeta im = item.getItemMeta();
         if (BimmCore.supports(14))
-            im.getCustomTagContainer().setCustomTag(key, uUIDItemTagType, id);
-        else
             im.getPersistentDataContainer().set(key, PersistentDataType.STRING, id.toString());
+        else
+            im.getCustomTagContainer().setCustomTag(key, uUIDItemTagType, id);
         item.setItemMeta(im);
         return item;
     }
@@ -41,13 +41,16 @@ public class SingleClickEventUtil {
         UUIDItemTagType uUIDItemTagType = new UUIDItemTagType();
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (BimmCore.supports(14)) {
+            if (itemMeta.getPersistentDataContainer().has(key, PersistentDataType.STRING))
+                return UUID.fromString(itemMeta.getPersistentDataContainer().get(key, PersistentDataType.STRING));
+
+        } else {
             CustomItemTagContainer tagContainer = itemMeta.getCustomTagContainer();
             if (tagContainer.hasCustomTag(key, uUIDItemTagType)) {
                 UUID id = tagContainer.getCustomTag(key, uUIDItemTagType);
                 return id;
             }
-        } else if (itemMeta.getPersistentDataContainer().has(key, PersistentDataType.STRING))
-            return UUID.fromString(itemMeta.getPersistentDataContainer().get(key, PersistentDataType.STRING));
+        }
         return null;
     }
 }

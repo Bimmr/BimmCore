@@ -170,7 +170,7 @@ public class HologramLine extends TimedObject {
 
         private static Class<?> packetPlayOutSpawnEntityLivingClass = Reflection.getNMSClass("PacketPlayOutSpawnEntityLiving");
         private static Class<?> packetPlayOutEntityDestroyClass = Reflection.getNMSClass("PacketPlayOutEntityDestroy");
-        private static Class<?> packetPlayOutEntityMetadataClass = Reflection.getNMSClass("PacketPlayOutEntityMetadata");
+        private static Class<?> packetPlayOutEntityMetadataClass;
 
         private static Constructor chatComponentTextConstructor = Reflection.getConstructor(chatComponentText, String.class);
         private static Constructor packetPlayOutSpawnEntityLivingConstructor = Reflection.getConstructor(packetPlayOutSpawnEntityLivingClass, nmsEntityLivingClass);
@@ -196,6 +196,7 @@ public class HologramLine extends TimedObject {
                 setCustomNameMethod = Reflection.getMethod(nmsEntityClass, "setCustomName", String.class);
             }
             if (BimmCore.supports(15)) {
+                packetPlayOutEntityMetadataClass = Reflection.getNMSClass("PacketPlayOutEntityMetadata");
                 packetPlayOutEntityMetadataConstructor = Reflection.getConstructor(packetPlayOutEntityMetadataClass, int.class, nmsDataWatcherClass, boolean.class);
                 getDataWatcherMethod = Reflection.getMethod(nmsEntityClass, "getDataWatcher");
             }
@@ -236,12 +237,12 @@ public class HologramLine extends TimedObject {
                 Reflection.invokeMethod(setLocationMethod, entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
             }
 
-            if (BimmCore.supports(13)){
-                Reflection.invokeMethod(setCustomNameVisibleMethod, entityArmorStand, true);
-                Reflection.invokeMethod(setInvisibleMethod, entityArmorStand, true);
-            }else {
+            if (BimmCore.supports(13))
                 Reflection.invokeMethod(setNoGravityMethod, entityArmorStand, true);
-            }
+
+
+            Reflection.invokeMethod(setCustomNameVisibleMethod, entityArmorStand, true);
+            Reflection.invokeMethod(setInvisibleMethod, entityArmorStand, true);
 
             Object id = Reflection.getEntityID(nmsArmorStandClass, entityArmorStand);
             return new Object[]{id, entityArmorStand};
