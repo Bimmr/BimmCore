@@ -1,14 +1,16 @@
 package me.bimmr.bimmcore.messages.fancymessage;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import me.bimmr.bimmcore.reflection.Reflection;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * Created by Randy on 9/23/2015.
@@ -28,6 +30,16 @@ import org.bukkit.entity.Player;
 
 public class FancyMessage {
 
+    private static Class<?> classCraftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
+    private static Method methodAsNMSCopy = Reflection.getMethod(classCraftItemStack, "asNMSCopy", ItemStack.class);
+
+    private static Class<?> classNBTTagCompound = Reflection.getNMSClass("NBTTagCompound");
+    private static Constructor<?> consNBTTagCompount = Reflection.getConstructor(classNBTTagCompound);
+
+    private static Class<?> classNmsItemStack = Reflection.getNMSClass("ItemStack");
+    private static Method nmsItemStackSave = Reflection.getMethod(classNmsItemStack, "save", classNBTTagCompound);
+
+
     private BaseComponent[] built;
     private ComponentBuilder builder;
 
@@ -44,7 +56,7 @@ public class FancyMessage {
      * @param string
      */
     public FancyMessage(String string) {
-        builder = new ComponentBuilder(string);
+        builder = new ComponentBuilder(ChatColor.RESET + string);
     }
 
     /**
@@ -56,6 +68,22 @@ public class FancyMessage {
      */
     public FancyMessage then(String string) {
         builder.append(ChatColor.RESET + string);
+        builder.event((HoverEvent) null);
+        builder.event((ClickEvent) null);
+        return this;
+    }
+
+    public FancyMessage reset() {
+        builder.append(ChatColor.RESET + "");
+        builder.event((HoverEvent) null);
+        builder.event((ClickEvent) null);
+        return this;
+    }
+
+    public FancyMessage then(FancyMessage fancyMessage) {
+        builder.append(fancyMessage.getBaseComponents());
+        builder.event((HoverEvent) null);
+        builder.event((ClickEvent) null);
         return this;
     }
 
@@ -72,6 +100,25 @@ public class FancyMessage {
             component.append(strings[i]);
         }
         builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
+        return this;
+    }
+
+    public FancyMessage showItem(ItemStack item) {
+
+//        net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
+        Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
+
+//        NBTTagCompound compound = new NBTTagCompound();
+        Object compound = Reflection.newInstance(consNBTTagCompount);
+
+//        nmsItemStack.save(compound);
+        Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
+
+        String json = compound.toString();
+        BaseComponent[] hoverEventComponents = new BaseComponent[]{
+                new TextComponent(json)
+        };
+        builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
         return this;
     }
 
@@ -180,10 +227,7 @@ public class FancyMessage {
      * @param sender The console sender
      */
     public void sendToConsole(CommandSender sender) {
-        if (built == null)
-            built = builder.create();
-        for (BaseComponent component : built)
-            Bukkit.getConsoleSender().sendMessage(component.toPlainText());
+        Bukkit.getConsoleSender().sendMessage(toPlainText());
     }
 
     /**
