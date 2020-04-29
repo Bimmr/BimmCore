@@ -57,6 +57,19 @@ public class Reflection {
             e.printStackTrace();
         }
         return null;
+    }/**
+     * Get a class
+     *
+     * @param name the name
+     * @return craft class
+     */
+    public static Class<?> getClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

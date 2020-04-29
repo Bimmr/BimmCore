@@ -1,5 +1,6 @@
 package me.bimmr.bimmcore.messages.fancymessage;
 
+import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.reflection.Reflection;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -10,7 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * Created by Randy on 9/23/2015.
@@ -30,14 +33,17 @@ import java.lang.reflect.Method;
 
 public class FancyMessage {
 
+    //Show Item
     private static Class<?> classCraftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
     private static Method methodAsNMSCopy = Reflection.getMethod(classCraftItemStack, "asNMSCopy", ItemStack.class);
-
     private static Class<?> classNBTTagCompound = Reflection.getNMSClass("NBTTagCompound");
     private static Constructor<?> consNBTTagCompount = Reflection.getConstructor(classNBTTagCompound);
-
     private static Class<?> classNmsItemStack = Reflection.getNMSClass("ItemStack");
     private static Method nmsItemStackSave = Reflection.getMethod(classNmsItemStack, "save", classNBTTagCompound);
+
+    //Append FancyMessage together
+    private static Class classComponentBuilder = Reflection.getClass("net.md_5.bungee.api.chat.ComponentBuilder");
+    private static Field fieldParts = Reflection.getField(classComponentBuilder, "parts");
 
 
     private BaseComponent[] built;
@@ -81,9 +87,16 @@ public class FancyMessage {
     }
 
     public FancyMessage then(FancyMessage fancyMessage) {
-        builder.append(fancyMessage.getBaseComponents());
-        builder.event((HoverEvent) null);
-        builder.event((ClickEvent) null);
+        if(BimmCore.supports(12)) {
+            builder.append(fancyMessage.getBaseComponents());
+            builder.event((HoverEvent) null);
+            builder.event((ClickEvent) null);
+        }else{
+            builder.append("");
+            Object parts = Reflection.get(fieldParts, builder);
+            for(BaseComponent component : fancyMessage.getBaseComponents())
+                ((List<BaseComponent>)parts).add(component);
+        }
         return this;
     }
 
