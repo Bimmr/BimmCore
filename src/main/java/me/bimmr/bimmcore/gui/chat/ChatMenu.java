@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Created by Randy on 07/06/16.
  */
 public class ChatMenu {
-    private final int MAX_CHAT_HEIGHT = 18;
+    private static final int MAX_CHAT_HEIGHT = 18;
 
     private ArrayList<ArrayList<FancyMessage>> lines = new ArrayList<>();
     private FancyMessage title;

@@ -35,117 +35,183 @@ import java.util.List;
 
 public class Book {
 
-    private final int MAXLINESPERPAGE = 14;
+    private static final int MAX_LINE_HEIGHT = 14;
 
     private String title;
     private String author;
-    private List<FancyMessage> lines;
+    private ArrayList<ArrayList<FancyMessage>> lines = new ArrayList<>();
 
     public Book() {
         this.title = "BimmCore";
         this.author = "Bimmr";
-        this.lines = new ArrayList<>();
+        nextPage();
     }
 
     /**
-     * Set the text at a line
-     * Calls {@link #setLine(int, FancyMessage)}
+     * Gets lines.
      *
-     * @param line The Line
-     * @param text The text
-     * @return The Book
+     * @return the lines
      */
-    public Book setLine(int line, String text) {
-        return setLine(line, new FancyMessage(text));
+    public ArrayList<ArrayList<FancyMessage>> getLines() {
+        return lines;
     }
 
     /**
-     * Add a line
-     * Calls {@link #addLine(FancyMessage)}
+     * Gets lines.
      *
-     * @param line    The Line
-     * @param message The Fancy Message
-     * @return The Book
+     * @param page the page
+     * @return the lines
+     */
+    public ArrayList<FancyMessage> getLines(int page) {
+        return getLines().get(page);
+    }
+
+    /**
+     * Add line chat menu.
+     *
+     * @param message the message
+     * @return the chat menu
+     */
+    public Book addLine(String message) {
+        return addLine(getCurrentPage(), new FancyMessage(message));
+    }
+
+    /**
+     * Add line chat menu.
+     *
+     * @param message the message
+     * @return the chat menu
+     */
+    public Book addLine(FancyMessage message) {
+        return addLine(getCurrentPage(), message);
+    }
+
+    private int getCurrentPage() {
+        return getLines().size() - 1;
+    }
+
+    /**
+     * Add line chat menu.
+     *
+     * @param page    the page
+     * @param message the message
+     * @return the chat menu
+     */
+    public Book addLine(int page, String message) {
+        return addLine(page, new FancyMessage(message));
+    }
+
+    /**
+     * Add line chat menu.
+     *
+     * @param page    the page
+     * @param message the message
+     * @return the chat menu
+     */
+    public Book addLine(int page, FancyMessage message) {
+        if (lines.size() <= page)
+            nextPage();
+        if (getLines(page).size() >= MAX_LINE_HEIGHT)
+            return addLine(++page, message);
+
+        lines.get(page).add(message);
+
+        return this;
+    }
+
+    /**
+     * Sets line.
+     *
+     * @param line    the line
+     * @param message the message
+     * @return the line
+     */
+    public Book setLine(int line, String message) {
+        return setLine(getCurrentPage(), line, new FancyMessage(message));
+    }
+
+    /**
+     * Sets line.
+     *
+     * @param page    the page
+     * @param line    the line
+     * @param message the message
+     * @return the line
+     */
+    public Book setLine(int page, int line, String message) {
+        return setLine(page, line, new FancyMessage(message));
+    }
+
+    /**
+     * Sets line.
+     *
+     * @param line    the line
+     * @param message the message
+     * @return the line
      */
     public Book setLine(int line, FancyMessage message) {
-        if (lines.size() < line) {
-            for (int i = lines.size(); i < line; i++)
-                addBlankLine();
-        }
-        if (message == null || message.toPlainText().equals(" "))
-            addBlankLine();
-        else
-            addLine(message);
+        return setLine(getCurrentPage(), line, message);
+    }
+
+    /**
+     * Sets line.
+     *
+     * @param page    the page
+     * @param line    the line
+     * @param message the message
+     * @return the line
+     */
+    public Book setLine(int page, int line, FancyMessage message) {
+        ArrayList<FancyMessage> list = lines.get(page);
+        while (line > list.size())
+            list.add(new FancyMessage());
+
+        list.add(message);
+        lines.add(page, list);
+        lines.remove(page + 1);
         return this;
     }
 
     /**
-     * Remove all lines
-     */
-    public void clear() {
-        lines.clear();
-    }
-
-    /**
-     * Add a line
-     * Calls {@link #addLine(FancyMessage)}
+     * Next page chat menu.
      *
-     * @param line Line to add
-     * @return The Book
-     */
-    public Book addLine(String line) {
-        return addLine(new FancyMessage(line));
-    }
-
-    /**
-     * Add a Line
-     *
-     * @param line The Line to add
-     * @return The Book
-     */
-    public Book addLine(FancyMessage line) {
-        if (line == null || line.toPlainText().equals(" "))
-            lines.add(new FancyMessage(" "));
-        else
-            lines.add(line);
-        return this;
-    }
-
-    /**
-     * Add a blank line
-     *
-     * @return The Book
-     */
-    public Book addBlankLine() {
-        return addLine(" ");
-    }
-
-    /**
-     * Move index to the start of the next page
-     *
-     * @return The Book
+     * @return the chat menu
      */
     public Book nextPage() {
-        int line = getLines().size() / 13;
-        return setLine((((line + 1) * 13)), " ");
+        lines.add(new ArrayList());
+
+        return this;
     }
 
     /**
-     * Go to the bottom of the page, leaving x amount of empty lines
+     * Add blank line chat menu.
      *
-     * @param lines The lines to leave at the bottom
-     * @return The Book
+     * @return the chat menu
      */
-    public Book goToFooter(int lines) {
-        int line = getLines().size() / 13;
-        return setLine((((line + 1) * 13)) - lines, " ");
+    public Book addBlankLine() {
+        return addBlankLine(getCurrentPage());
     }
 
     /**
-     * @return Get the lines in the book
+     * Add blank line chat menu.
+     *
+     * @return the chat menu
      */
-    public List<FancyMessage> getLines() {
-        return this.lines;
+    public Book addBlankLine(int page) {
+        return addLine(page, "");
+    }
+
+    /**
+     * To bottom chat menu.
+     *
+     * @param space the space
+     * @return the chat menu
+     */
+    public Book toBottom(int space) {
+
+        int line = MAX_LINE_HEIGHT - space - 1;
+
+        return setLine(getCurrentPage(), line, "");
     }
 
     /**
@@ -153,7 +219,7 @@ public class Book {
      *
      * @param player The player
      */
-    public void openFor(Player player) {
+    public void show(Player player) {
         BookAPI.openBook(this, player);
     }
 
@@ -207,8 +273,9 @@ public class Book {
          * @return Get the Book as an ItemStack
          */
         private static ItemStack getAsItemStack(Book book) {
+            for (ArrayList page : book.getLines())
+                System.out.println(page.size());
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
-            ArrayList<FancyMessage> lines = new ArrayList(book.lines);
 
             //create the book
             BookMeta bookMeta = (BookMeta) iBook.getItemMeta();
@@ -217,48 +284,24 @@ public class Book {
             //get the pages
             pages = (List<Object>) Reflection.get(fieldPages, bookMeta);
 
-
-            Object page = null;
             String prefix = "{\"extra\":[";
             String suffix = "],\"text\":\"\"}";
 
-            StringBuilder sb = new StringBuilder();
-            sb.append(prefix);
+            for (int page = 0; page < book.getLines().size(); page++) {
+                StringBuilder pageBuilder = new StringBuilder();
 
-            //Add all the lines
-            for (int i = 0; i < lines.size(); i++) {
-
-                //If line is multiple of 13, it means a new page is needed
-                if (i >= 13 && i % 13 == 0) {
-
-                    //Finish current page
-                    String temp = sb.toString();
-                    temp = temp.substring(0, temp.length() - 1);
-                    temp += suffix;
-                    String line = temp;
-                    page = Reflection.invokeMethod(serializer, null, line);
-                    pages.add(page);
-
-                    //Start new page
-                    sb = new StringBuilder();
-                    sb.append(prefix);
+                ArrayList<FancyMessage> lines = book.getLines(page);
+                pageBuilder.append(prefix);
+                for (int line = 0; line < lines.size() && line < MAX_LINE_HEIGHT; line++) {
+                    pageBuilder.append("[\"\", ").append(lines.get(line).toJSON()).append(",{\"text\":\"\\n\"}]");
+                    if(line < lines.size()-1)
+                        pageBuilder.append(",");
                 }
+                pageBuilder.append(suffix);
 
-
-                FancyMessage fm = lines.get(i);
-                String part = fm.toJSON();
-                part = "[\"\", " + part + ",{\"text\":\"\\n\"}]";
-
-                if (i != lines.size() - 1)
-                    part += ",";
-                sb.append(part);
+                Object pageData = Reflection.invokeMethod(serializer, null, pageBuilder.toString());
+                pages.add(pageData);
             }
-
-            sb.append(suffix);
-            String line = sb.toString();
-            page = Reflection.invokeMethod(serializer, null, line);
-
-            pages.add(page);
 
             //set the title and author of this book
             bookMeta.setTitle(book.title);
