@@ -1,8 +1,8 @@
 package me.bimmr.bimmcore.hologram;
 
-import me.bimmr.bimmcore.utils.timed.TimedObject;
-import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Viewer;
+import me.bimmr.bimmcore.utils.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -26,7 +26,7 @@ public class Hologram extends TimedObject {
      *
      * @param location The location for the hologram line
      * @param text     The text for the hologram line as a String
-     **/
+     */
     public Hologram(Location location, String text) {
         this(true, location, Arrays.asList(text), null, false);
     }
@@ -37,7 +37,7 @@ public class Hologram extends TimedObject {
      *
      * @param location The location for the hologram line
      * @param text     The text for the hologram line as a List
-     **/
+     */
     public Hologram(Location location, List<String> text) {
         this(true, location, text, null, false);
     }
@@ -49,7 +49,7 @@ public class Hologram extends TimedObject {
      * @param showToAll If the hologram is shown to all
      * @param location  The location for the hologram line
      * @param text      The text for the hologram line as a String
-     **/
+     */
     public Hologram(boolean showToAll, Location location, String text) {
         this(showToAll, location, Arrays.asList(text), null, false);
     }
@@ -61,7 +61,7 @@ public class Hologram extends TimedObject {
      * @param showToAll If the hologram is shown to all
      * @param location  The location for the hologram line
      * @param text      The text for the hologram line as a List
-     **/
+     */
     public Hologram(boolean showToAll, Location location, List<String> text) {
         this(showToAll, location, text, null, false);
     }
@@ -74,7 +74,7 @@ public class Hologram extends TimedObject {
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a String
      * @param timedEvent The timed event to run
-     **/
+     */
     public Hologram(boolean showToAll, Location location, String text, TimedEvent timedEvent) {
         this(showToAll, location, Arrays.asList(text), timedEvent, false);
     }
@@ -87,7 +87,7 @@ public class Hologram extends TimedObject {
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a List
      * @param timedEvent The timed event to run
-     **/
+     */
     public Hologram(boolean showToAll, Location location, List<String> text, TimedEvent timedEvent) {
         this(showToAll, location, text, timedEvent, false);
     }
@@ -99,7 +99,7 @@ public class Hologram extends TimedObject {
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a List
      * @param timedEvent The timed event to run
-     **/
+     */
     public Hologram(Location location, List<String> text, TimedEvent timedEvent) {
         this(true, location, text, timedEvent, false);
     }
@@ -111,7 +111,7 @@ public class Hologram extends TimedObject {
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a String
      * @param timedEvent The timed event to run
-     **/
+     */
     public Hologram(Location location, String text, TimedEvent timedEvent) {
         this(true, location, Arrays.asList(text), timedEvent, false);
     }
@@ -124,7 +124,7 @@ public class Hologram extends TimedObject {
      * @param text            The text for the hologram line as a String
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
-     **/
+     */
     public Hologram(Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
         this(true, location, Arrays.asList(text), timedEvent, startTimedEvent);
     }
@@ -137,7 +137,7 @@ public class Hologram extends TimedObject {
      * @param text            The text for the hologram line as a List
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
-     **/
+     */
     public Hologram(Location location, List<String> text, TimedEvent timedEvent, boolean startTimedEvent) {
         this(true, location, text, timedEvent, startTimedEvent);
     }
@@ -150,7 +150,7 @@ public class Hologram extends TimedObject {
      * @param text            The text for the hologram line as a String
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
-     **/
+     */
     public Hologram(boolean showToAll, Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
         this(showToAll, location, Arrays.asList(text), timedEvent, startTimedEvent);
     }
@@ -164,7 +164,7 @@ public class Hologram extends TimedObject {
      * @param text            The text for the hologram line as a List
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
-     **/
+     */
     public Hologram(boolean showToAll, Location location, List<String> text, TimedEvent timedEvent, boolean startTimedEvent) {
         this.location = location;
         this.hologramLines = new ArrayList<>();
@@ -190,6 +190,8 @@ public class Hologram extends TimedObject {
     }
 
     /**
+     * Gets viewer.
+     *
      * @return Get the Viewer
      */
     public Viewer getViewer() {
@@ -197,6 +199,8 @@ public class Hologram extends TimedObject {
     }
 
     /**
+     * Gets hologram lines.
+     *
      * @return Get the list of HologramLines
      */
     public List<HologramLine> getHologramLines() {
@@ -204,6 +208,8 @@ public class Hologram extends TimedObject {
     }
 
     /**
+     * Gets location.
+     *
      * @return Get the Location
      */
     public Location getLocation() {
@@ -260,11 +266,62 @@ public class Hologram extends TimedObject {
      */
     public Hologram setText(int line, String text, TimedEvent timedEvent, boolean timedEventAutoStart) {
         HologramLine holoLine = this.hologramLines.get(line);
+
         holoLine.setText(text);
         if (timedEvent != null)
             holoLine.setTimedEvent(timedEvent, timedEventAutoStart);
         this.viewer.update();
         return this;
+    }
+
+    /**
+     * Sets hologram line.
+     *
+     * @param line the line
+     * @param text the text
+     * @return the hologram line
+     */
+    public Hologram setHologramLine(int line, String text) {
+        return setHologramLine(line, text, null, false);
+    }
+
+    /**
+     * Sets hologram line.
+     *
+     * @param line       the line
+     * @param text       the text
+     * @param timedEvent the timed event
+     * @return the hologram line
+     */
+    public Hologram setHologramLine(int line, String text, TimedEvent timedEvent) {
+        return setHologramLine(line, text, timedEvent, false);
+    }
+
+    /**
+     * Sets hologram line.
+     *
+     * @param line            the line
+     * @param text            the text
+     * @param timedEvent      the timed event
+     * @param startTimedEvent the start timed event
+     * @return the hologram line
+     */
+    public Hologram setHologramLine(int line, String text, TimedEvent timedEvent, boolean startTimedEvent) {
+        if (hologramLines.size() < line) {
+            for (int i = hologramLines.size(); i < line; i++)
+                addBlankLine();
+
+            if (text == null || text.equals(" "))
+                return addBlankLine();
+            else
+                return addText(text);
+        } else {
+            Location loc = this.location.clone();
+            loc.setY(loc.getY() - 0.27D * this.hologramLines.size());
+            this.hologramLines.add(line, new HologramLine(this, loc, text, timedEvent, startTimedEvent));
+            this.viewer.update();
+            return this;
+        }
     }
 
     /**
