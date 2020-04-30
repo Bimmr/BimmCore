@@ -104,32 +104,35 @@ public class FancyMessage {
      * @return The FancyMessage
      */
     public FancyMessage tooltip(String... strings) {
-        ComponentBuilder component = new ComponentBuilder(strings[0]);
-        for (int i = 1; i != strings.length; i++) {
-            component.append("\n");
-            component.append(strings[i]);
+        if (strings != null && strings.length >= 1 && strings[0] != null) {
+            ComponentBuilder component = new ComponentBuilder(strings[0]);
+            for (int i = 1; i != strings.length; i++) {
+                component.append("\n");
+                component.append(strings[i]);
+            }
+            builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
         }
-        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
         return this;
     }
 
     public FancyMessage showItem(ItemStack item) {
 
-
+        if (item != null) {
 //        net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
-        Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
+            Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
 
 //        NBTTagCompound compound = new NBTTagCompound();
-        Object compound = Reflection.newInstance(consNBTTagCompount);
+            Object compound = Reflection.newInstance(consNBTTagCompount);
 
 //        nmsItemStack.save(compound);
-        Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
+            Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
 
-        String json = compound.toString();
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(json)
-        };
-        builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
+            String json = compound.toString();
+            BaseComponent[] hoverEventComponents = new BaseComponent[]{
+                    new TextComponent(json)
+            };
+            builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
+        }
         return this;
     }
 
