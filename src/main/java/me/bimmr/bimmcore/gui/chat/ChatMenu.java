@@ -25,8 +25,11 @@ public class ChatMenu {
      * Instantiates a new Chat menu.
      */
     public ChatMenu() {
-        this((FancyMessage) null, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = HeightControl.MAX;
+        this((FancyMessage) null, (FancyMessage) null, ChatColor.DARK_GRAY, -1, HeightControl.MAX);
+    }
+
+    public ChatMenu(ChatColor lineColor) {
+        this((FancyMessage) null, (FancyMessage) null, lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -35,8 +38,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(HeightControl heightControl) {
-        this((FancyMessage) null, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = heightControl;
+        this((FancyMessage) null, (FancyMessage) null, ChatColor.DARK_GRAY, -1, heightControl);
     }
 
     /**
@@ -45,8 +47,7 @@ public class ChatMenu {
      * @param title the title
      */
     public ChatMenu(String title) {
-        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = HeightControl.MAX;
+        this(new FancyMessage(title), (FancyMessage) null, ChatColor.DARK_GRAY, -1, HeightControl.MAX);
     }
 
     /**
@@ -56,8 +57,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(String title, HeightControl heightControl) {
-        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = heightControl;
+        this(new FancyMessage(title), (FancyMessage) null, ChatColor.DARK_GRAY, -1, heightControl);
     }
 
     /**
@@ -67,8 +67,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(String title, ChatColor lineColor) {
-        this(title, (FancyMessage) null, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(new FancyMessage(title), (FancyMessage) null, lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -79,8 +78,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(String title, ChatColor lineColor, HeightControl heightControl) {
-        this(title, (FancyMessage) null, lineColor, -1);
-        this.heightControl = heightControl;
+        this(new FancyMessage(title), (FancyMessage) null, lineColor, -1, heightControl);
     }
 
     /**
@@ -91,7 +89,11 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(String title, ChatColor lineColor, int height) {
-        this(title, (FancyMessage) null, lineColor, height);
+        this(new FancyMessage(title), (FancyMessage) null, lineColor, height, HeightControl.MAX);
+    }
+
+    public ChatMenu(String title, ChatColor lineColor, int height, HeightControl heightControl) {
+        this(new FancyMessage(title), (FancyMessage) null, lineColor, height, heightControl);
     }
 
     /**
@@ -102,8 +104,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(String title, String footer, ChatColor lineColor) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(new FancyMessage(title), new FancyMessage(footer), lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -115,8 +116,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(String title, String footer, ChatColor lineColor, HeightControl heightControl) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = heightControl;
+        this(new FancyMessage(title), new FancyMessage(footer), lineColor, -1, heightControl);
     }
 
     /**
@@ -127,8 +127,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(String title, FancyMessage footer, ChatColor lineColor) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(new FancyMessage(title), footer, lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -140,8 +139,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(String title, FancyMessage footer, ChatColor lineColor, HeightControl heightControl) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = heightControl;
+        this(new FancyMessage(title), footer, lineColor, -1, heightControl);
     }
 
     /**
@@ -152,8 +150,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(FancyMessage title, String footer, ChatColor lineColor) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(title, new FancyMessage(footer), lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -165,8 +162,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(FancyMessage title, String footer, ChatColor lineColor, HeightControl heightControl) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = heightControl;
+        this(title, new FancyMessage(footer), lineColor, -1, heightControl);
     }
 
     /**
@@ -175,8 +171,7 @@ public class ChatMenu {
      * @param title the title
      */
     public ChatMenu(FancyMessage title) {
-        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = HeightControl.MAX;
+        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1, HeightControl.MAX);
     }
 
     /**
@@ -186,8 +181,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(FancyMessage title, HeightControl heightControl) {
-        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1);
-        this.heightControl = heightControl;
+        this(title, (FancyMessage) null, ChatColor.DARK_GRAY, -1, heightControl);
     }
 
     /**
@@ -197,8 +191,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(FancyMessage title, ChatColor lineColor) {
-        this(title, (FancyMessage) null, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(title, (FancyMessage) null, lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -209,8 +202,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(FancyMessage title, ChatColor lineColor, HeightControl heightControl) {
-        this(title, (FancyMessage) null, lineColor, -1);
-        this.heightControl = heightControl;
+        this(title, (FancyMessage) null, lineColor, -1, heightControl);
     }
 
     /**
@@ -221,7 +213,11 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(FancyMessage title, ChatColor lineColor, int height) {
-        this(title, (FancyMessage) null, lineColor, height);
+        this(title, (FancyMessage) null, lineColor, height, HeightControl.MANUAL);
+    }
+
+    public ChatMenu(FancyMessage title, ChatColor lineColor, int height, HeightControl heightControl) {
+        this(title, (FancyMessage) null, lineColor, height, heightControl);
     }
 
     /**
@@ -232,8 +228,7 @@ public class ChatMenu {
      * @param lineColor the line color
      */
     public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = HeightControl.MAX;
+        this(title, footer, lineColor, -1, HeightControl.MAX);
     }
 
     /**
@@ -245,8 +240,7 @@ public class ChatMenu {
      * @param heightControl the height control
      */
     public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor, HeightControl heightControl) {
-        this(title, footer, lineColor, -1);
-        this.heightControl = heightControl;
+        this(title, footer, lineColor, -1, heightControl);
     }
 
     /**
@@ -258,7 +252,11 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(String title, String footer, ChatColor lineColor, int height) {
-        this(new FancyMessage(title), new FancyMessage(footer), lineColor, height);
+        this(new FancyMessage(title), new FancyMessage(footer), lineColor, height, HeightControl.MANUAL);
+    }
+
+    public ChatMenu(String title, String footer, ChatColor lineColor, int height, HeightControl heightControl) {
+        this(new FancyMessage(title), new FancyMessage(footer), lineColor, height, heightControl);
     }
 
     /**
@@ -270,7 +268,11 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(String title, FancyMessage footer, ChatColor lineColor, int height) {
-        this(new FancyMessage(title), footer, lineColor, height);
+        this(new FancyMessage(title), footer, lineColor, height, HeightControl.MANUAL);
+    }
+
+    public ChatMenu(String title, FancyMessage footer, ChatColor lineColor, int height, HeightControl heightControl) {
+        this(new FancyMessage(title), footer, lineColor, height, heightControl);
     }
 
     /**
@@ -282,7 +284,11 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(FancyMessage title, String footer, ChatColor lineColor, int height) {
-        this(title, new FancyMessage(footer), lineColor, height);
+        this(title, new FancyMessage(footer), lineColor, height, HeightControl.MANUAL);
+    }
+
+    public ChatMenu(FancyMessage title, String footer, ChatColor lineColor, int height, HeightControl heightControl) {
+        this(title, new FancyMessage(footer), lineColor, height, heightControl);
     }
 
     /**
@@ -294,11 +300,23 @@ public class ChatMenu {
      * @param height    the height
      */
     public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor, int height) {
+        this(title, footer, lineColor, height, HeightControl.MANUAL);
+    }
+
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title     the title
+     * @param footer    the footer
+     * @param lineColor the line color
+     * @param height    the height
+     */
+    public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this.title = title;
         this.footer = footer;
         this.lineColor = lineColor;
         this.height = height;
-        this.heightControl = HeightControl.MANUAL;
+        this.heightControl = heightControl;
         nextPage();
     }
 
@@ -358,6 +376,14 @@ public class ChatMenu {
         return title;
     }
 
+    public void setTitle(FancyMessage title) {
+        this.title = title;
+    }
+
+    public void setTitle(String title) {
+        setTitle(new FancyMessage(title));
+    }
+
     /**
      * Gets footer.
      *
@@ -365,6 +391,14 @@ public class ChatMenu {
      */
     public FancyMessage getFooter() {
         return footer;
+    }
+
+    public void setFooter(FancyMessage footer) {
+        this.footer = footer;
+    }
+
+    public void setFooter(String footer) {
+        setFooter(new FancyMessage(footer));
     }
 
     /**
@@ -376,6 +410,10 @@ public class ChatMenu {
         return lineColor;
     }
 
+    public void setLineColor(ChatColor lineColor) {
+        this.lineColor = lineColor;
+    }
+
     /**
      * Gets height.
      *
@@ -383,7 +421,7 @@ public class ChatMenu {
      */
     public int getHeight() {
         int height = this.height;
-        if (this.heightControl == HeightControl.MAX)
+        if (this.heightControl == HeightControl.MAX || this.heightControl == HeightControl.AUTO_EXTERNAL || this.heightControl == HeightControl.AUTO_CENTER)
             height = MAX_CHAT_HEIGHT;
         else if (this.heightControl == HeightControl.AUTO)
             height = Integer.MAX_VALUE;
@@ -398,6 +436,14 @@ public class ChatMenu {
      */
     public ChatMenu addLine(String message) {
         return addLine(getCurrentPage(), new FancyMessage(message));
+    }
+
+    public ChatMenu addLine(int page, String message, FancyClickEvent fancyClickEvent) {
+        return addLine(page, new FancyMessage(message).onClick(fancyClickEvent));
+    }
+
+    public ChatMenu addLine(String message, FancyClickEvent fancyClickEvent) {
+        return addLine(getCurrentPage(), message, fancyClickEvent);
     }
 
     /**
@@ -452,6 +498,14 @@ public class ChatMenu {
      */
     public ChatMenu setLine(int line, String message) {
         return setLine(getCurrentPage(), line, new FancyMessage(message));
+    }
+
+    public ChatMenu setLine(int page, int line, String message, FancyClickEvent fancyClickEvent) {
+        return setLine(page, line, new FancyMessage(message).onClick(fancyClickEvent));
+    }
+
+    public ChatMenu setLine(int line, String message, FancyClickEvent fancyClickEvent) {
+        return setLine(getCurrentPage(), line, message, fancyClickEvent);
     }
 
     /**
@@ -541,16 +595,20 @@ public class ChatMenu {
      * @param player the player
      */
     public void show(int page, Player player) {
-        getFormattedTitle().send(player);
 
+        if (!(this.heightControl == HeightControl.AUTO || this.heightControl == HeightControl.MANUAL))
+            for (int i = getLines(page).size(); i < MAX_CHAT_HEIGHT; i++)
+                player.sendMessage("");
+
+        getFormattedTitle().send(player);
         for (int i = 0; i < getLines(page).size() && i < MAX_CHAT_HEIGHT; i++)
             getLines(page).get(i).send(player);
 
-        if (this.heightControl != HeightControl.AUTO)
+
+        if (!this.heightControl.toString().startsWith("AUTO"))
             for (int i = getLines(page).size(); i < getHeight(); i++) {
                 player.sendMessage("");
             }
-
 
         if (getFooter() == null && getCurrentPage() > 0) {
             FancyMessage pageNav = new FancyMessage("[ ");
@@ -562,7 +620,7 @@ public class ChatMenu {
                     }
                 });
             if (page > 0 && page + 1 < getLines().size())
-                pageNav.then("     ").reset();
+                pageNav.then("     ");
             if (page + 1 < getLines().size())
                 pageNav.then(" Next >>").onClick(new FancyClickEvent() {
                     @Override
@@ -583,8 +641,8 @@ public class ChatMenu {
                         }
                     });
                 else
-                    pageNav.then(""+ChatColor.GRAY+ ChatColor.STRIKETHROUGH + "<< Back");
-                pageNav.then(" ]").then(""+lineColor+ChatColor.STRIKETHROUGH+"       ").then(" ").then(getFooter().reset()).then(" ").then(""+lineColor+ChatColor.STRIKETHROUGH+"       ").then("[ ").reset();
+                    pageNav.then("" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + "<< Back");
+                pageNav.then(" ]").then("" + lineColor + ChatColor.STRIKETHROUGH + "       ").then(" ").then(getFooter()).then(" ").then("" + lineColor + ChatColor.STRIKETHROUGH + "       ").then("[ ");
                 if (page + 1 < getLines().size())
                     pageNav.then(" Next >>").onClick(new FancyClickEvent() {
                         @Override
@@ -593,11 +651,15 @@ public class ChatMenu {
                         }
                     });
                 else
-                    pageNav.then(""+ChatColor.GRAY+ ChatColor.STRIKETHROUGH + " Next >>");
+                    pageNav.then("" + ChatColor.GRAY + ChatColor.STRIKETHROUGH + " Next >>");
                 pageNav.then(" ]");
                 getFormatted(pageNav).send(player);
             } else
                 getFormattedFooter().send(player);
+
+            if (this.heightControl == HeightControl.MANUAL_CENTER || this.heightControl == HeightControl.AUTO_CENTER)
+                for (int i = 0; i < Math.floor((MAX_CHAT_HEIGHT - getLines(page).size())/2.0); i++)
+                    player.sendMessage("");
         }
     }
 
@@ -608,7 +670,7 @@ public class ChatMenu {
      * @return the chat menu
      */
     public ChatMenu toBottom(int space) {
-        if (this.heightControl == HeightControl.AUTO)
+        if (this.heightControl == HeightControl.AUTO || this.heightControl == HeightControl.AUTO_EXTERNAL)
             heightControl = HeightControl.MAX;
 
         int line = getHeight() - space - 1;
@@ -621,17 +683,34 @@ public class ChatMenu {
      */
     public enum HeightControl {
         /**
-         * Max height control.
+         * Inner fills top to max height
          */
         MAX,
         /**
-         * Auto height control.
+         * Fills inner to set height
+         */
+        MANUAL,
+        /**
+         * No auto fill at all
          */
         AUTO,
         /**
-         * Manual height control.
+         * No inner filling, fill top till max height
          */
-        MANUAL
+        AUTO_EXTERNAL,
+        /**
+         * No inner filling, fill top and bottom till max height
+         */
+        AUTO_CENTER,
+        /**
+         * Fills inner till set height,  fill top till max height
+         */
+        MANUAL_EXTERNAL,
+        /**
+         * Fills inner till set height, fill top and bottom till max height
+         */
+        MANUAL_CENTER
+
     }
 
 }
