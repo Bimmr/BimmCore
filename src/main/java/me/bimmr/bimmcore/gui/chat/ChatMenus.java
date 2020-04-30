@@ -8,16 +8,19 @@ import org.bukkit.ChatColor;
 
 public class ChatMenus {
 
-    public static ChatMenu getConfirmation(String title, String message, FancyClickEvent confirm, FancyClickEvent deny) {
+    public static ChatMenu getConfirmation(String message, FancyClickEvent confirm, FancyClickEvent deny) {
+        return getConfirmation(message, null, confirm, deny);
+    }
+
+    public static ChatMenu getConfirmation(String message, String subMessage, FancyClickEvent confirm, FancyClickEvent deny) {
         ChatMenu menu = new ChatMenu(ChatMenu.HeightControl.AUTO_CENTER);
-        int lineIndex = (10 - 6) / 2;
-        for (int i = 0; i < lineIndex; i++)
-            menu.addBlankLine();
         menu.addLine(StringUtil.getCenteredMessage("" + ChatColor.RED + UnicodeUtil.CAUTION))
                 .addBlankLine()
-                .addLine(StringUtil.getCenteredMessage(message))
-                .addBlankLine()
-                .addLine(StringUtil.getCenteredMessage(new FancyMessage(ChatColor.GREEN + " [ CONFIRM ] ").onClick(confirm).then("       ").then(ChatColor.DARK_RED + " [ DENY ] ").onClick(deny)))
+                .addLine(StringUtil.getCenteredMessage(message));
+        if (subMessage != null)
+            menu.addLine(StringUtil.getCenteredMessage(subMessage));
+        menu.addBlankLine()
+                .addLine(StringUtil.getCenteredMessage(new FancyMessage(ChatColor.GREEN + " [ CONFIRM ] ").onClick(confirm).then("       ").then(ChatColor.RED + " [ DENY ] ").onClick(deny)))
                 .addBlankLine();
         return menu;
     }

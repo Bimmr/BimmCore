@@ -315,7 +315,10 @@ public class ChatMenu {
         this.title = title;
         this.footer = footer;
         this.lineColor = lineColor;
-        this.height = height;
+        if (!(heightControl == HeightControl.AUTO || heightControl == HeightControl.AUTO_CENTER))
+            this.height = height;
+        else
+            this.height = -1;
         this.heightControl = heightControl;
         nextPage();
     }
@@ -658,7 +661,7 @@ public class ChatMenu {
                 getFormattedFooter().send(player);
 
             if (this.heightControl == HeightControl.MANUAL_CENTER || this.heightControl == HeightControl.AUTO_CENTER)
-                for (int i = 0; i < Math.floor((MAX_CHAT_HEIGHT - getLines(page).size())/2.0); i++)
+                for (int i = 0; i < Math.floor((MAX_CHAT_HEIGHT - getLines(page).size()) / 2.0); i++)
                     player.sendMessage("");
         }
     }
