@@ -178,12 +178,13 @@ public class StringUtil {
     public static FancyMessage getCenteredMessage(FancyMessage message) {
         return getCenteredMessage(message, "");
     }
+
     public static String getCenteredMessage(String message) {
         return getCenteredMessage(message, "");
     }
 
     public static FancyMessage getCenteredMessage(FancyMessage fancyMessage, String format) {
-        if(fancyMessage == null)
+        if (fancyMessage == null)
             fancyMessage = new FancyMessage("");
 
         FancyMessage fm = new FancyMessage();
@@ -227,7 +228,7 @@ public class StringUtil {
     }
 
     public static String getCenteredMessage(String message, String format) {
-        if(message == null)
+        if (message == null)
             message = "";
         String[] lines = ChatColor.translateAlternateColorCodes('&', message).split("\n", 40);
         StringBuilder returnMessage = new StringBuilder();
