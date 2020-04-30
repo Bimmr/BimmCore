@@ -65,6 +65,12 @@ public class FancyMessage {
         builder = new ComponentBuilder(ChatColor.RESET + string);
     }
 
+    public FancyMessage(FancyMessage fancyMessage) {
+        this("");
+        then(fancyMessage);
+    }
+
+
     /**
      * Adds a new string section to the messages, this allows new tooltips, and
      * events.
@@ -73,29 +79,20 @@ public class FancyMessage {
      * @return The FancyMessage
      */
     public FancyMessage then(String string) {
-        builder.append(ChatColor.RESET + string);
-        builder.event((HoverEvent) null);
-        builder.event((ClickEvent) null);
+        builder.append(ChatColor.RESET + string, ComponentBuilder.FormatRetention.NONE);
         return this;
     }
 
-    public FancyMessage reset() {
-        builder.append(ChatColor.RESET + "");
-        builder.event((HoverEvent) null);
-        builder.event((ClickEvent) null);
-        return this;
-    }
 
     public FancyMessage then(FancyMessage fancyMessage) {
-        if(BimmCore.supports(12)) {
-            builder.append(fancyMessage.getBaseComponents());
-            builder.event((HoverEvent) null);
-            builder.event((ClickEvent) null);
-        }else{
+        if (BimmCore.supports(12)) {
+            for (BaseComponent component : fancyMessage.getBaseComponents())
+                builder.append(component, ComponentBuilder.FormatRetention.NONE);
+        } else {
             builder.append("");
             Object parts = Reflection.get(fieldParts, builder);
-            for(BaseComponent component : fancyMessage.getBaseComponents())
-                ((List<BaseComponent>)parts).add(component);
+            for (BaseComponent component : fancyMessage.getBaseComponents())
+                ((List<BaseComponent>) parts).add(component);
         }
         return this;
     }
@@ -118,6 +115,7 @@ public class FancyMessage {
 
     public FancyMessage showItem(ItemStack item) {
 
+
 //        net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
         Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
 
@@ -136,13 +134,25 @@ public class FancyMessage {
     }
 
     /**
-     * The command/Message the player will use/say when they message the messages
-     * To make it a command, don't forget to have a "/"
+     * The command the player will use/say when they message the messages
      *
      * @param string The command to run
      * @return The FancyMessage
      */
     public FancyMessage command(String string) {
+        if (!string.startsWith("/"))
+            string = "/" + string;
+        builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, string));
+        return this;
+    }
+
+    /**
+     * The message the player will use/say when they message the messages
+     *
+     * @param string The command to run
+     * @return The FancyMessage
+     */
+    public FancyMessage say(String string) {
         builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, string));
         return this;
     }
@@ -199,9 +209,9 @@ public class FancyMessage {
      * @param player The player
      */
     public void send(Player player) {
-
         if (built == null)
             built = builder.create();
+
         player.spigot().sendMessage(built);
     }
 
@@ -213,6 +223,7 @@ public class FancyMessage {
     public void send(Player[] players) {
         if (built == null)
             built = builder.create();
+
         for (Player player : players)
             player.spigot().sendMessage(built);
     }
@@ -223,6 +234,7 @@ public class FancyMessage {
     public BaseComponent[] getBaseComponents() {
         if (built == null)
             built = builder.create();
+
         return this.built;
     }
 
@@ -249,6 +261,7 @@ public class FancyMessage {
     public String toPlainText() {
         if (built == null)
             built = builder.create();
+
         StringBuilder plainTxt = new StringBuilder();
         for (BaseComponent component : built)
             plainTxt.append(component.toPlainText());
