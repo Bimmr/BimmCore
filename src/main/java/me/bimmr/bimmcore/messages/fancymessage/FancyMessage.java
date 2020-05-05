@@ -85,14 +85,16 @@ public class FancyMessage {
 
 
     public FancyMessage then(FancyMessage fancyMessage) {
-        if (BimmCore.supports(12)) {
-            for (BaseComponent component : fancyMessage.getBaseComponents())
-                builder.append(component, ComponentBuilder.FormatRetention.NONE);
-        } else {
-            builder.append("");
-            Object parts = Reflection.get(fieldParts, builder);
-            for (BaseComponent component : fancyMessage.getBaseComponents())
-                ((List<BaseComponent>) parts).add(component);
+        if (fancyMessage != null) {
+            if (BimmCore.supports(12)) {
+                for (BaseComponent component : fancyMessage.getBaseComponents())
+                    builder.append(component, ComponentBuilder.FormatRetention.NONE);
+            } else {
+                builder.append("");
+                Object parts = Reflection.get(fieldParts, builder);
+                for (BaseComponent component : fancyMessage.getBaseComponents())
+                    ((List<BaseComponent>) parts).add(component);
+            }
         }
         return this;
     }
