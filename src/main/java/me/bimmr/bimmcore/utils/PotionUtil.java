@@ -29,21 +29,22 @@ public class PotionUtil {
 
                     type = pet;
                 } else if (data.startsWith("length") || data.startsWith("time") || data.startsWith("duration")) {
-                    dur = Integer.parseInt(data.split(":")[1]) - 1;
+                    dur = Integer.parseInt(data.split(":")[1]);
                     if (dur == -1) dur = Integer.MAX_VALUE;
                 } else if (data.startsWith("power") || data.startsWith("strength") || data.startsWith("amplifier")) {
-                    amp = Integer.parseInt(data.split(":")[1]) - 1;
+                    amp = Integer.parseInt(data.split(":")[1]);
                     if (amp == -1) amp = Integer.MAX_VALUE;
 
                 }
 
         }
         if (type != null)
-            return new PotionEffect(type, dur * 20, amp);
+            return new PotionEffect(type, dur * 20, amp-1);
         else return null;
     }
 
     public static ArrayList<PotionEffect> getPotionEffects(List<String> potionCodes) {
+
         ArrayList<PotionEffect> effects = new ArrayList<PotionEffect>();
         if ((potionCodes != null) && !potionCodes.isEmpty())
             for (String code : potionCodes) {
