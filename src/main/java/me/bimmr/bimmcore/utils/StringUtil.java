@@ -12,7 +12,7 @@ import java.util.*;
  * A Utilities class to manage strings
  */
 public class StringUtil {
-    private final static int CENTER_PX = 154;
+    private final static int CENTER_PX = 157;
 
     /**
      * Gets a String with &amp; converted to ChatColor#COLOUR_CHAR
@@ -175,7 +175,7 @@ public class StringUtil {
         return map;
     }
 
-    public static FancyMessage getCenteredMessage (FancyMessage message) {
+    public static FancyMessage getCenteredMessage(FancyMessage message) {
         return getCenteredMessage(message, "");
     }
 
@@ -225,6 +225,31 @@ public class StringUtil {
         }
         fm.then(sb.toString());
         return fm;
+    }
+
+    public static int lineWraps(String message) {
+
+        if (message == null || message.length() == 0)
+            return 0;
+
+        int maxLength = CENTER_PX * 2;
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for (char c : message.toCharArray()) {
+            if (c == '§') {
+                previousCode = true;
+            } else if (previousCode) {
+                previousCode = false;
+                isBold = c == 'l';
+            } else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize = isBold ? messagePxSize + dFI.getBoldLength() : messagePxSize + dFI.getLength();
+                messagePxSize++;
+            }
+        }
+        return messagePxSize / (maxLength+1);
     }
 
     public static String getCenteredMessage(String message, String format) {
@@ -374,6 +399,7 @@ public class StringUtil {
         PERIOD('.', 1),
         COMMA(',', 1),
         SPACE(' ', 3),
+        LEFT_ONE_QUARTER_BLOCK('▎', 2),
         DEFAULT('a', 4);
 
         private char character;
