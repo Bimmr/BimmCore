@@ -2,7 +2,6 @@ package me.bimmr.bimmcore.items.attributes;
 
 /**
  * Attribute Class
- * Used from 1.8.8 - 1.13
  */
 @Deprecated
 public class Attribute {

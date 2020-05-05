@@ -175,7 +175,7 @@ public class StringUtil {
         return map;
     }
 
-    public static FancyMessage getCenteredMessage(FancyMessage message) {
+    public static FancyMessage getCenteredMessage (FancyMessage message) {
         return getCenteredMessage(message, "");
     }
 
