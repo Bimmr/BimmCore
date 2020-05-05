@@ -122,6 +122,7 @@ public class Menu {
     public Menu(String name, ItemStack borderCorners, ItemStack borderSides) {
         this(name, -1, null, borderCorners, borderSides);
     }
+
     /**
      * Create a MenuGUI
      * ClickEvent is null
@@ -163,7 +164,7 @@ public class Menu {
         this.pages.add(new ArrayList<>());
 
         if (clickEvent != null)
-            this.clickEvent = clickEvent;
+            setClickEvent(clickEvent);
 
         border(borderCorners, borderSides);
         MenuManager.register(this);
@@ -398,6 +399,9 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
+
+        if (clickEvent != null)
+            clickEvent.menuObject = this;
         if (clickEvent != null)
             if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
@@ -553,6 +557,10 @@ public class Menu {
                 this.pages.add(new ArrayList<>());
             }
         }
+
+
+        if (clickEvent != null)
+            clickEvent.menuObject = this;
         if (clickEvent != null)
             if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
@@ -897,6 +905,8 @@ public class Menu {
      * @param clickEvent the click event
      */
     public void setClickEvent(ClickEvent clickEvent) {
+        if (clickEvent != null)
+            clickEvent.menuObject = this;
         this.clickEvent = clickEvent;
     }
 

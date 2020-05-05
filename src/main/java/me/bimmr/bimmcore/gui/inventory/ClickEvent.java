@@ -4,6 +4,7 @@ package me.bimmr.bimmcore.gui.inventory;
  * Created by Randy on 3/5/2016.
  */
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,8 @@ public abstract class ClickEvent {
     private ItemStack item;
     private InventoryClickEvent event;
 
+    protected Menu menuObject;
+
     /**
      * Setup the ClickEvent
      *
@@ -25,12 +28,18 @@ public abstract class ClickEvent {
      * @param item     The item clicked
      * @param event    The InventoryClickEvent
      */
-    public void setup(Player player, int page, int position, ItemStack item, InventoryClickEvent event) {
+    protected void setup(Player player, int page, int position, ItemStack item, InventoryClickEvent event) {
         this.player = player;
         this.page = page;
         this.position = position;
         this.item = item;
         this.event = event;
+    }
+    public void setClose(boolean close){
+        this.menuObject.setClose(close);
+    }
+    public void setDestroy(boolean close){
+        this.menuObject.setDestroy(close);
     }
 
     /**
@@ -67,7 +76,7 @@ public abstract class ClickEvent {
      * @return Get the item clicked's name
      */
     public String getClickedName() {
-        return getItem().getItemMeta().hasDisplayName() ? getItem().getItemMeta().getDisplayName() : getItem().getType().name();
+        return ChatColor.stripColor(getItem().getItemMeta().hasDisplayName() ? getItem().getItemMeta().getDisplayName() : getItem().getType().name());
     }
 
     /**
