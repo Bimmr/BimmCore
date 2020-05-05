@@ -4,6 +4,7 @@ import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.utils.StringUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class ChatMenu {
     private ChatColor lineColor;
     private int height;
     private HeightControl heightControl;
+
+    private boolean spacedFormat = false;
 
     /**
      * Instantiates a new Chat menu.
@@ -339,16 +342,25 @@ public class ChatMenu {
      * @return the lines
      */
     public ArrayList<FancyMessage> getLines(int page) {
+        if(page >= getLines().size())
+            nextPage();
         return getLines().get(page);
     }
 
+    public void clear(){
+        this.lines = new ArrayList<>();
+        nextPage();
+    }
     /**
      * Gets formatted title.
      *
      * @return the formatted title
      */
     public FancyMessage getFormattedTitle() {
-        return StringUtil.getCenteredMessage(getTitle(), "" + lineColor + ChatColor.STRIKETHROUGH);
+        if(getTitle() != null)
+            return StringUtil.getCenteredMessage(new FancyMessage(lineColor+"[ ").then(getTitle()).then(lineColor+" ]"), "" + lineColor + ChatColor.STRIKETHROUGH);
+        else
+            return StringUtil.getCenteredMessage(new FancyMessage(""), "" + lineColor + ChatColor.STRIKETHROUGH);
     }
 
     /**
@@ -604,6 +616,8 @@ public class ChatMenu {
                 player.sendMessage("");
 
         getFormattedTitle().send(player);
+        if(spacedFormat)
+            player.sendMessage("");
         for (int i = 0; i < getLines(page).size() && i < MAX_CHAT_HEIGHT; i++)
             getLines(page).get(i).send(player);
 
@@ -612,6 +626,9 @@ public class ChatMenu {
             for (int i = getLines(page).size(); i < getHeight(); i++) {
                 player.sendMessage("");
             }
+
+        if(spacedFormat)
+            player.sendMessage("");
 
         if (getFooter() == null && getCurrentPage() > 0) {
             FancyMessage pageNav = new FancyMessage("[ ");
@@ -623,7 +640,7 @@ public class ChatMenu {
                     }
                 });
             if (page > 0 && page + 1 < getLines().size())
-                pageNav.then("     ");
+                pageNav.then(" ]" + lineColor + ChatColor.STRIKETHROUGH + "     ").then("[ ");
             if (page + 1 < getLines().size())
                 pageNav.then(" Next >>").onClick(new FancyClickEvent() {
                     @Override
@@ -679,6 +696,14 @@ public class ChatMenu {
         int line = getHeight() - space - 1;
 
         return setLine(getCurrentPage(), line, "");
+    }
+
+    public boolean isSpacedFormat() {
+        return spacedFormat;
+    }
+
+    public void setSpacedFormat(boolean spacedFormat) {
+        this.spacedFormat = spacedFormat;
     }
 
     /**
