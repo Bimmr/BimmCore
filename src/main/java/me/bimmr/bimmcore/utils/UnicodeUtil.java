@@ -14,7 +14,7 @@ public enum UnicodeUtil {
     TRIANGLE_EMPTY_UP("△"),
     TRIANGLE_EMPTY_DOWN("▽"),
     TRIANGLE_FILLED_UP("▲"),
-    TRIANGLE_FILLED_DOWN("▲"),
+    TRIANGLE_FILLED_DOWN("▼"),
     EJECT("⏏"),
     BULLET_CIRCLED_EMPTY("⦾"),
     BULLET_CIRCLED_FILLED("⦿"),
