@@ -4,7 +4,6 @@ import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.utils.StringUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
  * Created by Randy on 07/06/16.
  */
 public class ChatMenu {
-    private static final int MAX_CHAT_HEIGHT = 18;
+    private final int MAX_CHAT = 18;
 
     private ArrayList<ArrayList<FancyMessage>> lines = new ArrayList<>();
     private FancyMessage title;
@@ -318,11 +317,13 @@ public class ChatMenu {
         this.title = title;
         this.footer = footer;
         this.lineColor = lineColor;
-        if (!(heightControl == HeightControl.AUTO || heightControl == HeightControl.AUTO_CENTER))
-            this.height = height;
-        else
-            this.height = -1;
         this.heightControl = heightControl;
+        //Add 2 for header and footer
+        this.height = height;
+
+        if (this.heightControl.isManual() && this.height < 1)
+            this.height = MAX_CHAT;
+
         nextPage();
     }
 
@@ -342,23 +343,24 @@ public class ChatMenu {
      * @return the lines
      */
     public ArrayList<FancyMessage> getLines(int page) {
-        if(page >= getLines().size())
+        if (page >= getLines().size())
             nextPage();
         return getLines().get(page);
     }
 
-    public void clear(){
+    public void clear() {
         this.lines = new ArrayList<>();
         nextPage();
     }
+
     /**
      * Gets formatted title.
      *
      * @return the formatted title
      */
     public FancyMessage getFormattedTitle() {
-        if(getTitle() != null)
-            return StringUtil.getCenteredMessage(new FancyMessage(lineColor+"[ ").then(getTitle()).then(lineColor+" ]"), "" + lineColor + ChatColor.STRIKETHROUGH);
+        if (getTitle() != null)
+            return StringUtil.getCenteredMessage(new FancyMessage(lineColor + "[ ").then(getTitle()).then(lineColor + " ]"), "" + lineColor + ChatColor.STRIKETHROUGH);
         else
             return StringUtil.getCenteredMessage(new FancyMessage(""), "" + lineColor + ChatColor.STRIKETHROUGH);
     }
@@ -429,18 +431,23 @@ public class ChatMenu {
         this.lineColor = lineColor;
     }
 
-    /**
-     * Gets height.
-     *
-     * @return the height
-     */
-    public int getHeight() {
-        int height = this.height;
-        if (this.heightControl == HeightControl.MAX || this.heightControl == HeightControl.AUTO_EXTERNAL || this.heightControl == HeightControl.AUTO_CENTER)
-            height = MAX_CHAT_HEIGHT;
-        else if (this.heightControl == HeightControl.AUTO)
-            height = Integer.MAX_VALUE;
-        return height;
+    public int getMaxHeight() {
+        int h = -1;
+        if (this.heightControl.isManual())
+            h = this.height + 2;
+        else if (this.heightControl.isAuto())
+            if (this.height > 0)
+                h = this.height + 2;
+            else
+                h = MAX_CHAT;
+        else if (this.heightControl.isFillingInner())
+            h = MAX_CHAT;
+
+
+        //Give space if requested
+        if (spacedFormat)
+            h -= 2;
+        return h;
     }
 
     /**
@@ -494,15 +501,16 @@ public class ChatMenu {
      * @return the chat menu
      */
     public ChatMenu addLine(int page, FancyMessage message) {
-        if (lines.size() <= page)
+        while (lines.size() <= page)
             nextPage();
-        if (getLines(page).size() >= getHeight() || getLines(page).size() >= MAX_CHAT_HEIGHT)
+        if (getLines(page).size() >= getMaxHeight())
             return addLine(++page, message);
 
         lines.get(page).add(message);
 
         return this;
     }
+
 
     /**
      * Sets line.
@@ -610,24 +618,26 @@ public class ChatMenu {
      * @param player the player
      */
     public void show(int page, Player player) {
+        int lineIndex = 0;
 
-        if (!(this.heightControl == HeightControl.AUTO || this.heightControl == HeightControl.MANUAL))
-            for (int i = getLines(page).size(); i < MAX_CHAT_HEIGHT; i++)
+        if (this.heightControl.isFillingTop() || this.heightControl.isFillingTopAndBottom())
+            for (int i = 0; i < MAX_CHAT - getLines(page).size(); i++)
                 player.sendMessage("");
 
         getFormattedTitle().send(player);
-        if(spacedFormat)
+        if (spacedFormat)
             player.sendMessage("");
-        for (int i = 0; i < getLines(page).size() && i < MAX_CHAT_HEIGHT; i++)
-            getLines(page).get(i).send(player);
+
+        for (; lineIndex < getLines(page).size(); lineIndex++)
+            getLines(page).get(lineIndex).send(player);
 
 
-        if (!this.heightControl.toString().startsWith("AUTO"))
-            for (int i = getLines(page).size(); i < getHeight(); i++) {
+        if (this.heightControl.isFillingInner())
+            for (; lineIndex < getMaxHeight(); lineIndex++) {
                 player.sendMessage("");
             }
 
-        if(spacedFormat)
+        if (spacedFormat)
             player.sendMessage("");
 
         if (getFooter() == null && getCurrentPage() > 0) {
@@ -676,10 +686,13 @@ public class ChatMenu {
                 getFormatted(pageNav).send(player);
             } else
                 getFormattedFooter().send(player);
-
-            if (this.heightControl == HeightControl.MANUAL_CENTER || this.heightControl == HeightControl.AUTO_CENTER)
-                for (int i = 0; i < Math.floor((MAX_CHAT_HEIGHT - getLines(page).size()) / 2.0); i++)
-                    player.sendMessage("");
+        }
+        if (this.heightControl.isFillingTopAndBottom()) {
+            int max = MAX_CHAT;
+            if (spacedFormat)
+                max -= 2;
+            for (int i = (MAX_CHAT - lineIndex) / 2; i > 0; i--)
+                player.sendMessage("");
         }
     }
 
@@ -690,10 +703,10 @@ public class ChatMenu {
      * @return the chat menu
      */
     public ChatMenu toBottom(int space) {
-        if (this.heightControl == HeightControl.AUTO || this.heightControl == HeightControl.AUTO_EXTERNAL)
+        if (this.heightControl.isAuto())
             heightControl = HeightControl.MAX;
 
-        int line = getHeight() - space - 1;
+        int line = getMaxHeight() - space - 1;
 
         return setLine(getCurrentPage(), line, "");
     }
@@ -702,8 +715,9 @@ public class ChatMenu {
         return spacedFormat;
     }
 
-    public void setSpacedFormat(boolean spacedFormat) {
+    public ChatMenu setSpacedFormat(boolean spacedFormat) {
         this.spacedFormat = spacedFormat;
+        return this;
     }
 
     /**
@@ -737,7 +751,38 @@ public class ChatMenu {
         /**
          * Fills inner till set height, fill top and bottom till max height
          */
-        MANUAL_CENTER
+        MANUAL_CENTER;
+
+        public boolean isFillingTop() {
+            return this == HeightControl.MANUAL_EXTERNAL ||
+                    this == HeightControl.AUTO_EXTERNAL;
+        }
+
+        public boolean isFillingTopAndBottom() {
+            return this == HeightControl.MANUAL_CENTER ||
+                    this == HeightControl.AUTO_CENTER;
+        }
+
+        public boolean isFillingInner() {
+            return this == HeightControl.MAX || isManual();
+        }
+
+        public boolean isNotFilling() {
+            return this == HeightControl.MANUAL ||
+                    this == HeightControl.AUTO;
+        }
+
+        public boolean isAuto() {
+            return this == HeightControl.AUTO ||
+                    this == HeightControl.AUTO_CENTER ||
+                    this == HeightControl.AUTO_EXTERNAL;
+        }
+
+        public boolean isManual() {
+            return this == HeightControl.MANUAL ||
+                    this == HeightControl.MANUAL_CENTER ||
+                    this == HeightControl.MANUAL_EXTERNAL;
+        }
 
     }
 
