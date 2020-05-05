@@ -1,8 +1,13 @@
 package me.bimmr.bimmcore.gui.inventory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.gui.inventory.helpers.SingleClickEventUtil;
 import me.bimmr.bimmcore.items.Items;
+import me.bimmr.bimmcore.gui.inventory.helpers.SingleClickEventUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,31 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-/**
- * The type Menu.
- */
 public class Menu {
-    /**
-     * The constant MAXITEMSPERPAGE.
-     */
     public static final int MAXITEMSPERPAGE = 45;
-    /**
-     * The constant MAXITEMSPERPAGEBORDERED.
-     */
     public static final int MAXITEMSPERPAGEBORDERED = 28;
 
-    /**
-     * The constant PREVIOUSPAGEITEM.
-     */
     public static ItemStack PREVIOUSPAGEITEM;
-    /**
-     * The constant NEXTPAGEITEM.
-     */
     public static ItemStack NEXTPAGEITEM;
 
     static {
@@ -64,8 +49,6 @@ public class Menu {
 
     private HashMap<String, ClickEvent> oldClickEvent = new HashMap<>();
     private HashMap<UUID, ClickEvent> clickEvents = new HashMap<>();
-    private boolean close = true;
-    private boolean destroy = false;
 
     /**
      * Create a MenuGUI
@@ -101,18 +84,6 @@ public class Menu {
 
     /**
      * Create a MenuGUI
-     * No borders, No corners
-     *
-     * @param name       The menu's name
-     * @param size       The Size
-     * @param clickEvent The ClickEvent
-     */
-    public Menu(String name, int size, ClickEvent clickEvent) {
-        this(name, size, clickEvent, null, null);
-    }
-
-    /**
-     * Create a MenuGUI
      * Size is automatic, ClickEvent is null
      *
      * @param name          The menu's name
@@ -122,6 +93,7 @@ public class Menu {
     public Menu(String name, ItemStack borderCorners, ItemStack borderSides) {
         this(name, -1, null, borderCorners, borderSides);
     }
+
     /**
      * Create a MenuGUI
      * ClickEvent is null
@@ -169,35 +141,7 @@ public class Menu {
         MenuManager.register(this);
     }
 
-    public boolean willClose() {
-        return close;
-    }
-
-    @Deprecated
-    public void setCloseOnClick(boolean close) {
-        setClose(close);
-    }
-
-    public void setClose(boolean close) {
-        this.close = close;
-    }
-
-    public boolean willDestroy() {
-        return destroy;
-    }
-
-    @Deprecated
-    public void setDestroyOnClick(boolean destroy) {
-        setDestroy(destroy);
-    }
-
-    public void setDestroy(boolean destroy) {
-        this.destroy = destroy;
-    }
-
     /**
-     * Gets name.
-     *
      * @return Get The MenuGUI's name
      */
     public String getName() {
@@ -216,8 +160,6 @@ public class Menu {
     }
 
     /**
-     * Gets border corners.
-     *
      * @return Get the border corner ItemStack
      */
     public ItemStack getBorderCorners() {
@@ -237,22 +179,7 @@ public class Menu {
         return this;
     }
 
-    public void clear() {
-        pageSlot = new HashMap<>();
-        playerPage = new HashMap<>();
-        pages = new ArrayList<>();
-        inventories = new ArrayList<>();
-        toSetItems = new HashMap<>();
-
-        oldClickEvent = new HashMap<>();
-        clickEvents = new HashMap<>();
-
-        this.pages.add(new ArrayList<>());
-    }
-
     /**
-     * Gets player page.
-     *
      * @return Get the HashMap of page's each player is on
      */
     public HashMap<String, Integer> getPlayerPage() {
@@ -260,8 +187,6 @@ public class Menu {
     }
 
     /**
-     * Gets pages.
-     *
      * @return Get the Pages for the MenuGUI
      */
     public ArrayList<ArrayList<ItemStack>> getPages() {
@@ -269,7 +194,7 @@ public class Menu {
     }
 
     /**
-     * Gets inventories.
+     *
      *
      * @return Get The Inventory's in the MenuGUI
      */
@@ -278,8 +203,6 @@ public class Menu {
     }
 
     /**
-     * Gets border sides.
-     *
      * @return Get the border's ItemStack
      */
     public ItemStack getBorderSides() {
@@ -311,7 +234,7 @@ public class Menu {
             this.borderCorners = format(borderCorners, ChatColor.GRAY + "");
         if (borderSides != null)
             this.borderSides = format(borderSides, ChatColor.GRAY + "");
-        if (this.borderSides != null || this.borderCorners != null)
+        if(this.borderSides != null || this.borderCorners != null)
             this.bordered = true;
         return this;
     }
@@ -388,7 +311,6 @@ public class Menu {
         return addItem(page, itemStack, null);
     }
 
-
     /**
      * Add an Item to the MenuGUI
      *
@@ -403,8 +325,8 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
-            }
-        this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
+            }else
+                this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
         while (page < this.pages.size() && ((this.bordered && (this.pages.get(page)).size() >= 28) || (!this.bordered && (this.pages.get(page)).size() >= 45)))
             page++;
         while (this.pages.size() < page)
@@ -554,12 +476,11 @@ public class Menu {
             }
         }
         if (clickEvent != null)
-            if (BimmCore.supports(13)) {
+            if (!BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
                 item = SingleClickEventUtil.addUUIDTag(id, item);
                 this.clickEvents.put(id, clickEvent);
             }
-        oldClickEvent.put(new Items(item).toString(), clickEvent);
         this.toSetItems.put(new Integer[]{page, slot}, item);
         return this;
     }
@@ -638,7 +559,6 @@ public class Menu {
         return setItem(0, slot, item, null);
     }
 
-
     /**
      * Set an Item in the Menu
      * Page is 0
@@ -652,7 +572,6 @@ public class Menu {
     public Menu setItem(int slot, ItemStack item, ClickEvent clickEvent) {
         return setItem(0, slot, item, clickEvent);
     }
-
 
     /**
      * Set an Item in the Menu
@@ -707,18 +626,18 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu build() {
-        for (int pageIndex = 0; pageIndex < this.pages.size(); pageIndex++) {
-            ArrayList<ItemStack> items = this.pages.get(pageIndex);
+        for (int i = 0; i < this.pages.size(); i++) {
+            ArrayList<ItemStack> items = this.pages.get(i);
             if (this.bordered && items.size() == 0)
                 items.add(null);
             if (this.centered &&
-                    this.pageSlot.containsKey(pageIndex))
-                items = centerLastRow(items, this.pageSlot.get(pageIndex));
+                    this.pageSlot.containsKey(i))
+                items = centerLastRow(items, this.pageSlot.get(i));
             if (this.bordered)
                 items = outline(items);
             HashMap<Integer, ItemStack> toSetAfter = new HashMap<>();
             for (Map.Entry<Integer[], ItemStack> e : this.toSetItems.entrySet()) {
-                if (e.getKey()[0] == pageIndex) {
+                if (e.getKey()[0] == i) {
                     int slot = e.getKey()[1];
                     if (slot < 0) {
                         toSetAfter.put(slot, e.getValue());
@@ -729,26 +648,14 @@ public class Menu {
                     items.set(slot, e.getValue());
                 }
             }
-            int invSize = 1;
-
-            //If automatic size
-            if (this.size == -1)
-                invSize = getRows(items.size(), 9.0D) + (this.bordered ? -1 : pages.size() > 1 ? 1 : 0);
-
-                //If manual size
-            else
-                invSize = getRows(this.size, 9.0D) + 2;
-
-            invSize *= 9;
-
-            Inventory inv = Bukkit.createInventory(null, invSize, this.name);
+            Inventory inv = Bukkit.createInventory(null, (this.size != -1) ? ((getRows(this.size, 9.0D) + 2) * 9) : ((getRows(items.size(), 9.0D) + (this.bordered ? -1 : 1)) * 9), this.name);
             for (int position = 0; position < items.size(); position++) {
                 if (items.get(position) != null)
                     inv.setItem(position, items.get(position));
             }
-            if (pageIndex > 0 && pages.size() > 1)
+            if (i > 0)
                 inv.setItem(inv.getSize() - 9, PREVIOUSPAGEITEM);
-            if (pages.size() > 1 && pageIndex != this.pages.size() - 1)
+            if (i != this.pages.size() - 1)
                 inv.setItem(inv.getSize() - 1, NEXTPAGEITEM);
             for (Map.Entry<Integer, ItemStack> e : toSetAfter.entrySet())
                 inv.setItem(inv.getSize() + e.getKey(), e.getValue());
@@ -847,8 +754,6 @@ public class Menu {
     }
 
     /**
-     * Gets current page.
-     *
      * @param player The player
      * @return The current page
      */
@@ -883,8 +788,6 @@ public class Menu {
     }
 
     /**
-     * Gets click event.
-     *
      * @return Get the ClickEvent
      */
     public ClickEvent getClickEvent() {
@@ -894,15 +797,13 @@ public class Menu {
     /**
      * Set the ClickEvent
      *
-     * @param clickEvent the click event
+     * @param clickEvent
      */
     public void setClickEvent(ClickEvent clickEvent) {
         this.clickEvent = clickEvent;
     }
 
     /**
-     * Gets click event.
-     *
      * @param itemStack The ItemStack
      * @return Get the ClickEvent for an item
      */
@@ -911,16 +812,33 @@ public class Menu {
             UUID id = SingleClickEventUtil.getUUIDFromTag(itemStack);
             if (id != null)
                 return this.clickEvents.get(id);
-        }
-        if (this.oldClickEvent.containsKey(new Items(itemStack).toString()))
+        }else{
             return this.oldClickEvent.get(new Items(itemStack).toString());
-
+        }
         return null;
     }
 
     /**
-     * Gets size.
+     * Set if MenuGUI is to close on click (Safe if ClickEvent is null)
      *
+     * @param closeOnClick If the MenuGUI is to close on click
+     */
+    public void setCloseOnClick(boolean closeOnClick) {
+        if (this.getClickEvent() != null)
+            this.clickEvent.setClose(closeOnClick);
+    }
+
+    /**
+     * Set if MenuGUI is to destroy on click (Safe if ClickEvent is null)
+     *
+     * @param destroyOnClick If the MenuGUI is to destroy on click
+     */
+    public void setDestroyOnClick(boolean destroyOnClick) {
+        if (this.getClickEvent() != null)
+            this.clickEvent.setDestroy(destroyOnClick);
+    }
+
+    /**
      * @return Get the MenuGUI's size
      */
     public int getSize() {
