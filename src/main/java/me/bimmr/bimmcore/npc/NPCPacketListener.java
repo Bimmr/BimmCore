@@ -1,5 +1,12 @@
 package me.bimmr.bimmcore.npc;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import io.netty.channel.Channel;
 import me.bimmr.bimmcore.misc.Cooldown;
 import me.bimmr.bimmcore.reflection.Reflection;
@@ -11,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Original Authour: Jitse Boonstra
@@ -27,34 +35,66 @@ public class NPCPacketListener {
 
     private Plugin plugin;
     private Cooldown<UUID> cooldown;
+    private boolean usingProtocolLib;
+    private boolean started = false;
     private TinyProtocol tinyProtocol;
 
     public void start(Plugin plugin) {
-        this.plugin = plugin;
-        this.cooldown = new Cooldown(1);
-        this.tinyProtocol = new TinyProtocol(plugin) {
+        if (!started) {
+            started = true;
+            this.plugin = plugin;
+            this.cooldown = new Cooldown(1);
 
-            @Override
-            public Object onPacketInAsync(Player sender, Channel channel, Object packet) {
-                return handleInteractPacket(sender, packet) ? super.onPacketInAsync(sender, channel, packet) : null;
+            if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
+                usingProtocolLib = true;
+
+            if (usingProtocolLib) {
+                plugin.getLogger().log(Level.INFO, "Using ProtocolLib for NPCPacketListener");
+                ProtocolLibrary.getProtocolManager().addPacketListener(
+                        new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+                            @Override
+                            public void onPacketReceiving(PacketEvent event) {
+                                handleInteractPacket(event.getPlayer(), event.getPacket());
+                                event.setCancelled(true);
+                            }
+                        });
+            } else {
+                plugin.getLogger().log(Level.INFO, "Using TinyProtocol for NPCPacketListener");
+                this.tinyProtocol = new TinyProtocol(plugin) {
+
+                    @Override
+                    public Object onPacketInAsync(Player sender, Channel channel, Object packet) {
+                        if (!packetPlayInUseEntityClazz.isInstance(packet))
+                            return super.onPacketInAsync(sender, channel, packet);
+                        return handleInteractPacket(sender, packet) ? super.onPacketInAsync(sender, channel, packet) : null;
+                    }
+                };
             }
-        };
+        }
     }
 
     public void stop() {
-        getTinyProtocol().close();
+        if (!usingProtocolLib)
+            tinyProtocol.close();
     }
 
     private boolean handleInteractPacket(Player player, Object packet) {
-        if (!packetPlayInUseEntityClazz.isInstance(packet))
-            return true; // We aren't handling the packet.
-
-        if (!cooldown.isCooledDown(player.getUniqueId())) {
+        if (!cooldown.isCooledDown(player.getUniqueId()))
             return false;
-        }
 
         NPC npc = null;
-        int packetEntityId = (int) Reflection.get(entityIdField, packet);
+        int entityID = -1;
+        boolean isLeftClick = false;
+
+        if (usingProtocolLib) {
+            PacketContainer packetContainer = (PacketContainer)packet;
+            entityID = packetContainer.getIntegers().read(0);
+            isLeftClick= packetContainer.getEntityUseActions().getValues().get(0) == EnumWrappers.EntityUseAction.ATTACK;
+        } else {
+            entityID = (int) Reflection.get(entityIdField, packet);
+            isLeftClick = Reflection.get(actionField, packet).toString().equals("ATTACK");
+        }
+
 
         // Not using streams here is an intentional choice.
         // Packet listeners is one of the few places where it is important to write optimized code.
@@ -63,7 +103,7 @@ public class NPCPacketListener {
         // ~ Kneesnap, 9 / 20 / 2019.
 
         for (NPC testNPC : NPCManager.getAllNPCs()) {
-            if (testNPC.isShown(player) && testNPC.getId() == packetEntityId) {
+            if (testNPC.isShown(player) && testNPC.getId() == entityID) {
                 npc = testNPC;
                 break;
             }
@@ -76,21 +116,16 @@ public class NPCPacketListener {
 
 
         cooldown.addToCooldown(player.getUniqueId());
-        Bukkit.getScheduler().runTask(plugin, new TaskCallNpcClickEvent(player, Reflection.get(actionField, packet).toString().equals("ATTACK"), npc.getNpcClickEvent()));
+        Bukkit.getScheduler().runTask(plugin, new TaskCallNpcClickEvent(player, isLeftClick, npc.getNpcClickEvent()));
         return false;
-    }
-
-    public TinyProtocol getTinyProtocol() {
-        return tinyProtocol;
     }
 
     // This would be a non-static lambda, and its usage matters, so we'll make it a full class.
     private static final class TaskCallNpcClickEvent implements Runnable {
+        private static Location playerLocation = new Location(null, 0, 0, 0);
         private Player player;
         private boolean leftClick;
         private NPCClickEvent eventToCall;
-
-        private static Location playerLocation = new Location(null, 0, 0, 0);
 
         TaskCallNpcClickEvent(Player player, boolean leftClick, NPCClickEvent eventToCall) {
             this.player = player;

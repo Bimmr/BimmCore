@@ -30,10 +30,9 @@ public class NPCManager {
     }
 
     public static NPCPacketListener getNPCPacketListener() {
-        if (npcPacketListener == null) {
+        if (npcPacketListener == null)
             npcPacketListener = new NPCPacketListener();
-            npcPacketListener.start(BimmCore.getInstance());
-        }
+
         return npcPacketListener;
     }
 }
