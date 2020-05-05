@@ -13,8 +13,6 @@ public abstract class ClickEvent {
     private Player player;
     private int position;
     private int page;
-    private boolean close;
-    private boolean destroy;
     private ItemStack item;
     private InventoryClickEvent event;
 
@@ -31,28 +29,8 @@ public abstract class ClickEvent {
         this.player = player;
         this.page = page;
         this.position = position;
-        this.close = true;
-        this.destroy = false;
         this.item = item;
         this.event = event;
-    }
-
-    /**
-     * Set destroy
-     *
-     * @param destroy boolean if to be destroyed
-     */
-    public void setDestroy(boolean destroy) {
-        this.destroy = destroy;
-    }
-
-    /**
-     * Set close
-     *
-     * @param close boolean if to be close
-     */
-    public void setClose(boolean close) {
-        this.close = close;
     }
 
     /**
@@ -67,20 +45,6 @@ public abstract class ClickEvent {
      */
     public int getPosition() {
         return position;
-    }
-
-    /**
-     * @return Get if will close
-     */
-    public boolean willClose() {
-        return close;
-    }
-
-    /**
-     * @return Get if will destroy
-     */
-    public boolean willDestroy() {
-        return destroy;
     }
 
     /**
