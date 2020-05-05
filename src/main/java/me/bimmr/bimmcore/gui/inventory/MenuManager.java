@@ -44,10 +44,11 @@ public class MenuManager implements Listener {
      * @return The MenuGUI
      */
     public static Menu getMenuGUI(Inventory inventory) {
-        for (Menu menu : menus)
+        for (Menu menu : menus) {
             for (Inventory inv : menu.getInventories())
                 if (inv.equals(inventory))
                     return menu;
+        }
         return null;
     }
 
@@ -60,6 +61,8 @@ public class MenuManager implements Listener {
 
         //Get MenuGUI
         Menu menu = getMenuGUI(event.getInventory());
+        if(menu == null)
+            menu = getMenuGUI(event.getView().getTitle());
         if (menu != null) {
             event.setCancelled(true);
 
@@ -101,11 +104,11 @@ public class MenuManager implements Listener {
                         player.updateInventory();
 
                         //Close if set to close on ClickEvent
-                        if (menu.getClickEvent() == null || menu.getClickEvent().willClose())
+                        if (menu.willClose())
                             player.closeInventory();
 
                         //Destroy if set to destroy on ClickEvent
-                        if (menu.getClickEvent() != null && menu.getClickEvent().willDestroy())
+                        if (menu.willDestroy())
                             menu.destroy();
                     }
                 }
