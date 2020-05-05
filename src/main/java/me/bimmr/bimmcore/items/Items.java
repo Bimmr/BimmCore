@@ -3,15 +3,15 @@ package me.bimmr.bimmcore.items;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.items.helpers.GlowEnchant;
-import me.bimmr.bimmcore.items.helpers.Items_Crackshot;
-import me.bimmr.bimmcore.items.helpers.Items_QualityArmory;
-import me.bimmr.bimmcore.utils.StringUtil;
 import me.bimmr.bimmcore.items.attributes.AttributeType;
 import me.bimmr.bimmcore.items.attributes.ItemAttributes;
 import me.bimmr.bimmcore.items.attributes.Operation;
 import me.bimmr.bimmcore.items.attributes.Slot;
+import me.bimmr.bimmcore.items.helpers.GlowEnchant;
+import me.bimmr.bimmcore.items.helpers.Items_Crackshot;
+import me.bimmr.bimmcore.items.helpers.Items_QualityArmory;
 import me.bimmr.bimmcore.reflection.Reflection;
+import me.bimmr.bimmcore.utils.StringUtil;
 import org.bukkit.*;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.banner.Pattern;
@@ -69,11 +69,19 @@ public class Items {
 
     /**
      * Instantiates a new Items.
+     *
+     * @param material the material
+     */
+    public Items(Material material) {
+        setMaterial(material);
+    }
+
+    /**
+     * Instantiates a new Items.
      */
     public Items() {
         this.item = new ItemStack(Material.AIR);
     }
-
 
     /**
      * Load the item from a string
@@ -324,6 +332,19 @@ public class Items {
             }
         }
 
+        return this;
+    }
+
+    /**
+     * Set the material
+     *
+     * @param material The Material
+     * @return The Item
+     */
+    public Items setMaterial(Material material) {
+        this.item = new ItemStack(material);
+        if (this.item.hasItemMeta())
+            itemMeta = this.item.getItemMeta();
         return this;
     }
 
@@ -692,7 +713,7 @@ public class Items {
     public Items setSkullOwner(String value) {
         if (!(getItemMeta() instanceof SkullMeta))
             return this;
-        if (value.startsWith("http://") || value.startsWith("https://"))
+        if (value.startsWith("http://") || value.startsWith("https://") || value.length() > 16)
             return setSkullSkin(value);
         else {
             SkullMeta skullMeta = (SkullMeta) getItemMeta();
@@ -722,15 +743,22 @@ public class Items {
     /**
      * Set Skull Owner to a Custom URL
      *
-     * @param url The URL
+     * @param value The URL
      * @return Items skull skin
      */
-    public Items setSkullSkin(String url) {
+    public Items setSkullSkin(String value) {
         SkullMeta meta = (SkullMeta) getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        profile.getProperties().put("textures", new Property("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + url + "\"}}}")));
+        try {
+            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            if (value.startsWith("http://") || value.startsWith("https://"))
+                profile.getProperties().put("textures", new Property("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + value + "\"}}}")));
+            else
+                profile.getProperties().put("textures", new Property("textures", value));
 
-        Reflection.setField(meta.getClass(), "profile", meta, profile);
+            Reflection.setField(meta.getClass(), "profile", meta, profile);
+        } catch (Exception e) {
+            System.out.println("Unable to apply custom Skull Skin");
+        }
         setItemMeta(meta);
         return this;
     }
@@ -1033,5 +1061,15 @@ public class Items {
         }
 
         return string.toString();
+    }
+
+    public Items duplicate() {
+        return new Items(toString());
+    }
+    public String getTexture(){
+        SkullMeta meta = (SkullMeta) getItemMeta();
+        GameProfile profile = (GameProfile)Reflection.get(meta.getClass(), "profile", meta);
+        Property property = (Property) profile.getProperties().get("textures").toArray()[0];
+        return property.getValue();
     }
 }
