@@ -43,6 +43,11 @@ import java.util.*;
  */
 public class Items {
 
+    public static final Items INVALID_ITEM = new Items(BimmCore.supports(13) ? Material.getMaterial("PLAYER_HEAD") : Material.getMaterial("SKULL_ITEM"))
+            .setDamage(3)
+            .setDisplayName("Unknown Item")
+            .setSkullOwner("MHF_Question");
+
     private ItemStack item = new ItemStack(Material.AIR);
     private ItemMeta itemMeta;
     private ItemAttributes itemAttributes;
@@ -54,7 +59,7 @@ public class Items {
      */
     public Items(ItemStack stack) {
         this.item = stack;
-        if (this.item.hasItemMeta())
+        if (this.item != null && this.item.hasItemMeta())
             itemMeta = this.item.getItemMeta();
     }
 
@@ -137,14 +142,10 @@ public class Items {
 
                 //Material
                 else if (StringUtil.equalsStrings(prefix, "id", "item", "material", "type")) {
-                    if (Material.matchMaterial(value) != null)
+                   if (Material.matchMaterial(value) != null)
                         this.item = new ItemStack(Material.matchMaterial(value));
                     else {
-                        this.item = new ItemStack(BimmCore.supports(13) ? Material.getMaterial("PLAYER_HEAD") : Material.getMaterial("SKULL_ITEM"));
-                        setDamage(3);
-                        setDisplayName("Unknown Item");
-                        setSkullOwner("MHF_Question");
-                        return this;
+                        return INVALID_ITEM;
                     }
                 }
                 //Amount
@@ -976,7 +977,7 @@ public class Items {
             //Leather Armour Color
             if (itemMeta instanceof LeatherArmorMeta) {
                 LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
-                string.append(" leather-color:").append(leatherArmorMeta.getColor().getRed()).append(",").append(leatherArmorMeta.getColor().getBlue()).append(",").append(leatherArmorMeta.getColor().getGreen());
+                string.append(" leather-color:").append(leatherArmorMeta.getColor().getRed()).append(",").append(leatherArmorMeta.getColor().getGreen()).append(",").append(leatherArmorMeta.getColor().getBlue());
             }
 
             //Books
@@ -1019,7 +1020,7 @@ public class Items {
                     if (BimmCore.supports(12))
                         string.append(" owner:").append(skullMeta.getOwningPlayer().getUniqueId());
                     else
-                        string.append(" owner:").append(Bukkit.getOfflinePlayer(skullMeta.getOwner()).getUniqueId());
+                        string.append(" owner:").append(skullMeta.getOwner());
 
             }
 
@@ -1066,9 +1067,10 @@ public class Items {
     public Items duplicate() {
         return new Items(toString());
     }
-    public String getTexture(){
+
+    public String getTexture() {
         SkullMeta meta = (SkullMeta) getItemMeta();
-        GameProfile profile = (GameProfile)Reflection.get(meta.getClass(), "profile", meta);
+        GameProfile profile = (GameProfile) Reflection.get(meta.getClass(), "profile", meta);
         Property property = (Property) profile.getProperties().get("textures").toArray()[0];
         return property.getValue();
     }
