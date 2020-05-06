@@ -1,14 +1,24 @@
 package me.bimmr.bimmcore.npc;
 
 
-import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.npc.human.NPCPlayerListener;
+import me.bimmr.bimmcore.npc.human.ProtocolLibPlayerListener;
+import me.bimmr.bimmcore.npc.human.TinyPlayerListener;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.ArrayList;
 
-public class NPCManager {
+public class NPCManager implements Listener {
 
     private static ArrayList<NPC> npcs = new ArrayList<>();
-    private static NPCPacketListener npcPacketListener;
+    private static NPCPlayerListener npcPlayerListener;
 
     public static void unregister(NPC npc) {
         npcs.remove(npc);
@@ -23,16 +33,53 @@ public class NPCManager {
     }
 
     public static NPC getNPC(int id) {
-        for (NPC npc : getAllNPCs())
-            if (npc.getId() == id)
-                return npc;
+        for (NPC npcPlayer : getAllNPCs())
+            if (npcPlayer.getId() == id)
+                return npcPlayer;
         return null;
     }
 
-    public static NPCPacketListener getNPCPacketListener() {
-        if (npcPacketListener == null)
-            npcPacketListener = new NPCPacketListener();
+    public NPCPlayerListener getNPCPlayerListener() {
+        if (npcPlayerListener == null)
+            if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null)
+                npcPlayerListener = new ProtocolLibPlayerListener();
+            else npcPlayerListener = new TinyPlayerListener();
 
-        return npcPacketListener;
+        return npcPlayerListener;
+    }
+
+    @EventHandler
+    public void playerDamageNPC(EntityDamageByEntityEvent e) {
+        int id = e.getEntity().getEntityId();
+        NPC npc = getNPC(id);
+        if (npc != null) {
+            if (e.getDamager() instanceof Player)
+                npc.getNPCClickEvent().playerLeftClick((Player) e.getDamager());
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void damageNPC(EntityDamageEvent e) {
+        int id = e.getEntity().getEntityId();
+        NPC npc = getNPC(id);
+        if (npc != null)
+            e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void npcOnFire(EntityCombustEvent e) {
+        int id = e.getEntity().getEntityId();
+        NPC npc = getNPC(id);
+        if (npc != null)
+            e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void playerInteract(PlayerInteractEntityEvent e) {
+        int id = e.getRightClicked().getEntityId();
+        NPC npc = getNPC(id);
+        if (npc != null)
+            npc.getNPCClickEvent().playerRightClick(e.getPlayer());
     }
 }

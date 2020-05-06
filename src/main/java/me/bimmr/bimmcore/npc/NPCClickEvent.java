@@ -1,7 +1,6 @@
 package me.bimmr.bimmcore.npc;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 public abstract class NPCClickEvent {
 
