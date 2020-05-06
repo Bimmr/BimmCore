@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class Config {
     private FileManager fileManager;
@@ -57,9 +58,10 @@ public class Config {
             Reader defConfigStream = new InputStreamReader(this.resourcePlugin.getResource(this.name), "UTF8");
             if (defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                this.config.setDefaults((Configuration)defConfig);
+                this.config.setDefaults((Configuration) defConfig);
             }
-        } catch (UnsupportedEncodingException |NullPointerException unsupportedEncodingException) {}
+        } catch (UnsupportedEncodingException | NullPointerException unsupportedEncodingException) {
+        }
         return this;
     }
 
@@ -107,5 +109,13 @@ public class Config {
     public Config setup() {
         copyDefaults(true).save();
         return this;
+    }
+
+    public ArrayList<String> getKeys(String path) {
+        ArrayList<String> list = new ArrayList<>();
+        for (String name : get().getConfigurationSection(path).getKeys(true))
+            if (!name.contains("."))
+                list.add(name);
+        return list;
     }
 }
