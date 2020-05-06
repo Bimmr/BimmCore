@@ -179,8 +179,9 @@ public class Menu {
         setClose(close);
     }
 
-    public void setClose(boolean close) {
+    public Menu setClose(boolean close) {
         this.close = close;
+        return this;
     }
 
     public boolean willDestroy() {
@@ -192,8 +193,9 @@ public class Menu {
         setDestroy(destroy);
     }
 
-    public void setDestroy(boolean destroy) {
+    public Menu setDestroy(boolean destroy) {
         this.destroy = destroy;
+        return this;
     }
 
     /**
@@ -308,51 +310,14 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu border(ItemStack borderCorners, ItemStack borderSides) {
+        //Validate Items
+
         if (borderCorners != null)
-            this.borderCorners = format(borderCorners, ChatColor.GRAY + "");
+            this.borderCorners = new Items(borderCorners).setDisplayName(ChatColor.GRAY + "").getItem();
         if (borderSides != null)
-            this.borderSides = format(borderSides, ChatColor.GRAY + "");
+            this.borderSides = new Items(borderSides).setDisplayName(ChatColor.GRAY + "").getItem();
         if (this.borderSides != null || this.borderCorners != null)
             this.bordered = true;
-        return this;
-    }
-
-    /**
-     * Format the ItemStack with a Name and lore
-     *
-     * @param itemStack The ItemStack
-     * @param name      The name
-     * @param lore      The lore
-     * @return The formatted ItemStack
-     */
-    public ItemStack format(ItemStack itemStack, String name, String... lore) {
-        Items item = new Items(itemStack);
-        item.setDisplayName(name);
-        item.setLore(lore);
-        return item.getItem();
-    }
-
-    /**
-     * Format the ItemStack with a name
-     * Lore is null
-     * Calls {@link #format(ItemStack, String, String...)}
-     *
-     * @param itemStack The ItemStack
-     * @param name      The name
-     * @return The formatted ItemStack
-     */
-    public ItemStack format(ItemStack itemStack, String name) {
-        return format(itemStack, name, null);
-    }
-
-    /**
-     * Set the MenuGUI being bordered - includes corners
-     *
-     * @param bordered If being bordered
-     * @return The MenuGUI
-     */
-    public Menu setBordered(boolean bordered) {
-        this.bordered = false;
         return this;
     }
 
@@ -389,7 +354,6 @@ public class Menu {
         return addItem(page, itemStack, null);
     }
 
-
     /**
      * Add an Item to the MenuGUI
      *
@@ -400,15 +364,15 @@ public class Menu {
      */
     public Menu addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
 
-        if (clickEvent != null)
+        if (clickEvent != null) {
             clickEvent.menuObject = this;
-        if (clickEvent != null)
             if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
             }
-        this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
+            this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
+        }
         while (page < this.pages.size() && ((this.bordered && (this.pages.get(page)).size() >= 28) || (!this.bordered && (this.pages.get(page)).size() >= 45)))
             page++;
         while (this.pages.size() < page)
@@ -430,28 +394,11 @@ public class Menu {
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
      * @param page      The page to add the item to
-     * @param itemStack The ItemStack
-     * @param name      The Name
-     * @param lore      The Lore as an array
+     * @param items The ItemStack
      * @return The MenuGUI
      */
-    public Menu addItem(int page, ItemStack itemStack, String name, String... lore) {
-        return addItem(page, format(itemStack, name, lore), null);
-    }
-
-    /**
-     * Add a formatted Item
-     * Lore is null
-     * Call {@link #addItem(int, ItemStack, ClickEvent)}
-     *
-     * @param page       The page to add the item to
-     * @param itemStack  The ItemStack
-     * @param name       The Name
-     * @param clickEvent The ClickEvent
-     * @return The MenuGUI
-     */
-    public Menu addItem(int page, ItemStack itemStack, String name, ClickEvent clickEvent) {
-        return addItem(page, format(itemStack, name, new String[]{}), clickEvent);
+    public Menu addItem(int page, Items items) {
+        return addItem(page, items.getItem(), null);
     }
 
     /**
@@ -460,28 +407,11 @@ public class Menu {
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      * =
      *
-     * @param itemStack The ItemStack
-     * @param name      The Name
-     * @param lore      The Lore as an array
+     * @param items The ItemStack
      * @return The MenuGUI
      */
-    public Menu addItem(ItemStack itemStack, String name, String... lore) {
-        return addItem(0, format(itemStack, name, lore), null);
-    }
-
-    /**
-     * Add a formatted Item
-     * Call {@link #addItem(int, ItemStack, ClickEvent)}
-     *
-     * @param page       The page to add the item to
-     * @param itemStack  The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as an array
-     * @param clickEvent The ClickEvent
-     * @return The MenuGUI
-     */
-    public Menu addItem(int page, ItemStack itemStack, String name, String[] lore, ClickEvent clickEvent) {
-        return addItem(page, format(itemStack, name, lore), clickEvent);
+    public Menu addItem(Items items) {
+        return addItem(0, items.getItem(), null);
     }
 
     /**
@@ -489,14 +419,11 @@ public class Menu {
      * Page is 0
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
-     * @param itemStack  The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as a String
-     * @param clickEvent The ClickEvent
+     * @param items  The ItemStack
      * @return The MenuGUI
      */
-    public Menu addItem(ItemStack itemStack, String name, String lore, ClickEvent clickEvent) {
-        return addItem(format(itemStack, name, lore), clickEvent);
+    public Menu addItem(Items items, ClickEvent clickEvent) {
+        return addItem(0, items.getItem(), clickEvent);
     }
 
     /**
@@ -504,14 +431,12 @@ public class Menu {
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
      * @param page       The page to add the item to
-     * @param itemStack  The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as a String
+     * @param items  The ItemStack
      * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
-    public Menu addItem(int page, ItemStack itemStack, String name, String lore, ClickEvent clickEvent) {
-        return addItem(page, format(itemStack, name, lore), clickEvent);
+    public Menu addItem(int page, Items items, ClickEvent clickEvent) {
+        return addItem(page, items.getItem(), clickEvent);
     }
 
     /**
@@ -558,16 +483,15 @@ public class Menu {
             }
         }
 
-
-        if (clickEvent != null)
+        if (clickEvent != null) {
             clickEvent.menuObject = this;
-        if (clickEvent != null)
             if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
                 item = SingleClickEventUtil.addUUIDTag(id, item);
                 this.clickEvents.put(id, clickEvent);
             }
-        oldClickEvent.put(new Items(item).toString(), clickEvent);
+            this.oldClickEvent.put(new Items(item).toString(), clickEvent);
+        }
         this.toSetItems.put(new Integer[]{page, slot}, item);
         return this;
     }
@@ -592,13 +516,11 @@ public class Menu {
      *
      * @param page The page
      * @param slot The slot number
-     * @param item The ItemStack
-     * @param name The Name
-     * @param lore The Lore as an array
+     * @param items The ItemStack
      * @return The MenuGUI
      */
-    public Menu setItem(int page, int slot, ItemStack item, String name, String... lore) {
-        return setItem(page, slot, format(item, name, lore));
+    public Menu setItem(int page, int slot, Items items) {
+        return setItem(page, slot, items.getItem());
     }
 
     /**
@@ -607,30 +529,12 @@ public class Menu {
      *
      * @param page       The page
      * @param slot       The slot number
-     * @param item       The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as an array
+     * @param items       The ItemStack
      * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
-    public Menu setItem(int page, int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
-        return setItem(page, slot, format(item, name, lore), clickEvent);
-    }
-
-    /**
-     * Set an Item in the Menu
-     * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
-     *
-     * @param page       The page
-     * @param slot       The slot number
-     * @param item       The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as a String
-     * @param clickEvent The ClickEvent
-     * @return The MenuGUI
-     */
-    public Menu setItem(int page, int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
-        return setItem(page, slot, format(item, name, lore), clickEvent);
+    public Menu setItem(int page, int slot, Items items, ClickEvent clickEvent) {
+        return setItem(page, slot, items.getItem(), clickEvent);
     }
 
     /**
@@ -646,7 +550,6 @@ public class Menu {
         return setItem(0, slot, item, null);
     }
 
-
     /**
      * Set an Item in the Menu
      * Page is 0
@@ -661,20 +564,17 @@ public class Menu {
         return setItem(0, slot, item, clickEvent);
     }
 
-
     /**
      * Set an Item in the Menu
      * Page is 0, ClickEvent is null
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
      *
      * @param slot The slot number
-     * @param item The ItemStack
-     * @param name The Name
-     * @param lore The Lore as a String
+     * @param items The ItemStack
      * @return The MenuGUI
      */
-    public Menu setItem(int slot, ItemStack item, String name, String... lore) {
-        return setItem(0, slot, format(item, name, lore), null);
+    public Menu setItem(int slot, Items items) {
+        return setItem(0, slot, items, null);
     }
 
     /**
@@ -683,30 +583,11 @@ public class Menu {
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
      *
      * @param slot       The slot number
-     * @param item       The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as a String
-     * @param clickEvent The ClickEvent
+     * @param items       The ItemStack
      * @return The MenuGUI
      */
-    public Menu setItem(int slot, ItemStack item, String name, String lore, ClickEvent clickEvent) {
-        return setItem(0, slot, format(item, name, lore), clickEvent);
-    }
-
-    /**
-     * Set an Item in the Menu
-     * Page is 0
-     * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
-     *
-     * @param slot       The slot number
-     * @param item       The ItemStack
-     * @param name       The Name
-     * @param lore       The Lore as an array
-     * @param clickEvent The ClickEvent
-     * @return The MenuGUI
-     */
-    public Menu setItem(int slot, ItemStack item, String name, String[] lore, ClickEvent clickEvent) {
-        return setItem(0, slot, format(item, name, lore), clickEvent);
+    public Menu setItem(int slot, Items items, ClickEvent clickEvent) {
+        return setItem(0, slot, items, clickEvent);
     }
 
     /**
@@ -944,5 +825,20 @@ public class Menu {
      */
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public boolean isBordered() {
+        return this.bordered;
+    }
+
+    /**
+     * Set the MenuGUI being bordered - includes corners
+     *
+     * @param bordered If being bordered
+     * @return The MenuGUI
+     */
+    public Menu setBordered(boolean bordered) {
+        this.bordered = false;
+        return this;
     }
 }

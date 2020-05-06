@@ -1,19 +1,25 @@
 package me.bimmr.bimmcore.gui.inventory;
 
+import me.bimmr.bimmcore.misc.Cooldown;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MenuManager implements Listener {
     public static ArrayList<Menu> menus = new ArrayList<Menu>();
+    private static Cooldown<UUID> cooldown = new Cooldown<>(1);
 
     /**
      * Unregister the Menu
+     *
      * @param menu The Menu to unRegister
      */
     public static void unregister(Menu menu) {
@@ -22,6 +28,7 @@ public class MenuManager implements Listener {
 
     /**
      * Register the Menu
+     *
      * @param menu the Menu to register
      */
     public static void register(Menu menu) {
@@ -54,14 +61,15 @@ public class MenuManager implements Listener {
 
     /**
      * Event Handler for MenuGUIs
-     * @param event  The InventoryClickEvent
+     *
+     * @param event The InventoryClickEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
 
         //Get MenuGUI
         Menu menu = getMenuGUI(event.getInventory());
-        if(menu == null)
+        if (menu == null)
             menu = getMenuGUI(event.getView().getTitle());
         if (menu != null) {
             event.setCancelled(true);
@@ -79,41 +87,53 @@ public class MenuManager implements Listener {
 
                 //If clicked on a valid item
                 if (inv.getContents()[position] != null) {
+                    if (cooldown.isCooledDown(player.getUniqueId())) {
+                        cooldown.addToCooldown(player.getUniqueId());
 
-                    //Check if clicked on page navigation
-                    if (page > 0 && position == inv.getSize() - 9)
-                        menu.openPreviousPage(player);
-                    else if (menu.getPages().size() > 1 && page < menu.getPages().size() - 1 && position == inv.getSize() - 1)
-                        menu.openNextPage(player);
+                        //Check if clicked on page navigation
+                        if (page > 0 && position == inv.getSize() - 9)
+                            menu.openPreviousPage(player);
+                        else if (menu.getPages().size() > 1 && page < menu.getPages().size() - 1 && position == inv.getSize() - 1)
+                            menu.openNextPage(player);
+                        else if (isBorderItem(menu, inv.getContents()[position]))
+                            ;//Do nothing if border item
 
-                        //Clicking on valid item in inventory
-                    else {
+                        else {
+                            //Call ClickEvent
+                            if (menu.getClickEvent() != null) {
+                                menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
+                                menu.getClickEvent().click();
+                            }
+                            //Call individual item's ClickEvent
+                            if (menu.getClickEvent(inv.getContents()[position]) != null) {
+                                menu.getClickEvent(inv.getContents()[position]).setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
+                                menu.getClickEvent(inv.getContents()[position]).click();
+                            }
 
-                        //Call ClickEvent
-                        if (menu.getClickEvent() != null) {
-                            menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
-                            menu.getClickEvent().click();
+                            //Update the player's inventory
+                            player.updateInventory();
+
+                            //Close if set to close on ClickEvent
+                            if (menu.willClose())
+                                player.closeInventory();
+
+                            //Destroy if set to destroy on ClickEvent
+                            if (menu.willDestroy())
+                                menu.destroy();
                         }
-                        //Call individual item's ClickEvent
-                        if (menu.getClickEvent(inv.getContents()[position]) != null) {
-                            menu.getClickEvent(inv.getContents()[position]).setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
-                            menu.getClickEvent(inv.getContents()[position]).click();
-                        }
-
-                        //Update the player's inventory
-                        player.updateInventory();
-
-                        //Close if set to close on ClickEvent
-                        if (menu.willClose())
-                            player.closeInventory();
-
-                        //Destroy if set to destroy on ClickEvent
-                        if (menu.willDestroy())
-                            menu.destroy();
                     }
                 }
             }
         }
 
+    }
+
+    private boolean isBorderItem(Menu menu, ItemStack itemStack) {
+        boolean isBorder = false;
+        if (itemStack.hasItemMeta() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
+            isBorder=  true;
+        else if (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack))
+            isBorder=  true;
+        return isBorder;
     }
 }
