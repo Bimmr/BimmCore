@@ -142,7 +142,7 @@ public class Items {
 
                 //Material
                 else if (StringUtil.equalsStrings(prefix, "id", "item", "material", "type")) {
-                   if (Material.matchMaterial(value) != null)
+                    if (Material.matchMaterial(value) != null)
                         this.item = new ItemStack(Material.matchMaterial(value));
                     else {
                         return INVALID_ITEM;
@@ -903,16 +903,16 @@ public class Items {
             if (BimmCore.supports(13) && itemMeta instanceof Damageable) {
                 Damageable damageable = (Damageable) itemMeta;
                 if (damageable.hasDamage())
-                    string.append(" data:").append(damageable.getDamage());
+                    string.append(" damage:").append(damageable.getDamage());
             } else {
                 if (getItem().getDurability() != 0)
-                    string.append(" data:").append(getItem().getDurability());
+                    string.append(" damage:").append(getItem().getDurability());
 
             }
 
             //Custom Name
             if (itemMeta.hasDisplayName())
-                string.append(" name:").append(itemMeta.getDisplayName().replaceAll(" ", "_"));
+                string.append(" name:").append(StringUtil.replaceToYAMLFriendlyColors(itemMeta.getDisplayName().replaceAll(" ", "_")));
 
             //Custom Lore
             if (itemMeta.hasLore()) {
@@ -1016,12 +1016,18 @@ public class Items {
             //Skulls
             if (itemMeta instanceof SkullMeta) {
                 SkullMeta skullMeta = (SkullMeta) itemMeta;
-                if (skullMeta.hasOwner())
-                    if (BimmCore.supports(12))
+                if (BimmCore.supports(12)) {
+                    if (skullMeta.getOwningPlayer() != null)
                         string.append(" owner:").append(skullMeta.getOwningPlayer().getUniqueId());
                     else
-                        string.append(" owner:").append(skullMeta.getOwner());
+                        string.append(" owner:").append(getTexture());
 
+                } else {
+                    if (skullMeta.getOwner() != null)
+                        string.append(" owner:").append(skullMeta.getOwner());
+                    else
+                        string.append(" owner:").append(getTexture());
+                }
             }
 
             //Enchantment Storage
@@ -1064,14 +1070,14 @@ public class Items {
         return string.toString();
     }
 
-    public Items duplicate() {
-        return new Items(toString());
-    }
-
     public String getTexture() {
-        SkullMeta meta = (SkullMeta) getItemMeta();
-        GameProfile profile = (GameProfile) Reflection.get(meta.getClass(), "profile", meta);
-        Property property = (Property) profile.getProperties().get("textures").toArray()[0];
-        return property.getValue();
+        try {
+            SkullMeta meta = (SkullMeta) getItemMeta();
+            GameProfile profile = (GameProfile) Reflection.get(meta.getClass(), "profile", meta);
+            Property property = (Property) profile.getProperties().get("textures").toArray()[0];
+            return property.getValue();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
