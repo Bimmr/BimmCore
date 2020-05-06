@@ -45,8 +45,8 @@ public class NPCPlayer extends NPC {
     public NPCPlayer(String name, Location location, String skin) {
         super(NPCType.PLAYER, name, location);
 
-        if (!BimmCore.supports(14)) {
-            BimmCore.getInstance().getLogger().log(Level.SEVERE, "Unable to create NPC Player before MC 1.14");
+        if (!BimmCore.supports(9)) {
+            BimmCore.getInstance().getLogger().log(Level.SEVERE, "Unable to create NPC Player before MC 1.9");
             return;
         }
         this.gameProfile = new GameProfile(UUID.randomUUID(), name);
@@ -240,6 +240,7 @@ public class NPCPlayer extends NPC {
         private static Class<?> craftWorldClass = Reflection.getCraftClass("CraftWorld");
         private static Class<?> playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
         private static Class<?> worldServerClass = Reflection.getNMSClass("WorldServer");
+        private static Class<?> worldClass = Reflection.getNMSClass("World");
         private static Class<?> minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
         private static Class<?> entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
         private static Class<?> entityClass = Reflection.getNMSClass("Entity");
@@ -254,7 +255,7 @@ public class NPCPlayer extends NPC {
         private static Class<?> enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
         private static Class<?> packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
 
-        private static Constructor<?> playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldServerClass);
+        private static Constructor<?> playerInteractManagerConstructor;
         private static Constructor<?> entityConstructor = Reflection.getConstructor(entityPlayerClass, minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
         private static Constructor<?> packetPlayOutEntityHeadRotationConstructor = Reflection.getConstructor(packetPlayOutEntityHeadRotationClass, entityClass, byte.class);
         private static Constructor<?> packetPlayOutNamedEntitySpawnConstructor = Reflection.getConstructor(packetPlayOutNamedEntitySpawnClass, entityHumanClass);
@@ -275,6 +276,11 @@ public class NPCPlayer extends NPC {
         private static Object playerInfoActionEnumRemove;
 
         static {
+            if (BimmCore.supports(14))
+                playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldServerClass);
+            else
+                playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldClass);
+
             itemSlotEnumMainHand = enumItemSlotClass.getEnumConstants()[0];
             itemSlotEnumOffHand = enumItemSlotClass.getEnumConstants()[1];
             itemSlotEnumFeet = enumItemSlotClass.getEnumConstants()[2];
@@ -319,6 +325,7 @@ public class NPCPlayer extends NPC {
 
             Object[] entities = (Object[]) Array.newInstance(entityPlayerClass, 1);
             entities[0] = entity;
+
             Constructor<?> packetPlayOutPlayerInfoConstructor = Reflection.getConstructor(packetPlayOutPlayerInfoClass, enumPlayerInfoActionClass, entities.getClass());
             Object packetPlayOutPlayerInfoAdd = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumAdd, entities);
             Object packetPlayOutNamedEntitySpawn = Reflection.newInstance(packetPlayOutNamedEntitySpawnConstructor, entity);
@@ -378,12 +385,17 @@ public class NPCPlayer extends NPC {
          * @return Get the Created Entity
          */
         public static Object create(NPCPlayer npcPlayer) {
+//            MinecraftServer minecraftServer = ((CraftServer) Bukkit.getServer()).getServer();
+//            WorldServer worldServer = ((CraftWorld) npcPlayer.getLocation().getWorld()).getHandle();
+//            PlayerInteractManager playerInteractManager = new PlayerInteractManager(worldServer);
             Object craftWorld = craftWorldClass.cast(npcPlayer.getLocation().getWorld());
-            Object worldHandle = Reflection.getHandle(craftWorld);
+            Object worldServer = Reflection.getHandle(craftWorld);
             Object craftServer = craftServerClass.cast(Bukkit.getServer());
             Object minecraftServer = Reflection.invokeMethod(craftServerClass, "getServer", craftServer);
-            Object playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, worldHandle);
-            Object entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldHandle, npcPlayer.getGameProfile(), playerInteractManager);
+            Object playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, worldServer);
+
+//            EntityPlayer entityPlayer = new EntityPlayer((MinecraftServer) minecraftServer, (WorldServer) worldServer, npcPlayer.getGameProfile(), playerInteractManager);
+            Object entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldServer, npcPlayer.getGameProfile(), playerInteractManager);
             return entityPlayer;
         }
 
