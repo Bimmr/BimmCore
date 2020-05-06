@@ -182,11 +182,9 @@ public class FancyMessage {
      * @return The FancyMessage
      */
     public FancyMessage onClick(FancyClickEvent fce) {
-        if (fce != null) {
             FancyMessageListener.chats.add(fce);
+            System.out.println(fce.getUUID());
             return command("/BimmCore " + fce.getUUID());
-        }
-        return this;
     }
 
     /**

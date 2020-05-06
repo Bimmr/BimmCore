@@ -23,7 +23,7 @@ public class FancyMessageListener implements Listener {
         if (event.getMessage().startsWith("/BimmCore ")) {
             String uuid = event.getMessage().split(" ")[1];
 
-            for (FancyClickEvent chatClickEvent : chats)
+            for (FancyClickEvent chatClickEvent : chats) {
                 if (chatClickEvent.getUUID().toString().equals(uuid)) {
                     event.setCancelled(true);
                     chatClickEvent.setPlayer(event.getPlayer());
@@ -31,6 +31,7 @@ public class FancyMessageListener implements Listener {
                     chatClickEvent.startRemoval();
                     break;
                 }
+            }
         }
     }
 
