@@ -12,7 +12,7 @@ import java.util.*;
  * A Utilities class to manage strings
  */
 public class StringUtil {
-    private final static int CENTER_PX = 157;
+    private final static int CENTER_PX = 154;
 
     /**
      * Gets a String with &amp; converted to ChatColor#COLOUR_CHAR
