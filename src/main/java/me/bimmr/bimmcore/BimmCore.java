@@ -17,12 +17,12 @@ import me.bimmr.bimmcore.messages.Title;
 import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
-import me.bimmr.bimmcore.misc.RandomChatColor;
 import me.bimmr.bimmcore.misc.Scroller;
 import me.bimmr.bimmcore.npc.NPC;
 import me.bimmr.bimmcore.npc.NPCClickEvent;
 import me.bimmr.bimmcore.npc.NPCManager;
-import me.bimmr.bimmcore.utils.StringUtil;
+import me.bimmr.bimmcore.npc.mob.NPCMob;
+import me.bimmr.bimmcore.npc.player.NPCPlayer;
 import me.bimmr.bimmcore.utils.TimeUtil;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.Bukkit;
@@ -32,6 +32,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -49,6 +50,7 @@ public class BimmCore extends JavaPlugin implements Listener {
     public static boolean oldAPI = !supports(13);
 
     private static BimmCore instance;
+    private NPCManager npcManager;
 
     public static BimmCore getInstance() {
         return instance;
@@ -126,20 +128,22 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
+        npcManager = new NPCManager();
+
         loadTimeUtil();
-        try {
-            NPCManager.getNPCPacketListener().start(instance);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "NPCPacketListener Unable to Load - Did the server get reloaded?");
-        }
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new FancyMessageListener(), this);
         Bukkit.getPluginManager().registerEvents(new MenuManager(), this);
+        Bukkit.getPluginManager().registerEvents(npcManager, this);
+
+
+        npcManager.getNPCPlayerListener().start();
     }
 
     public void onDisable() {
-        NPCManager.getNPCPacketListener().stop();
+        for (NPC npc : NPCManager.getAllNPCs())
+            npc.destroy();
+
     }
 
     @EventHandler
@@ -147,9 +151,9 @@ public class BimmCore extends JavaPlugin implements Listener {
         if (true && e.getMessage().startsWith("/BTest")) {
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
-                menu.addItem(new ItemStack(Material.GOLD_BLOCK), "Testing Add");
-                menu.setItem(1, 3, new ItemStack(Material.BOOK), "Testing Set");
-                menu.addItem(2, new ItemStack(Material.DIAMOND_BLOCK), "Testing Add", new ClickEvent() {
+                menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
+                menu.setItem(1, 3, new Items(Material.BOOK).setDisplayName("Testing Set"));
+                menu.addItem(2, new Items(Material.DIAMOND_BLOCK).setDisplayName("Testing Add"), new ClickEvent() {
                     @Override
                     public void click() {
                         e.getPlayer().sendMessage("test");
@@ -175,31 +179,25 @@ public class BimmCore extends JavaPlugin implements Listener {
             if (e.getMessage().contains("Chat")) {
                 System.out.println(FancyMessageListener.chats.size());
                 ChatMenu previous = null;
-                new ChatMenu("[ McInfected Kit "+ChatColor.GREEN+"Private "+ChatColor.WHITE+"]", new FancyMessage(ChatColor.DARK_RED+" << Back ").onClick(new FancyClickEvent() {
-                    @Override
-                    public void onClick() {
-                        if(previous != null)
-                            previous.show(getPlayer());
-                    }
-                }), ChatColor.DARK_GREEN)
-                        .addBlankLine()
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.AQUA + "Icon: ").then(ChatColor.GRAY+"Diamond_Sword").showItem(new Items(new ItemStack(Material.DIAMOND_SWORD)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "⧉" + ChatColor.DARK_GRAY + "]").tooltip("Click to modify setting").onClick(new FancyClickEvent() {
-                            @Override
-                            public void onClick() {
-
-                            }
-                        }).then("  ").then(ChatColor.GREEN + "Description"))
-                        .addBlankLine()
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Helmet: ").then(ChatColor.GRAY+"Diamond_Helmet").showItem(new Items(new ItemStack(Material.DIAMOND_HELMET)).getItem()))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Chestplate: ").then(ChatColor.GRAY+"Diamond_Chestplate").showItem(new Items(new ItemStack(Material.DIAMOND_CHESTPLATE)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Leggings: ").then(ChatColor.GRAY+"Diamond_Leggings").showItem(new Items(new ItemStack(Material.DIAMOND_LEGGINGS)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Boots: ").then(ChatColor.GRAY+"Diamond_Boots").showItem(new Items(new ItemStack(Material.DIAMOND_BOOTS)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
+                new ChatMenu("[ McInfected Kit " + ChatColor.GREEN + "Private " + ChatColor.WHITE + "]", ChatColor.DARK_GREEN, ChatMenu.HeightControl.AUTO_EXTERNAL)
+                        .setSpacedFormat(true)
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Leggings: ").then(ChatColor.GRAY + "Diamond_Leggings").showItem(new Items(new ItemStack(Material.DIAMOND_LEGGINGS)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Boots: ").then(ChatColor.GRAY + "Diamond_Boots").showItem(new Items(new ItemStack(Material.DIAMOND_BOOTS)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "⧉" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Inventory"))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "⧉" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.YELLOW + "Effects"))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "⧉" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.BLUE + "KillStreaks"))
 
-                        .addBlankLine()
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
+                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✕" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.RED + "Unload Kit"))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✖" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.DARK_RED + "Delete Kit"))
@@ -245,25 +243,47 @@ public class BimmCore extends JavaPlugin implements Listener {
                     }
                 }).send(e.getPlayer());
             }
-            if (e.getMessage().contains("NPC")) {
-                NPC npc = new NPC("Bimmr", e.getPlayer().getLocation());
+            if (e.getMessage().contains("NPCPlayer")) {
+                NPCPlayer npc = new NPCPlayer("Bimmr", e.getPlayer().getLocation());
                 npc.setNPCClickEvent(new NPCClickEvent() {
                     @Override
                     public void onRightClick() {
                         if (getPlayer().isSneaking()) {
-                            getNPC().setSkin("brenden23");
-                            getNPC().refresh();
+                            npc.setSkin("brenden23");
                         } else {
-                            getNPC().setSkin("Notch");
-                            getNPC().refresh();
+                            npc.setSkin("eyJ0aW1lc3RhbXAiOjE1ODgwOTU3NjI0MTcsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTlkNTAwMGQ1OGQ3NzczYTViOTYwNjZlMDVlNTdjMmY3ZDc1MWM3YWNkYWFjOTdhYWFlZmIxODEwYzQ5MzMxZiJ9fX0=",
+                                    "kxjU/PtVywX6Xs36RLIwH9j18ROeANCULxy3gLTid3YSgqGzGOKYDkWaSCL+8QtYFSNd6DTtfvDxswf9DF3+NXEe0ud9qjaYT+r9QHPvl3GvdTHiqavlYmo/QduiR7r0azck3MnbAbRDhUIGxmnMhltOHraY51HEydkWLtNzFiwJt5CcWBN1X5Q8H52fzG2yhPr+rgQ3+zPedDNT6bA8b5++JKsqS8Lf+e1qkBRWSncQByIfEz+X0/1xO4mcm/Xik/88suzfyWq87RM0fbu7PKzgeXTb6JfMReA2v5SjsNGWAUqLQmtqgW8rf63/QHmiacDLl8X0Rzrtu+gpM3dRqubXzvTRz87dxfhVybFPd5OOoiK6jGQL2NGmcLhcZMzJYV3I/ELWfcfsqcLL3hKEBg2Tu6cVimFTVhx7n0lbQvD+de5lNN4xe1lpD+4v2n+gdTauKQyqZxoTpOqIZ8bXaokZUP9UldzLhFYuiV+KTgaBGgLqWaFvckz7GRUKexUkU07y/12QoCVp9XHmC1G8wzW+LS8i1P3ka4wOArn5HE2L9SZWhN4ah31eQDh9ITtpFjqgJj4y5ydZdBanMVnqHlXRz2jsgDFmgysg5njdzpyhRbkMVe+jzxnJSfngKxQkKgi/Q2ReEWCk3TXwGBseA1Y/0z2CTMo8W3UP64sWOgk=");
                         }
+
                     }
 
                     @Override
                     public void onLeftClick() {
-                        getNPC().setSkin("eyJ0aW1lc3RhbXAiOjE1ODgwOTU3NjI0MTcsInByb2ZpbGVJZCI6IjkxZjA0ZmU5MGYzNjQzYjU4ZjIwZTMzNzVmODZkMzllIiwicHJvZmlsZU5hbWUiOiJTdG9ybVN0b3JteSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTlkNTAwMGQ1OGQ3NzczYTViOTYwNjZlMDVlNTdjMmY3ZDc1MWM3YWNkYWFjOTdhYWFlZmIxODEwYzQ5MzMxZiJ9fX0=",
-                                "kxjU/PtVywX6Xs36RLIwH9j18ROeANCULxy3gLTid3YSgqGzGOKYDkWaSCL+8QtYFSNd6DTtfvDxswf9DF3+NXEe0ud9qjaYT+r9QHPvl3GvdTHiqavlYmo/QduiR7r0azck3MnbAbRDhUIGxmnMhltOHraY51HEydkWLtNzFiwJt5CcWBN1X5Q8H52fzG2yhPr+rgQ3+zPedDNT6bA8b5++JKsqS8Lf+e1qkBRWSncQByIfEz+X0/1xO4mcm/Xik/88suzfyWq87RM0fbu7PKzgeXTb6JfMReA2v5SjsNGWAUqLQmtqgW8rf63/QHmiacDLl8X0Rzrtu+gpM3dRqubXzvTRz87dxfhVybFPd5OOoiK6jGQL2NGmcLhcZMzJYV3I/ELWfcfsqcLL3hKEBg2Tu6cVimFTVhx7n0lbQvD+de5lNN4xe1lpD+4v2n+gdTauKQyqZxoTpOqIZ8bXaokZUP9UldzLhFYuiV+KTgaBGgLqWaFvckz7GRUKexUkU07y/12QoCVp9XHmC1G8wzW+LS8i1P3ka4wOArn5HE2L9SZWhN4ah31eQDh9ITtpFjqgJj4y5ydZdBanMVnqHlXRz2jsgDFmgysg5njdzpyhRbkMVe+jzxnJSfngKxQkKgi/Q2ReEWCk3TXwGBseA1Y/0z2CTMo8W3UP64sWOgk=");
-                        getNPC().refresh();
+                        if (getPlayer().isSneaking())
+                            npc.setName("Notch");
+                        else
+                            npc.setName("brenden23");
+                    }
+                });
+            }
+            if (e.getMessage().contains("NPCMob")) {
+                NPC npc = NPCManager.createNPC(NPC.NPCType.MOB, "Bimmr", e.getPlayer().getLocation());
+                npc.setNPCClickEvent(new NPCClickEvent() {
+                    @Override
+                    public void onRightClick() {
+                            if (getPlayer().isSneaking())
+                                npc.asMob().setType(EntityType.SKELETON);
+                            else
+                                npc.asMob().setType(EntityType.IRON_GOLEM);
+
+                    }
+
+                    @Override
+                    public void onLeftClick() {
+                        if (getPlayer().isSneaking())
+                            npc.setName("Notch");
+                        else
+                            npc.setName("brenden23");
                     }
                 });
             }
