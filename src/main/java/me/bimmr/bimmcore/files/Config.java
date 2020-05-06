@@ -72,6 +72,11 @@ public class Config {
         return this;
     }
 
+    public Config saveResource(boolean replace) {
+        this.resourcePlugin.saveResource(this.name, replace);
+        return this;
+    }
+
     public Config save() {
         if (this.config == null || this.file == null)
             return this;
