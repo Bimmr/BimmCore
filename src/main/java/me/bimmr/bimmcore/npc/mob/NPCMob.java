@@ -14,6 +14,10 @@ public class NPCMob extends NPC {
 
     private LivingEntity entity;
 
+    public NPCMob(String name, Location location) {
+        this(name, location, EntityType.ZOMBIE);
+    }
+
     public NPCMob(String name, Location location, EntityType entityType) {
         super(NPCType.MOB, name, location);
 
@@ -22,15 +26,23 @@ public class NPCMob extends NPC {
             return;
         }
         this.entity = (LivingEntity) location.getWorld().spawnEntity(location, entityType);
+        init();
+    }
+    public void init(){
         this.entity.setCustomNameVisible(true);
-        this.entity.setCustomName(name);
+        this.entity.setCustomName(getName());
         this.entity.setGravity(false);
         this.entity.setAI(false);
         this.entity.setRemoveWhenFarAway(false);
 
         if (this.entity instanceof Ageable)
             ((Ageable) this.entity).setAdult();
+    }
 
+    public void setType(EntityType type) {
+        this.entity.remove();
+        this.entity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), type);
+        init();
     }
 
 

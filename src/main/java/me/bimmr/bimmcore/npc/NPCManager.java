@@ -1,10 +1,13 @@
 package me.bimmr.bimmcore.npc;
 
 
+import me.bimmr.bimmcore.npc.human.NPCPlayer;
 import me.bimmr.bimmcore.npc.human.NPCPlayerListener;
 import me.bimmr.bimmcore.npc.human.ProtocolLibPlayerListener;
 import me.bimmr.bimmcore.npc.human.TinyPlayerListener;
+import me.bimmr.bimmcore.npc.mob.NPCMob;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,6 +40,10 @@ public class NPCManager implements Listener {
             if (npcPlayer.getId() == id)
                 return npcPlayer;
         return null;
+    }
+
+    public static NPC createNPC(NPC.NPCType npcType, String name, Location location) {
+        return npcType == NPC.NPCType.PLAYER ? new NPCPlayer(name, location) : new NPCMob(name, location);
     }
 
     public NPCPlayerListener getNPCPlayerListener() {
