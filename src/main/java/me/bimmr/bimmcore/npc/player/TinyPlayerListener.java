@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.npc.human;
+package me.bimmr.bimmcore.npc.player;
 
 import io.netty.channel.Channel;
 import me.bimmr.bimmcore.BimmCore;

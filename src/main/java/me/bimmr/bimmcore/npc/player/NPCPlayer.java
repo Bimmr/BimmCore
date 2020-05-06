@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.npc.human;
+package me.bimmr.bimmcore.npc.player;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -6,13 +6,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.npc.NPC;
-import me.bimmr.bimmcore.npc.NPCManager;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.reflection.Viewer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,17 +35,14 @@ public class NPCPlayer extends NPC {
     private GameProfile gameProfile;
 
     private Object entityPlayer;
-    private int id;
     private Viewer viewer;
 
 
-    /**
-     * Create a NPC
-     *
-     * @param name     The Name
-     * @param location The Location
-     */
     public NPCPlayer(String name, Location location) {
+        this(name, location, name);
+    }
+
+    public NPCPlayer(String name, Location location, String skin) {
         super(NPCType.PLAYER, name, location);
 
         if (!BimmCore.supports(14)) {
@@ -57,7 +52,7 @@ public class NPCPlayer extends NPC {
         this.gameProfile = new GameProfile(UUID.randomUUID(), name);
 
         create();
-        setSkin(name);
+        setSkin(skin, false);
         this.viewer = new Viewer() {
 
             public void update(Player p) {
@@ -75,8 +70,6 @@ public class NPCPlayer extends NPC {
                 NPCPlayer.NPCAPI.destroy(NPCPlayer.this, p);
             }
         };
-
-        NPCManager.register(this);
     }
 
 
@@ -91,12 +84,16 @@ public class NPCPlayer extends NPC {
         return (Property) this.gameProfile.getProperties().get("textures").toArray()[0];
     }
 
+    public void setSkin(String nameOrUUID) {
+        setSkin(nameOrUUID, true);
+    }
+
     /**
      * Sets skin.
      *
      * @param nameOrUUID The player's name or
      */
-    public void setSkin(String nameOrUUID) {
+    public void setSkin(String nameOrUUID, boolean refresh) {
         if (skins.containsKey(nameOrUUID)) {
             this.gameProfile.getProperties().removeAll("textures");
             this.gameProfile.getProperties().put("textures", new Property("textures", skins.get(nameOrUUID)[0], skins.get(nameOrUUID)[1]));
@@ -124,6 +121,8 @@ public class NPCPlayer extends NPC {
                 e.printStackTrace();
             }
         }
+        if (refresh)
+            refresh();
     }
 
     /**
@@ -139,17 +138,22 @@ public class NPCPlayer extends NPC {
     public void refresh() {
         destroy();
         create();
-        NPCManager.register(this);
     }
 
     public void setSkin(String texture, String signature) {
-        this.gameProfile.getProperties().removeAll("textures");
-        this.gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
+        setSkin(texture, signature, true);
     }
 
-    private void create() {
+    public void setSkin(String texture, String signature, boolean refresh) {
+        this.gameProfile.getProperties().removeAll("textures");
+        this.gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
+        if (refresh)
+            refresh();
+    }
+
+    @Override
+    public void created() {
         this.entityPlayer = NPCAPI.create(this);
-        this.id = NPCAPI.getEntityID(this.entityPlayer);
         NPCAPI.setLocation(this.entityPlayer, getLocation());
 
         if (this.viewer != null)
@@ -189,6 +193,8 @@ public class NPCPlayer extends NPC {
         if (skin != null)
             this.gameProfile.getProperties().put("textures", new Property("textures", skin.getValue(), skin.getSignature()));
 
+        refresh();
+
     }
 
     @Override
@@ -219,7 +225,7 @@ public class NPCPlayer extends NPC {
      * @return Get The NPC's Id
      */
     public int getId() {
-        return this.id;
+        return NPCAPI.getEntityID(this.entityPlayer);
     }
 
 

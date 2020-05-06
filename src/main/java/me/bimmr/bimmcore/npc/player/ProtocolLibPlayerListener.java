@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.npc.human;
+package me.bimmr.bimmcore.npc.player;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;

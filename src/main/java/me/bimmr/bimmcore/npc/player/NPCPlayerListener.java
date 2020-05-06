@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.npc.human;
+package me.bimmr.bimmcore.npc.player;
 
 import me.bimmr.bimmcore.misc.Cooldown;
 

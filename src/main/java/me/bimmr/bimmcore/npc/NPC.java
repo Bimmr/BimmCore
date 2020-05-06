@@ -1,5 +1,7 @@
 package me.bimmr.bimmcore.npc;
 
+import me.bimmr.bimmcore.npc.player.NPCPlayer;
+import me.bimmr.bimmcore.npc.mob.NPCMob;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,8 +20,6 @@ public abstract class NPC {
         this.npcType = npcType;
         this.name = name;
         this.location = location;
-
-        NPCManager.register(this);
     }
 
     public NPCType getNPCType() {
@@ -68,13 +68,28 @@ public abstract class NPC {
     public abstract void equipped(ItemSlots itemSlot, ItemStack itemStack);
 
     public void destroy() {
-        NPCManager.register(this);
         destroyed();
+        NPCManager.unregister(this);
+    }
+    public void create(){
+        created();
+        NPCManager.register(this);
     }
 
+    public boolean isMob(){return npcType==NPCType.MOB;}
+    public boolean isPlayer(){return npcType==NPCType.PLAYER;}
     public abstract void destroyed();
+    public abstract void created();
 
     public abstract int getId();
+
+    public NPCPlayer asPlayer() {
+        return (NPCPlayer) this;
+    }
+
+    public NPCMob asMob() {
+        return (NPCMob) this;
+    }
 
     /**
      * ItemSlots NPC ENUM

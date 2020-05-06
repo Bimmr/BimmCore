@@ -1,13 +1,14 @@
 package me.bimmr.bimmcore.npc;
 
 
-import me.bimmr.bimmcore.npc.human.NPCPlayer;
-import me.bimmr.bimmcore.npc.human.NPCPlayerListener;
-import me.bimmr.bimmcore.npc.human.ProtocolLibPlayerListener;
-import me.bimmr.bimmcore.npc.human.TinyPlayerListener;
 import me.bimmr.bimmcore.npc.mob.NPCMob;
+import me.bimmr.bimmcore.npc.player.NPCPlayer;
+import me.bimmr.bimmcore.npc.player.NPCPlayerListener;
+import me.bimmr.bimmcore.npc.player.ProtocolLibPlayerListener;
+import me.bimmr.bimmcore.npc.player.TinyPlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +29,8 @@ public class NPCManager implements Listener {
     }
 
     public static void register(NPC npc) {
-        npcs.add(npc);
+        if (getNPC(npc.getId()) == null)
+            npcs.add(npc);
     }
 
     public static ArrayList<NPC> getAllNPCs() {
@@ -44,6 +46,14 @@ public class NPCManager implements Listener {
 
     public static NPC createNPC(NPC.NPCType npcType, String name, Location location) {
         return npcType == NPC.NPCType.PLAYER ? new NPCPlayer(name, location) : new NPCMob(name, location);
+    }
+
+    public static NPC createNPC(String name, Location location, EntityType type) {
+        return new NPCMob(name, location, type);
+    }
+
+    public static NPC createNPC(String name, Location location, String skin) {
+        return new NPCPlayer(name, location, skin);
     }
 
     public NPCPlayerListener getNPCPlayerListener() {

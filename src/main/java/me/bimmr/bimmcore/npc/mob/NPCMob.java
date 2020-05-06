@@ -12,6 +12,7 @@ import java.util.logging.Level;
 
 public class NPCMob extends NPC {
 
+    private EntityType entityType;
     private LivingEntity entity;
 
     public NPCMob(String name, Location location) {
@@ -25,24 +26,14 @@ public class NPCMob extends NPC {
             BimmCore.getInstance().getLogger().log(Level.SEVERE, "Unable to create NPC Mob before MC 1.9");
             return;
         }
-        this.entity = (LivingEntity) location.getWorld().spawnEntity(location, entityType);
-        init();
-    }
-    public void init(){
-        this.entity.setCustomNameVisible(true);
-        this.entity.setCustomName(getName());
-        this.entity.setGravity(false);
-        this.entity.setAI(false);
-        this.entity.setRemoveWhenFarAway(false);
-
-        if (this.entity instanceof Ageable)
-            ((Ageable) this.entity).setAdult();
+        this.entityType = entityType;
+        create();
     }
 
     public void setType(EntityType type) {
-        this.entity.remove();
-        this.entity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), type);
-        init();
+        this.entityType = type;
+        destroy();
+        create();
     }
 
 
@@ -83,6 +74,19 @@ public class NPCMob extends NPC {
     @Override
     public void destroyed() {
         this.entity.remove();
+    }
+
+    @Override
+    public void created() {
+        this.entity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), this.entityType);
+        this.entity.setCustomNameVisible(true);
+        this.entity.setCustomName(getName());
+        this.entity.setGravity(false);
+        this.entity.setAI(false);
+        this.entity.setRemoveWhenFarAway(false);
+
+        if (this.entity instanceof Ageable)
+            ((Ageable) this.entity).setAdult();
     }
 
     @Override
