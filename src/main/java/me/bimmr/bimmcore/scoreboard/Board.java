@@ -45,7 +45,7 @@ public class Board extends TimedObject {
     public Board(String name, int size, TimedEvent timedEvent, boolean startTimedEvent) {
         if (BimmCore.supports(13))
             this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy", name);
-         else
+        else
             this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
