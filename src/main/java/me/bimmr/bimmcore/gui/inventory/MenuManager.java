@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,6 +58,17 @@ public class MenuManager implements Listener {
                     return menu;
         }
         return null;
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Menu menu = getMenuGUI(event.getInventory());
+        if (menu == null)
+            menu = getMenuGUI(event.getView().getTitle());
+        if (menu != null) {
+            if (menu.willDestroy())
+                menu.destroy();
+        }
     }
 
     /**
@@ -118,7 +130,7 @@ public class MenuManager implements Listener {
                                 player.closeInventory();
 
                             //Destroy if set to destroy on ClickEvent
-                            if (menu.willDestroy())
+                            if (menu.willClose() && menu.willDestroy())
                                 menu.destroy();
                         }
                     }
@@ -131,9 +143,9 @@ public class MenuManager implements Listener {
     private boolean isBorderItem(Menu menu, ItemStack itemStack) {
         boolean isBorder = false;
         if (itemStack.hasItemMeta() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
-            isBorder=  true;
-        else if (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack))
-            isBorder=  true;
+            isBorder = true;
+        else if (menu.isBordered() && (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack)))
+            isBorder = true;
         return isBorder;
     }
 }

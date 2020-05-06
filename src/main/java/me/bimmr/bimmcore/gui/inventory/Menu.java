@@ -65,7 +65,7 @@ public class Menu {
     private HashMap<String, ClickEvent> oldClickEvent = new HashMap<>();
     private HashMap<UUID, ClickEvent> clickEvents = new HashMap<>();
     private boolean close = true;
-    private boolean destroy = false;
+    private boolean destroy = true;
 
     /**
      * Create a MenuGUI
@@ -370,8 +370,13 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
+            } else{
+                Items items = new Items(itemStack);
+                while (this.oldClickEvent.containsKey(items.toString()))
+                    items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
+                this.oldClickEvent.put(items.toString(), clickEvent);
+                itemStack = items.getItem();
             }
-            this.oldClickEvent.put(new Items(itemStack).toString(), clickEvent);
         }
         while (page < this.pages.size() && ((this.bordered && (this.pages.get(page)).size() >= 28) || (!this.bordered && (this.pages.get(page)).size() >= 45)))
             page++;
@@ -489,8 +494,13 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 item = SingleClickEventUtil.addUUIDTag(id, item);
                 this.clickEvents.put(id, clickEvent);
+            }else{
+                Items items = new Items(item);
+                while (this.oldClickEvent.containsKey(items.toString()))
+                    items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
+                this.oldClickEvent.put(items.toString(), clickEvent);
+                item = items.getItem();
             }
-            this.oldClickEvent.put(new Items(item).toString(), clickEvent);
         }
         this.toSetItems.put(new Integer[]{page, slot}, item);
         return this;
@@ -709,6 +719,9 @@ public class Menu {
     public void open(int page, Player player) {
         if (this.inventories.isEmpty())
             build();
+        //Re-register if not registered
+        if(MenuManager.getMenuGUI(this.inventories.get(page)) == null)
+            MenuManager.register(this);
         this.playerPage.put(player.getName(), page);
         player.openInventory(this.inventories.get(page));
     }
