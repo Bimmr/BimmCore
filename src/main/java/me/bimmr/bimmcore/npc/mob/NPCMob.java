@@ -1,4 +1,4 @@
-package me.bimmr.bimmcore.npc;
+package me.bimmr.bimmcore.npc.mob;
 
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.npc.NPCBase;
