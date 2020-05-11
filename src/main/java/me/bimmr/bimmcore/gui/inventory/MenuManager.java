@@ -13,7 +13,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.UUID;
-
+/**
+ * The Manager for {@link Menu} classes
+ */
 public class MenuManager implements Listener {
     public static ArrayList<Menu> menus = new ArrayList<Menu>();
     private static Cooldown<UUID> cooldown = new Cooldown<>(1);
@@ -142,10 +144,11 @@ public class MenuManager implements Listener {
 
     private boolean isBorderItem(Menu menu, ItemStack itemStack) {
         boolean isBorder = false;
-        if (itemStack.hasItemMeta() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
-            isBorder = true;
-        else if (menu.isBordered() && (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack)))
-            isBorder = true;
+        if (itemStack != null)
+            if (itemStack.hasItemMeta() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
+                isBorder = true;
+            else if (menu.isBordered() && (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack)))
+                isBorder = true;
         return isBorder;
     }
 }

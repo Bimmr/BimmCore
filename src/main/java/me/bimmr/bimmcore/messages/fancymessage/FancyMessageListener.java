@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Listener for the Click Callbacks
+ * Listener for the FancyMessage Click Callbacks
  */
 public class FancyMessageListener implements Listener {
     public static List<FancyClickEvent> chats = new ArrayList<>();

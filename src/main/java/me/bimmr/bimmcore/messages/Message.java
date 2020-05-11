@@ -5,7 +5,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 
 /**
- * Created by Randy on 05/09/16.
+ * A Manager class to use different types of message systems
  */
 public class Message {
 

@@ -8,8 +8,9 @@ import org.bukkit.World;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * The type Coords.
+ * A wrapper for easy to serialize location data
  */
 public class Coords {
 

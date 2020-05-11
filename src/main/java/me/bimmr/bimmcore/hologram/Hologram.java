@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Hologram Class
+ * A Utilities class to create a Hologram
  */
 public class Hologram extends TimedObject {
     private final double LINE_HEIGHT = 0.27D;

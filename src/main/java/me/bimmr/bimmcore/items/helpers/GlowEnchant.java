@@ -1,6 +1,5 @@
 package me.bimmr.bimmcore.items.helpers;
 
-import me.bimmr.bimmcore.BimmCore;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
@@ -8,6 +7,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 
+/**
+ * Custom GlowEnchantment for MC 1.13+
+ */
 public class GlowEnchant {
 
     public static Enchantment getGlowEnchantment() {

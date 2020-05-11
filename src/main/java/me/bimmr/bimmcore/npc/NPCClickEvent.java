@@ -4,22 +4,22 @@ import org.bukkit.entity.Player;
 
 public abstract class NPCClickEvent {
 
-    public NPC getNPC() {
-        return npc;
+    public NPCBase getNPC() {
+        return npcBase;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    private NPC npc;
+    private NPCBase npcBase;
     private Player player;
 
     public NPCClickEvent(){
     }
 
-    public void setup(NPC npc) {
-        this.npc = npc;
+    public void setup(NPCBase npcBase) {
+        this.npcBase = npcBase;
     }
 
     public void playerRightClick(Player player){

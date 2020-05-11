@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,21 +17,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * Created by Randy on 9/23/2015.
+ * A Utilities/Builder class for the BaseComponents API
  */
-//class FancyMessageExample {
-//    public FancyMessageExample() {
-//        Player player = null;
-//
-//        //Create the fancy message
-//        FancyMessage fancy = new FancyMessage("!").then("Click Here").suggest("Clicked");
-//        fancy.then(" Hover Here").tooltip("Hovered");
-//
-//        //Send the fancy message
-//        fancy.send(player);
-//    }
-//}
-
 public class FancyMessage {
 
     //Show Item
@@ -119,7 +107,7 @@ public class FancyMessage {
 
     public FancyMessage showItem(ItemStack item) {
 
-        if (item != null) {
+        if (item != null && item.getType() != Material.AIR) {
 //        net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
             Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
 
@@ -127,13 +115,15 @@ public class FancyMessage {
             Object compound = Reflection.newInstance(consNBTTagCompount);
 
 //        nmsItemStack.save(compound);
-            Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
+            if (nmsItemStackSave != null && asNMSCopy != null && compound != null) {
+                Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
 
-            String json = compound.toString();
-            BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                    new TextComponent(json)
-            };
-            builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
+                String json = compound.toString();
+                BaseComponent[] hoverEventComponents = new BaseComponent[]{
+                        new TextComponent(json)
+                };
+                builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
+            }
         }
         return this;
     }
@@ -182,9 +172,8 @@ public class FancyMessage {
      * @return The FancyMessage
      */
     public FancyMessage onClick(FancyClickEvent fce) {
-            FancyMessageListener.chats.add(fce);
-            System.out.println(fce.getUUID());
-            return command("/BimmCore " + fce.getUUID());
+        FancyMessageListener.chats.add(fce);
+        return command("/BimmCore " + fce.getUUID());
     }
 
     /**

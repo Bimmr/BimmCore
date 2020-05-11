@@ -6,6 +6,9 @@ import me.bimmr.bimmcore.utils.StringUtil;
 import me.bimmr.bimmcore.utils.UnicodeUtil;
 import org.bukkit.ChatColor;
 
+/**
+ * Pre-made ChatMenus
+ */
 public class ChatMenus {
 
     public static ChatMenu getConfirmation(String message, FancyClickEvent confirm, FancyClickEvent deny) {

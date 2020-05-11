@@ -1,7 +1,7 @@
-package me.bimmr.bimmcore.npc.mob;
+package me.bimmr.bimmcore.npc;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.npc.NPC;
+import me.bimmr.bimmcore.npc.NPCBase;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Level;
 
-public class NPCMob extends NPC {
+public class NPCMob extends NPCBase {
 
     private EntityType entityType;
     private LivingEntity entity;
@@ -38,17 +38,17 @@ public class NPCMob extends NPC {
 
 
     @Override
-    public void renamed(String name) {
+    protected void renamed(String name) {
         this.entity.setCustomName(name);
     }
 
     @Override
-    public void teleported(Location location) {
+    protected void teleported(Location location) {
         this.entity.teleport(location);
     }
 
     @Override
-    public void equipped(ItemSlots itemSlot, ItemStack itemStack) {
+    protected void equipped(ItemSlots itemSlot, ItemStack itemStack) {
         switch (itemSlot) {
             case MAINHAND:
                 this.entity.getEquipment().setItemInMainHand(itemStack);
@@ -72,12 +72,12 @@ public class NPCMob extends NPC {
     }
 
     @Override
-    public void destroyed() {
+    protected void destroyed() {
         this.entity.remove();
     }
 
     @Override
-    public void created() {
+    protected void created() {
         this.entity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), this.entityType);
         this.entity.setCustomNameVisible(true);
         this.entity.setCustomName(getName());

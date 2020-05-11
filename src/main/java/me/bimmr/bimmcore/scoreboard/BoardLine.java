@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.Iterator;
 
 /**
- * A Line on a Board
+ * A Line on a Scoreboard
  */
 public class BoardLine extends TimedObject {
 

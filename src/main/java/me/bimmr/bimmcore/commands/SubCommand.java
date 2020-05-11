@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+/**
+ * The command class - Used for commands such as /McInfected Join
+ */
 public abstract class SubCommand {
 
     private String name;
@@ -31,7 +34,6 @@ public abstract class SubCommand {
     public abstract List<String> getTabs(String[] args);
 
     public final boolean hasPermission(CommandSender sender) {
-
         return sender.hasPermission(getPermission());
     }
 

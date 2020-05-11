@@ -8,7 +8,9 @@ import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.UUID;
-
+/**
+ * A Utilities class for adding a persistent uuid to the itemstack
+ */
 public class SingleClickEventUtil {
 
     private static NamespacedKey key = new NamespacedKey(BimmCore.getInstance(), "bimmcore");

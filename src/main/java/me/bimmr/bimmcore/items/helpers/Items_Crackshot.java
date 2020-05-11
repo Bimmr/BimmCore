@@ -11,13 +11,13 @@ public class Items_Crackshot {
 
     public static ItemStack getGunItemStack(String code) {
         CSUtility cs = new CSUtility();
-        return cs.generateWeapon(code);
+        return cs.generateWeapon(code.replaceAll("_", " "));
     }
 
     public static String getGunName(ItemStack itemStack) {
         CSUtility cs = new CSUtility();
         if (cs.getWeaponTitle(itemStack) != null)
-            return "gun:" + cs.getWeaponTitle(itemStack);
+            return "gun:" + cs.getWeaponTitle(itemStack).replaceAll(" ", "_");
         return null;
     }
 }

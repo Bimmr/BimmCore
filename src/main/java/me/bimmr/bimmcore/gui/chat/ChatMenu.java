@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 /**
- * Created by Randy on 07/06/16.
+ * A Utilities class for creating a FancyMessage Chat Menu
  */
 public class ChatMenu {
     private final int MAX_CHAT = 18;
@@ -611,6 +611,10 @@ public class ChatMenu {
         show(0, player);
     }
 
+    public HeightControl getHeightControl() {
+        return heightControl;
+    }
+
     /**
      * Show.
      *
@@ -625,19 +629,19 @@ public class ChatMenu {
                 player.sendMessage("");
 
         getFormattedTitle().send(player);
-        if (spacedFormat)
+        if (isSpacedFormat())
             player.sendMessage("");
 
         for (; lineIndex < getLines(page).size(); lineIndex++)
             getLines(page).get(lineIndex).send(player);
 
 
-        if (this.heightControl.isFillingInner())
+        if (getHeightControl().isFillingInner())
             for (; lineIndex < getMaxHeight(); lineIndex++) {
                 player.sendMessage("");
             }
 
-        if (spacedFormat)
+        if (isSpacedFormat())
             player.sendMessage("");
 
         if (getFooter() == null && getCurrentPage() > 0) {
@@ -687,9 +691,9 @@ public class ChatMenu {
             } else
                 getFormattedFooter().send(player);
         }
-        if (this.heightControl.isFillingTopAndBottom()) {
+        if (getHeightControl().isFillingTopAndBottom()) {
             int max = MAX_CHAT;
-            if (spacedFormat)
+            if (isSpacedFormat())
                 max -= 2;
             for (int i = (MAX_CHAT - lineIndex) / 2; i > 0; i--)
                 player.sendMessage("");

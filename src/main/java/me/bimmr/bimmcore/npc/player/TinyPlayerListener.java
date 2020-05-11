@@ -2,7 +2,7 @@ package me.bimmr.bimmcore.npc.player;
 
 import io.netty.channel.Channel;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.npc.NPC;
+import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCManager;
 import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.reflection.tinyprotocol.TinyProtocol;
@@ -33,14 +33,14 @@ public class TinyPlayerListener implements NPCPlayerListener {
                         int entityID = (int) Reflection.get(entityIdField, packet);
                         boolean isLeftClick = Reflection.get(actionField, packet).toString().equals("ATTACK");
 
-                        for (NPC npc : NPCManager.getAllNPCs()) {
-                            if (npc.getNPCType() == NPC.NPCType.PLAYER && ((NPCPlayer) npc).isShown(player) && npc.getId() == entityID) {
-                                npcPlayer = (NPCPlayer) npc;
+                        for (NPCBase npcBase : NPCManager.getAllNPCs()) {
+                            if (npcBase.getNPCType() == NPCBase.NPCType.PLAYER && ((NPCPlayer) npcBase).isShown(player) && npcBase.getId() == entityID) {
+                                npcPlayer = (NPCPlayer) npcBase;
                                 break;
                             }
                         }
 
-                        if (npcPlayer != null) {
+                        if (npcPlayer != null && npcPlayer.getNPCClickEvent() != null) {
                             cooldown.addToCooldown(player.getUniqueId());
                             Bukkit.getScheduler().scheduleSyncDelayedTask(BimmCore.getInstance(), new TaskCallNpcClickEvent(player, isLeftClick, npcPlayer.getNPCClickEvent()), 1L);
                             return null;

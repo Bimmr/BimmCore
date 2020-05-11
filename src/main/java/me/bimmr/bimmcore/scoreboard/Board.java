@@ -12,6 +12,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+/**
+ * The Scoreboard wrapper API
+ */
 public class Board extends TimedObject {
     private List<BoardLine> lines;
 

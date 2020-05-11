@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The type Menu.
+ * A Utilities class for creating a Inventory GUI
  */
 public class Menu {
     /**
@@ -370,7 +370,7 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
-            } else{
+            } else {
                 Items items = new Items(itemStack);
                 while (this.oldClickEvent.containsKey(items.toString()))
                     items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
@@ -398,7 +398,7 @@ public class Menu {
      * ClickEvent is null
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
-     * @param page      The page to add the item to
+     * @param page  The page to add the item to
      * @param items The ItemStack
      * @return The MenuGUI
      */
@@ -424,7 +424,7 @@ public class Menu {
      * Page is 0
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
-     * @param items  The ItemStack
+     * @param items The ItemStack
      * @return The MenuGUI
      */
     public Menu addItem(Items items, ClickEvent clickEvent) {
@@ -436,7 +436,7 @@ public class Menu {
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
      * @param page       The page to add the item to
-     * @param items  The ItemStack
+     * @param items      The ItemStack
      * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
@@ -494,10 +494,15 @@ public class Menu {
                 UUID id = UUID.randomUUID();
                 item = SingleClickEventUtil.addUUIDTag(id, item);
                 this.clickEvents.put(id, clickEvent);
-            }else{
+            } else {
                 Items items = new Items(item);
-                while (this.oldClickEvent.containsKey(items.toString()))
+                int i = 0;
+                while (this.oldClickEvent.containsKey(items.toString())) {
+                    i++;
+                    if (i > 16)
+                        break;
                     items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
+                }
                 this.oldClickEvent.put(items.toString(), clickEvent);
                 item = items.getItem();
             }
@@ -524,8 +529,8 @@ public class Menu {
      * Set an Item in the Menu
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
      *
-     * @param page The page
-     * @param slot The slot number
+     * @param page  The page
+     * @param slot  The slot number
      * @param items The ItemStack
      * @return The MenuGUI
      */
@@ -539,7 +544,7 @@ public class Menu {
      *
      * @param page       The page
      * @param slot       The slot number
-     * @param items       The ItemStack
+     * @param items      The ItemStack
      * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
@@ -579,7 +584,7 @@ public class Menu {
      * Page is 0, ClickEvent is null
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
      *
-     * @param slot The slot number
+     * @param slot  The slot number
      * @param items The ItemStack
      * @return The MenuGUI
      */
@@ -592,8 +597,8 @@ public class Menu {
      * Page is 0
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
      *
-     * @param slot       The slot number
-     * @param items       The ItemStack
+     * @param slot  The slot number
+     * @param items The ItemStack
      * @return The MenuGUI
      */
     public Menu setItem(int slot, Items items, ClickEvent clickEvent) {
@@ -720,7 +725,7 @@ public class Menu {
         if (this.inventories.isEmpty())
             build();
         //Re-register if not registered
-        if(MenuManager.getMenuGUI(this.inventories.get(page)) == null)
+        if (MenuManager.getMenuGUI(this.inventories.get(page)) == null)
             MenuManager.register(this);
         this.playerPage.put(player.getName(), page);
         player.openInventory(this.inventories.get(page));

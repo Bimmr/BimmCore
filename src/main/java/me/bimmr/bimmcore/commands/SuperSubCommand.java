@@ -6,8 +6,9 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
+
 /**
- * Created by Randy on 07/03/16.
+ * The command class - Used for commands such as /McInfected Admin Start
  */
 public abstract class SuperSubCommand extends SubCommand {
 

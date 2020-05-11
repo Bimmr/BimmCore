@@ -5,7 +5,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * The Manager for the Config files
+ */
 public class FileManager {
     private final JavaPlugin plugin;
     private HashMap<String, Config> configs = new HashMap<>();

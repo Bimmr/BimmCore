@@ -13,6 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * A Utilities class to handle viewers
+ */
 public abstract class Viewer implements Listener {
     private List<String> players;
 

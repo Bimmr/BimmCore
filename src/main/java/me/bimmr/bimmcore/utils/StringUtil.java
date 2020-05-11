@@ -121,6 +121,16 @@ public class StringUtil {
         return newMessage.toString();
     }
 
+    public static ChatColor getIndexedColour(int index) {
+        return getIndexedColour(index, "123456789abcde");
+    }
+
+    public static ChatColor getIndexedColour(int index, String colours) {
+        index = Math.min(index, index % colours.length());
+        char colour = colours.toCharArray()[index];
+        return ChatColor.getByChar(colour);
+    }
+
     /**
      * Make a string a specific length, filling with white spaces
      *
@@ -249,7 +259,7 @@ public class StringUtil {
                 messagePxSize++;
             }
         }
-        return messagePxSize / (maxLength+1);
+        return messagePxSize / (maxLength + 1);
     }
 
     public static String getCenteredMessage(String message, String format) {

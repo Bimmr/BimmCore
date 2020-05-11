@@ -4,13 +4,12 @@ import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.entity.Player;
 
 /**
- * Created by Randy on 05/23/16.
+ * The MessageDisplay base class
  */
 public abstract class MessageDisplay extends TimedObject {
 
     public String text;
     public int    time;
-
 
     public abstract String getText();
 

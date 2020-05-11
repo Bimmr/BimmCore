@@ -8,8 +8,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by Randy on 07/03/16.
+ * The command class - Used for commands such as /McInfected Admin
  */
 public abstract class SuperCommand extends SubCommand {
 

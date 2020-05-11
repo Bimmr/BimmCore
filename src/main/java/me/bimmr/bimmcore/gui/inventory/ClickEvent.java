@@ -1,14 +1,12 @@
 package me.bimmr.bimmcore.gui.inventory;
 
-/**
- * Created by Randy on 3/5/2016.
- */
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-
+/**
+ * The ClickEvent that gets called when an inventory item gets clicked
+ */
 public abstract class ClickEvent {
 
     private Player player;

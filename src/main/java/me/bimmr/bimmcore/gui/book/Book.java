@@ -19,20 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Randy on 02/06/17.
+ * A Utilities class for creating a Book and opening it
  */
-
-//class BookExample {
-//    public BookExample() {
-//        Book book = new Book()
-//                .addLine(new FancyMessage("Hello"))
-//                .setLine(5, new FancyMessage("Line 5"))
-//                .addBlankLine()
-//                .addLine(new FancyMessage("Test"));
-//
-//    }
-//}
-
 public class Book {
 
     private static final int MAX_LINE_HEIGHT = 14;
@@ -294,7 +282,7 @@ public class Book {
                 pageBuilder.append(prefix);
                 for (int line = 0; line < lines.size() && line < MAX_LINE_HEIGHT; line++) {
                     pageBuilder.append("[\"\", ").append(lines.get(line).toJSON()).append(",{\"text\":\"\\n\"}]");
-                    if(line < lines.size()-1)
+                    if (line < lines.size() - 1)
                         pageBuilder.append(",");
                 }
                 pageBuilder.append(suffix);

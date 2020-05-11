@@ -6,6 +6,9 @@ import java.util.List;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+/**
+ * A Utilities class to manage Potions to and from strings
+ */
 public class PotionUtil {
 
     public static PotionEffect getPotionEffect(String potionCode) {

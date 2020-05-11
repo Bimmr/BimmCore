@@ -8,7 +8,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.npc.NPC;
+import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCManager;
 import org.bukkit.Bukkit;
 
@@ -29,9 +29,9 @@ public class ProtocolLibPlayerListener implements NPCPlayerListener {
                             entityID = packetContainer.getIntegers().read(0);
                             isLeftClick = packetContainer.getEntityUseActions().getValues().get(0) == EnumWrappers.EntityUseAction.ATTACK;
 
-                            for (NPC npc : NPCManager.getAllNPCs()) {
-                                if (npc.getNPCType() == NPC.NPCType.PLAYER && ((NPCPlayer) npc).isShown(event.getPlayer()) && npc.getId() == entityID) {
-                                    npcPlayer = (NPCPlayer) npc;
+                            for (NPCBase npcBase : NPCManager.getAllNPCs()) {
+                                if (npcBase.getNPCType() == NPCBase.NPCType.PLAYER && ((NPCPlayer) npcBase).isShown(event.getPlayer()) && npcBase.getId() == entityID) {
+                                    npcPlayer = (NPCPlayer) npcBase;
                                     break;
                                 }
                             }

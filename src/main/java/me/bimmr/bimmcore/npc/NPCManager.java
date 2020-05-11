@@ -15,44 +15,45 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.ArrayList;
 
 public class NPCManager implements Listener {
 
-    private static ArrayList<NPC> npcs = new ArrayList<>();
+    private static ArrayList<NPCBase> npcBases = new ArrayList<>();
     private static NPCPlayerListener npcPlayerListener;
 
-    public static void unregister(NPC npc) {
-        npcs.remove(npc);
+    public static void unregister(NPCBase npcBase) {
+        npcBases.remove(npcBase);
     }
 
-    public static void register(NPC npc) {
-        if (getNPC(npc.getId()) == null)
-            npcs.add(npc);
+    public static void register(NPCBase npcBase) {
+        if (getNPC(npcBase.getId()) == null)
+            npcBases.add(npcBase);
     }
 
-    public static ArrayList<NPC> getAllNPCs() {
-        return npcs;
+    public static ArrayList<NPCBase> getAllNPCs() {
+        return npcBases;
     }
 
-    public static NPC getNPC(int id) {
-        for (NPC npcPlayer : getAllNPCs())
-            if (npcPlayer.getId() == id)
-                return npcPlayer;
+    public static NPCBase getNPC(int id) {
+        for (NPCBase npcBasePlayer : getAllNPCs())
+            if (npcBasePlayer.getId() == id)
+                return npcBasePlayer;
         return null;
     }
 
-    public static NPC createNPC(NPC.NPCType npcType, String name, Location location) {
-        return npcType == NPC.NPCType.PLAYER ? new NPCPlayer(name, location) : new NPCMob(name, location);
+    public static NPCBase createNPC(NPCBase.NPCType npcType, String name, Location location) {
+        return npcType == NPCBase.NPCType.PLAYER ? new NPCPlayer(name, location) : new NPCMob(name, location);
     }
 
-    public static NPC createNPC(String name, Location location, EntityType type) {
+    public static NPCBase createNPC(String name, Location location, EntityType type) {
         return new NPCMob(name, location, type);
     }
 
-    public static NPC createNPC(String name, Location location, String skin) {
+    public static NPCBase createNPC(String name, Location location, String skin) {
         return new NPCPlayer(name, location, skin);
     }
 
@@ -68,10 +69,10 @@ public class NPCManager implements Listener {
     @EventHandler
     public void playerDamageNPC(EntityDamageByEntityEvent e) {
         int id = e.getEntity().getEntityId();
-        NPC npc = getNPC(id);
-        if (npc != null) {
+        NPCBase npcBase = getNPC(id);
+        if (npcBase != null) {
             if (e.getDamager() instanceof Player)
-                npc.getNPCClickEvent().playerLeftClick((Player) e.getDamager());
+                npcBase.getNPCClickEvent().playerLeftClick((Player) e.getDamager());
             e.setCancelled(true);
         }
     }
@@ -79,24 +80,32 @@ public class NPCManager implements Listener {
     @EventHandler
     public void damageNPC(EntityDamageEvent e) {
         int id = e.getEntity().getEntityId();
-        NPC npc = getNPC(id);
-        if (npc != null)
+        NPCBase npcBase = getNPC(id);
+        if (npcBase != null)
             e.setCancelled(true);
     }
 
     @EventHandler
     public void npcOnFire(EntityCombustEvent e) {
         int id = e.getEntity().getEntityId();
-        NPC npc = getNPC(id);
-        if (npc != null)
+        NPCBase npcBase = getNPC(id);
+        if (npcBase != null)
+            e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void npcTargeted(EntityTargetEvent e) {
+        int id = e.getTarget().getEntityId();
+        NPCBase npcBase = getNPC(id);
+        if (npcBase != null)
             e.setCancelled(true);
     }
 
     @EventHandler
     public void playerInteract(PlayerInteractEntityEvent e) {
         int id = e.getRightClicked().getEntityId();
-        NPC npc = getNPC(id);
-        if (npc != null)
-            npc.getNPCClickEvent().playerRightClick(e.getPlayer());
+        NPCBase npcBase = getNPC(id);
+        if (npcBase != null)
+            npcBase.getNPCClickEvent().playerRightClick(e.getPlayer());
     }
 }

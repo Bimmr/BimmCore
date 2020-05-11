@@ -6,23 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- * Created by Randy on 03/24/17.
+ * The start of an AnvilGUI
  */
-//TODO: Finish Anvil GUI
-@Deprecated
-class AnvilExample {
-    public AnvilExample() {
-        Anvil anvil = new Anvil("Test", new AnvilFinishEvent() {
-            @Override
-            public void onFinish() {
-                Anvil anvil = getAnvil();
-                String input = anvil.getInput();
-
-            }
-        }).open(null);
-    }
-}
-
 @Deprecated
 public class Anvil {
 

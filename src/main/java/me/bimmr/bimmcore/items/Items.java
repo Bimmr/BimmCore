@@ -39,7 +39,7 @@ import java.util.*;
 //}
 
 /**
- * The type Items.
+ * A Utilities class for easy to manage Items
  */
 public class Items {
 
@@ -174,7 +174,7 @@ public class Items {
                         enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
 
                     if (enchantment != null)
-                        addEnchantment(enchantment, level - 1);
+                        addEnchantment(enchantment, level);
                 }
 
                 //Custom Glow Enchantment
@@ -387,7 +387,7 @@ public class Items {
      * @return Get if ItemMeta is valid
      */
     public boolean hasItemMeta() {
-        return this.itemMeta != null;
+        return this.getItemMeta() != null;
     }
 
     /**
@@ -397,9 +397,16 @@ public class Items {
      * @return Items items
      */
     public Items addFireworkEffect(FireworkEffect fireworkEffect) {
+        if (!hasItemMeta())
+            return this;
+
+        if (!(getItemMeta() instanceof FireworkEffectMeta))
+            return this;
+
         FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) getItemMeta();
         fireworkEffectMeta.setEffect(fireworkEffect);
         setItemMeta(fireworkEffectMeta);
+
         return this;
     }
 
@@ -410,6 +417,12 @@ public class Items {
      * @return Items items
      */
     public Items addBannerPattern(Pattern pattern) {
+        if (!hasItemMeta())
+            return this;
+
+        if (!(getItemMeta() instanceof BannerMeta))
+            return this;
+
         BannerMeta bannerMeta = (BannerMeta) getItemMeta();
         bannerMeta.addPattern(pattern);
         setItemMeta(bannerMeta);
@@ -423,6 +436,9 @@ public class Items {
      * @return Items items
      */
     public Items addPage(String value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof BookMeta))
             return this;
 
@@ -440,6 +456,9 @@ public class Items {
      * @return Items pages
      */
     public Items setPages(List<String> value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof BookMeta))
             return this;
 
@@ -467,6 +486,9 @@ public class Items {
      * @return Items book title
      */
     public Items setBookTitle(String value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof BookMeta))
             return this;
 
@@ -483,6 +505,9 @@ public class Items {
      * @return Items book author
      */
     public Items setBookAuthor(String value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof BookMeta))
             return this;
 
@@ -500,6 +525,9 @@ public class Items {
      * @return Items unbreakable
      */
     public Items setUnbreakable(boolean value) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         if (BimmCore.supports(12))
             itemMeta.setUnbreakable(value);
@@ -516,6 +544,9 @@ public class Items {
      * @return Items leather color
      */
     public Items setLeatherColor(int red, int green, int blue) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof LeatherArmorMeta))
             return this;
 
@@ -532,6 +563,9 @@ public class Items {
      * @return Items leather color
      */
     public Items setLeatherColor(int value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof LeatherArmorMeta))
             return this;
 
@@ -560,6 +594,9 @@ public class Items {
      * @return Items items
      */
     public Items addEnchantment(Enchantment value, int level) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         itemMeta.addEnchant(value, level, true);
         setItemMeta(itemMeta);
@@ -573,6 +610,9 @@ public class Items {
      * @return Items items
      */
     public Items addPotionEffect(PotionEffect value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof PotionMeta))
             return this;
 
@@ -588,6 +628,9 @@ public class Items {
      * @return Items items
      */
     public Items addGlow() {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         if (BimmCore.supports(13)) {
             itemMeta.addEnchant(GlowEnchant.getGlowEnchantment(), 1, true);
@@ -617,6 +660,9 @@ public class Items {
      * @return Items items
      */
     public Items addLore(String... value) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
         lore.addAll(Arrays.asList(value));
@@ -632,6 +678,9 @@ public class Items {
      * @return Items lore
      */
     public Items setLore(List<String> value) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         itemMeta.setLore(value);
         setItemMeta(itemMeta);
@@ -659,6 +708,9 @@ public class Items {
      * @return Items items
      */
     public Items addAttribute(String attribute, String slot, double level, String operation) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         if (BimmCore.supports(13)) {
             itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
@@ -699,6 +751,9 @@ public class Items {
      * @return Items items
      */
     public Items addAttribute(org.bukkit.attribute.Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         itemMeta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, operation, slot));
         setItemMeta(itemMeta);
@@ -712,6 +767,9 @@ public class Items {
      * @return Items skull owner
      */
     public Items setSkullOwner(String value) {
+        if (!hasItemMeta())
+            return this;
+
         if (!(getItemMeta() instanceof SkullMeta))
             return this;
         if (value.startsWith("http://") || value.startsWith("https://") || value.length() > 16)
@@ -747,7 +805,8 @@ public class Items {
      * @param value The URL
      * @return Items skull skin
      */
-    public Items setSkullSkin(String value) {
+    private Items setSkullSkin(String value) {
+
         SkullMeta meta = (SkullMeta) getItemMeta();
         try {
             GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -785,6 +844,9 @@ public class Items {
     public Items setDamage(int value) {
         if (BimmCore.supports(13)) {
 
+            if (!hasItemMeta())
+                return this;
+
             if (!(getItemMeta() instanceof Damageable))
                 return this;
 
@@ -803,6 +865,9 @@ public class Items {
      * @return Items display name
      */
     public Items setDisplayName(String value) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         itemMeta.setDisplayName(value);
         setItemMeta(itemMeta);
@@ -816,6 +881,9 @@ public class Items {
      * @return Items items
      */
     public Items addFlag(ItemFlag flag) {
+        if (!hasItemMeta())
+            return this;
+
         ItemMeta itemMeta = getItemMeta();
         itemMeta.addItemFlags(flag);
         setItemMeta(itemMeta);

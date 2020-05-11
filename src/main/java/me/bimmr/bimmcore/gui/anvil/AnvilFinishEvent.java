@@ -1,6 +1,8 @@
 package me.bimmr.bimmcore.gui.anvil;
 
-
+/**
+ * Callback for when an AnvilGui is finished
+ */
 @Deprecated
 public abstract class AnvilFinishEvent {
 

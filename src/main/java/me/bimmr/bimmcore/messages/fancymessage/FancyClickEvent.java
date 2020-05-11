@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.UUID;
 
 /**
- * Created by Randy on 02/06/17.
+ * A FancyMessage's ClickEvent
  */
 public abstract class FancyClickEvent {
     private UUID uuid;

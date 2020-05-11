@@ -11,7 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * The Manager for the commands
+ */
 public class CommandHandler implements TabCompleter, CommandExecutor {
 
     private ArrayList<SubCommand> commands;

@@ -18,11 +18,11 @@ import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
 import me.bimmr.bimmcore.misc.Scroller;
-import me.bimmr.bimmcore.npc.NPC;
+import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCClickEvent;
 import me.bimmr.bimmcore.npc.NPCManager;
-import me.bimmr.bimmcore.npc.mob.NPCMob;
 import me.bimmr.bimmcore.npc.player.NPCPlayer;
+import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.utils.TimeUtil;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.Bukkit;
@@ -40,6 +40,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
 
 public class BimmCore extends JavaPlugin implements Listener {
 
@@ -136,19 +138,23 @@ public class BimmCore extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new MenuManager(), this);
         Bukkit.getPluginManager().registerEvents(npcManager, this);
 
-
-        npcManager.getNPCPlayerListener().start();
+        if (Reflection.getOnlinePlayers().length == 0)
+            npcManager.getNPCPlayerListener().start();
+        else
+            System.out.println("Unable to start NPCPlayer Listener on server reloads");
     }
 
     public void onDisable() {
-        for (NPC npc : NPCManager.getAllNPCs())
-            npc.destroy();
+        ArrayList<NPCBase> npcBaseList = new ArrayList<>();
+        npcBaseList.addAll(NPCManager.getAllNPCs());
+        for (NPCBase npcBase : npcBaseList)
+            npcBase.destroy();
 
     }
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (true && e.getMessage().startsWith("/BTest")) {
+        if (false && e.getMessage().startsWith("/BTest")) {
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
@@ -267,23 +273,23 @@ public class BimmCore extends JavaPlugin implements Listener {
                 });
             }
             if (e.getMessage().contains("NPCMob")) {
-                NPC npc = NPCManager.createNPC(NPC.NPCType.MOB, "Bimmr", e.getPlayer().getLocation());
-                npc.setNPCClickEvent(new NPCClickEvent() {
+                NPCBase npcBase = NPCManager.createNPC(NPCBase.NPCType.MOB, "Bimmr", e.getPlayer().getLocation());
+                npcBase.setNPCClickEvent(new NPCClickEvent() {
                     @Override
                     public void onRightClick() {
-                            if (getPlayer().isSneaking())
-                                npc.asMob().setType(EntityType.SKELETON);
-                            else
-                                npc.asMob().setType(EntityType.IRON_GOLEM);
+                        if (getPlayer().isSneaking())
+                            npcBase.asMob().setType(EntityType.SKELETON);
+                        else
+                            npcBase.asMob().setType(EntityType.IRON_GOLEM);
 
                     }
 
                     @Override
                     public void onLeftClick() {
                         if (getPlayer().isSneaking())
-                            npc.setName("Notch");
+                            npcBase.setName("Notch");
                         else
-                            npc.setName("brenden23");
+                            npcBase.setName("brenden23");
                     }
                 });
             }

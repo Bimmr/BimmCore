@@ -5,7 +5,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.npc.NPC;
+import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.reflection.Viewer;
@@ -28,7 +28,7 @@ import java.util.logging.Level;
 /**
  * The type Npc.
  */
-public class NPCPlayer extends NPC {
+public class NPCPlayer extends NPCBase {
 
     private static HashMap<Object, String[]> skins = new HashMap<>();
 
@@ -56,10 +56,10 @@ public class NPCPlayer extends NPC {
         this.viewer = new Viewer() {
 
             public void update(Player p) {
-                NPCPlayer.NPCAPI.destroy(NPCPlayer.this, p);
+                NPCAPI.destroy(NPCPlayer.this, p);
                 NPCPlayer.NPCAPI.show(NPCPlayer.this, p);
                 NPCPlayer.NPCAPI.setRotation(NPCPlayer.this.entityPlayer, p, getLocation().getYaw());
-                for (Map.Entry<NPCPlayer.ItemSlots, ItemStack> e : getEquipment().entrySet())
+                for (Map.Entry<ItemSlots, ItemStack> e : getEquipment().entrySet())
                     NPCPlayer.NPCAPI.equip(NPCPlayer.this.entityPlayer, p, e.getKey(), e.getValue());
             }
 
@@ -67,7 +67,7 @@ public class NPCPlayer extends NPC {
             }
 
             public void onRemoveFromView(Player p) {
-                NPCPlayer.NPCAPI.destroy(NPCPlayer.this, p);
+                NPCAPI.destroy(NPCPlayer.this, p);
             }
         };
     }
@@ -86,6 +86,14 @@ public class NPCPlayer extends NPC {
 
     public void setSkin(String nameOrUUID) {
         setSkin(nameOrUUID, true);
+    }
+
+    public String getSkinTexture() {
+        return getSkin().getValue();
+    }
+
+    public String getSkinSignature() {
+        return getSkin().getSignature();
     }
 
     /**
@@ -152,7 +160,7 @@ public class NPCPlayer extends NPC {
     }
 
     @Override
-    public void created() {
+    protected void created() {
         this.entityPlayer = NPCAPI.create(this);
         NPCAPI.setLocation(this.entityPlayer, getLocation());
 
@@ -176,7 +184,7 @@ public class NPCPlayer extends NPC {
     /**
      * Destroy the NPC for all players
      */
-    public void destroyed() {
+    protected void destroyed() {
         if (this.entityPlayer != null && this.viewer != null)
             for (String p : this.viewer.getPlayers())
                 NPCAPI.destroy(this, Bukkit.getPlayer(p));
@@ -186,7 +194,7 @@ public class NPCPlayer extends NPC {
 
 
     @Override
-    public void renamed(String name) {
+    protected void renamed(String name) {
 
         Property skin = this.getSkin();
         this.gameProfile = new GameProfile(this.gameProfile.getId(), name);
@@ -198,14 +206,14 @@ public class NPCPlayer extends NPC {
     }
 
     @Override
-    public void teleported(Location location) {
+    protected void teleported(Location location) {
         NPCAPI.setLocation(this.entityPlayer, location);
         if (this.viewer != null)
             this.viewer.update();
     }
 
     @Override
-    public void equipped(ItemSlots itemSlot, ItemStack itemStack) {
+    protected void equipped(ItemSlots itemSlot, ItemStack itemStack) {
         this.viewer.update();
     }
 
@@ -330,7 +338,11 @@ public class NPCPlayer extends NPC {
             Object packetPlayOutPlayerInfoAdd = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumAdd, entities);
             Object packetPlayOutNamedEntitySpawn = Reflection.newInstance(packetPlayOutNamedEntitySpawnConstructor, entity);
             Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
-//            PacketPlayOutEntityMetadata p = new PacketPlayOutEntityMetadata(getEntityID(entity), ((EntityPlayer)entity).getDataWatcher(), true);
+
+//            DataWatcher watcher = ((EntityPlayer)entity).getDataWatcher();
+//            watcher.set(DataWatcherRegistry.a.a(10), (byte) 127);
+//            //PacketPlayOutEntityMetadata packet4 = new PacketPlayOutEntityMetadata(npc.getId(), watcher, true);
+//            PacketPlayOutEntityMetadata p = new PacketPlayOutEntityMetadata(getEntityID(entity), watcher, true);
             Packets.sendPacket(player, packetPlayOutPlayerInfoAdd, packetPlayOutNamedEntitySpawn);
 
             Bukkit.getScheduler().runTaskLater(BimmCore.getInstance(), () ->
@@ -353,7 +365,7 @@ public class NPCPlayer extends NPC {
          * @param slot   The Slot
          * @param item   The Item
          */
-        public static void equip(Object entity, Player player, NPCPlayer.ItemSlots slot, ItemStack item) {
+        public static void equip(Object entity, Player player, ItemSlots slot, ItemStack item) {
             Object oSlot = itemSlotEnumMainHand;
             switch (slot) {
                 case OFFHAND:

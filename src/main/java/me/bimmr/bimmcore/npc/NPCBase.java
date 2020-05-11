@@ -1,13 +1,13 @@
 package me.bimmr.bimmcore.npc;
 
-import me.bimmr.bimmcore.npc.player.NPCPlayer;
 import me.bimmr.bimmcore.npc.mob.NPCMob;
+import me.bimmr.bimmcore.npc.player.NPCPlayer;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
-public abstract class NPC {
+public abstract class NPCBase {
 
     private String name;
     private Location location;
@@ -15,8 +15,7 @@ public abstract class NPC {
     private NPCClickEvent npcClickEvent;
     private NPCType npcType;
 
-    public NPC(NPCType npcType, String name, Location location) {
-
+    public NPCBase(NPCType npcType, String name, Location location) {
         this.npcType = npcType;
         this.name = name;
         this.location = location;
@@ -57,29 +56,38 @@ public abstract class NPC {
         teleported(location);
     }
 
-    public void setEquipment(ItemSlots itemSlot, ItemStack item) {
+    public void equip(ItemSlots itemSlot, ItemStack item) {
         this.equipment.put(itemSlot, item);
+        equipped(itemSlot, item);
     }
 
-    public abstract void renamed(String name);
+    protected abstract void renamed(String name);
 
-    public abstract void teleported(Location location);
+    protected abstract void teleported(Location location);
 
-    public abstract void equipped(ItemSlots itemSlot, ItemStack itemStack);
+    protected abstract void equipped(ItemSlots itemSlot, ItemStack itemStack);
 
     public void destroy() {
         destroyed();
         NPCManager.unregister(this);
     }
-    public void create(){
+
+    public void create() {
         created();
         NPCManager.register(this);
     }
 
-    public boolean isMob(){return npcType==NPCType.MOB;}
-    public boolean isPlayer(){return npcType==NPCType.PLAYER;}
-    public abstract void destroyed();
-    public abstract void created();
+    public boolean isMob() {
+        return npcType == NPCType.MOB;
+    }
+
+    public boolean isPlayer() {
+        return npcType == NPCType.PLAYER;
+    }
+
+    protected abstract void destroyed();
+
+    protected abstract void created();
 
     public abstract int getId();
 
@@ -94,6 +102,7 @@ public abstract class NPC {
     /**
      * ItemSlots NPC ENUM
      */
+
     public enum ItemSlots {
         /**
          * Mainhand item slots.

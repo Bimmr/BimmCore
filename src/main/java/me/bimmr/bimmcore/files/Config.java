@@ -7,6 +7,9 @@ import org.bukkit.plugin.Plugin;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * A Utilities class for managing a Config file
+ */
 public class Config {
     private FileManager fileManager;
     private String name;
@@ -116,11 +119,19 @@ public class Config {
         return this;
     }
 
-    public ArrayList<String> getKeys(String path) {
+    public ArrayList<String> getKeys(String path, boolean deep) {
         ArrayList<String> list = new ArrayList<>();
-        for (String name : get().getConfigurationSection(path).getKeys(true))
-            if (!name.contains("."))
+        if (get(path) != null)
+            for (String name : get().getConfigurationSection(path).getKeys(deep))
                 list.add(name);
         return list;
+    }
+
+    public ArrayList<String> getKeys(String path) {
+        return getKeys(path, false);
+    }
+
+    public ArrayList<String> getKeys() {
+        return getKeys("", false);
     }
 }

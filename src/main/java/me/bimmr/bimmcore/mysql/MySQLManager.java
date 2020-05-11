@@ -6,8 +6,9 @@ import org.bukkit.plugin.Plugin;
 import java.sql.*;
 import java.util.*;
 
+
 /**
- * Created by Randy on 05/20/16.
+ * A Utilities class to handle MySQL connections
  */
 public class MySQLManager {
 
