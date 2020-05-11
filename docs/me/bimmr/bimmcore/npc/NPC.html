@@ -99,7 +99,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!-- ======== START OF CLASS DATA ======== -->
 <main role="main">
 <div class="header">
-<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.npcPlayer</a></div>
+<div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">me.bimmr.bimmcore.npcBasePlayer</a></div>
 <h2 title="Class NPC" class="title">Class NPC</h2>
 </div>
 <div class="contentContainer">
@@ -107,7 +107,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>me.bimmr.bimmcore.npcPlayer.NPCPlayer</li>
+<li>me.bimmr.bimmcore.npcBasePlayer.NPCPlayer</li>
 </ul>
 </li>
 </ul>
@@ -142,7 +142,7 @@ extends java.lang.Object</pre>
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a></span></code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a></span></code></th>
 <td class="colLast">
 <div class="block">ItemSlots NPC ENUM</div>
 </td>
@@ -200,14 +200,14 @@ extends java.lang.Object</pre>
 <tbody>
 <tr class="altColor" id="i0">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#equip(me.bimmr.bimmcore.npcPlayer.NPCPlayer.ItemSlots,org.bukkit.inventory.ItemStack)">equip</a></span>&#8203;(<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>&nbsp;slot,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#equip(me.bimmr.bimmcore.npcBasePlayer.NPCPlayer.ItemSlots,org.bukkit.inventory.ItemStack)">equip</a></span>&#8203;(<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>&nbsp;slot,
      org.bukkit.inventory.ItemStack&nbsp;itemStack)</code></th>
 <td class="colLast">
 <div class="block">Equip the NPC</div>
 </td>
 </tr>
 <tr class="rowColor" id="i1">
-<td class="colFirst"><code>java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;</code></td>
+<td class="colFirst"><code>java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEquipment()">getEquipment</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Gets equipment.</div>
@@ -242,7 +242,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor" id="i6">
-<td class="colFirst"><code><a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcPlayer">NPCClickEvent</a></code></td>
+<td class="colFirst"><code><a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcBasePlayer">NPCClickEvent</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNpcClickEvent()">getNpcClickEvent</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -272,7 +272,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor" id="i11">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setEquipment(java.util.HashMap)">setEquipment</a></span>&#8203;(java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;equipment)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setEquipment(java.util.HashMap)">setEquipment</a></span>&#8203;(java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;equipment)</code></th>
 <td class="colLast">
 <div class="block">Set NPC's Equipment</div>
 </td>
@@ -293,7 +293,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor" id="i14">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setNPCClickEvent(me.bimmr.bimmcore.npcPlayer.NPCClickEvent)">setNPCClickEvent</a></span>&#8203;(<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcPlayer">NPCClickEvent</a>&nbsp;npcClickEvent)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setNPCClickEvent(me.bimmr.bimmcore.npcBasePlayer.NPCClickEvent)">setNPCClickEvent</a></span>&#8203;(<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcBasePlayer">NPCClickEvent</a>&nbsp;npcClickEvent)</code></th>
 <td class="colLast">
 <div class="block">Set the NPCClickEvent</div>
 </td>
@@ -371,13 +371,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="setNPCClickEvent(me.bimmr.bimmcore.npcPlayer.NPCClickEvent)">
+<a id="setNPCClickEvent(me.bimmr.bimmcore.npcBasePlayer.NPCClickEvent)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setNPCClickEvent</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;setNPCClickEvent&#8203;(<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcPlayer">NPCClickEvent</a>&nbsp;npcClickEvent)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setNPCClickEvent&#8203;(<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcBasePlayer">NPCClickEvent</a>&nbsp;npcClickEvent)</pre>
 <div class="block">Set the NPCClickEvent</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -405,7 +405,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getEquipment</h4>
-<pre class="methodSignature">public&nbsp;java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;getEquipment()</pre>
+<pre class="methodSignature">public&nbsp;java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;getEquipment()</pre>
 <div class="block">Gets equipment.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -480,7 +480,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getNpcClickEvent</h4>
-<pre class="methodSignature">public&nbsp;<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcPlayer">NPCClickEvent</a>&nbsp;getNpcClickEvent()</pre>
+<pre class="methodSignature">public&nbsp;<a href="NPCClickEvent.html" title="class in me.bimmr.bimmcore.npcBasePlayer">NPCClickEvent</a>&nbsp;getNpcClickEvent()</pre>
 </li>
 </ul>
 <a id="hide(org.bukkit.entity.Player)">
@@ -517,7 +517,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setEquipment</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;setEquipment&#8203;(java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;equipment)</pre>
+<pre class="methodSignature">public&nbsp;void&nbsp;setEquipment&#8203;(java.util.HashMap&lt;<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>,&#8203;org.bukkit.inventory.ItemStack&gt;&nbsp;equipment)</pre>
 <div class="block">Set NPC's Equipment</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -525,13 +525,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a id="equip(me.bimmr.bimmcore.npcPlayer.NPCPlayer.ItemSlots,org.bukkit.inventory.ItemStack)">
+<a id="equip(me.bimmr.bimmcore.npcBasePlayer.NPCPlayer.ItemSlots,org.bukkit.inventory.ItemStack)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>equip</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;equip&#8203;(<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcPlayer">NPC.ItemSlots</a>&nbsp;slot,
+<pre class="methodSignature">public&nbsp;void&nbsp;equip&#8203;(<a href="NPC.ItemSlots.html" title="enum in me.bimmr.bimmcore.npcBasePlayer">NPC.ItemSlots</a>&nbsp;slot,
                   org.bukkit.inventory.ItemStack&nbsp;itemStack)</pre>
 <div class="block">Equip the NPC</div>
 <dl>

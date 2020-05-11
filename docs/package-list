@@ -10,6 +10,6 @@ me.bimmr.bimmcore.gui.chat
 me.bimmr.bimmcore.gui.inventory
 me.bimmr.bimmcore.messages
 me.bimmr.bimmcore.mysql
-me.bimmr.bimmcore.npcPlayer
+me.bimmr.bimmcore.npcBasePlayer
 me.bimmr.bimmcore.reflection
 me.bimmr.bimmcore.scoreboard
