@@ -15,7 +15,9 @@ me.bimmr.bimmcore.messages
 me.bimmr.bimmcore.messages.fancymessage
 me.bimmr.bimmcore.misc
 me.bimmr.bimmcore.mysql
-me.bimmr.bimmcore.npcBasePlayer
+me.bimmr.bimmcore.npc
+me.bimmr.bimmcore.npc.mob
+me.bimmr.bimmcore.npc.player
 me.bimmr.bimmcore.reflection
 me.bimmr.bimmcore.reflection.tinyprotocol
 me.bimmr.bimmcore.scoreboard
