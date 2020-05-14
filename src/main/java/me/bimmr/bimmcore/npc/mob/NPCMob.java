@@ -3,9 +3,7 @@ package me.bimmr.bimmcore.npc.mob;
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.npc.NPCBase;
 import org.bukkit.Location;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Level;
@@ -87,6 +85,8 @@ public class NPCMob extends NPCBase {
 
         if (this.entity instanceof Ageable)
             ((Ageable) this.entity).setAdult();
+        if (this.entity instanceof Zombie)
+            ((Zombie) this.entity).setBaby(false);
     }
 
     @Override
