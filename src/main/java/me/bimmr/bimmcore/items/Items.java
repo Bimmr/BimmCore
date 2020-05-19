@@ -22,10 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
+import org.bukkit.potion.*;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.util.*;
@@ -43,10 +40,7 @@ import java.util.*;
  */
 public class Items {
 
-    public static final Items INVALID_ITEM = new Items(BimmCore.supports(13) ? Material.getMaterial("PLAYER_HEAD") : Material.getMaterial("SKULL_ITEM"))
-            .setDamage(3)
-            .setDisplayName("Unknown Item")
-            .setSkullOwner("MHF_Question");
+    public static final String INVALID_ITEM = "item:" + (BimmCore.supports(13) ? "PLAYER_HEAD" : "SKULL_ITEM damage:3") + " name:&eUnknown_Item owner:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmMyNzEwNTI3MTllZjY0MDc5ZWU4YzE0OTg5NTEyMzhhNzRkYWM0YzI3Yjk1NjQwZGI2ZmJkZGMyZDZiNWI2ZSJ9fX0=";
 
     private ItemStack item = new ItemStack(Material.AIR);
     private ItemMeta itemMeta;
@@ -132,6 +126,8 @@ public class Items {
                 String prefix = dataSplit[0];
                 String value = dataSplit.length > 1 ? StringUtil.addColor(dataSplit[1]) : "";
 
+                boolean isOldSplashPotion = string.contains("splash") || string.contains("splashPotion") || string.contains("splash-potion");
+
                 //Crackshot or QualityArmory
                 if (StringUtil.equalsStrings(prefix, "gun", "weapon")) {
                     if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null)
@@ -144,8 +140,10 @@ public class Items {
                 else if (StringUtil.equalsStrings(prefix, "id", "item", "material", "type")) {
                     if (Material.matchMaterial(value) != null)
                         this.item = new ItemStack(Material.matchMaterial(value));
+                    else if (value.equalsIgnoreCase("player_head") && !BimmCore.supports(13))
+                        this.item = new ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, (short) 3);
                     else {
-                        return INVALID_ITEM;
+                        return new Items(INVALID_ITEM).addLore("Item: " + ChatColor.WHITE + value);
                     }
                 }
                 //Amount
@@ -205,16 +203,26 @@ public class Items {
                     String[] valueSplit = value.split(",");
                     PotionMeta potionMeta = (PotionMeta) getItemMeta();
                     if (BimmCore.supports(12) && StringUtil.equalsStrings(valueSplit[1], "true", "false")) {
-                        if (PotionType.valueOf(valueSplit[0].toUpperCase()) != null)
-                            potionMeta.setBasePotionData(new PotionData(PotionType.valueOf(valueSplit[0].toUpperCase()), Boolean.parseBoolean(valueSplit[1]), Boolean.parseBoolean(valueSplit[2])));
+                        if (PotionType.valueOf(valueSplit[0].toUpperCase()) != null) {
+                            PotionData potionData = new PotionData(PotionType.valueOf(valueSplit[0].toUpperCase()), Boolean.parseBoolean(valueSplit[1]), Boolean.parseBoolean(valueSplit[2]));
+                            potionMeta.setBasePotionData(potionData);
+                            if (!BimmCore.supports(13) && isOldSplashPotion) {
+                                setSplashPotion();
+                            }
+                        }
                         setItemMeta(potionMeta);
-                    } else if (PotionEffectType.getByName(valueSplit[0]) != null)
-                        addPotionEffect(new PotionEffect(PotionEffectType.getByName(valueSplit[0].toUpperCase()), Integer.parseInt(valueSplit[1]) * 20, Integer.parseInt(valueSplit[2]) - 1));
+                    } else if (PotionEffectType.getByName(valueSplit[0]) != null) {
+                        PotionEffect potionEffect = new PotionEffect(PotionEffectType.getByName(valueSplit[0].toUpperCase()), Integer.parseInt(valueSplit[1]) * 20, Integer.parseInt(valueSplit[2]) - 1);
+                        addPotionEffect(potionEffect);
+                        if (!BimmCore.supports(13) && isOldSplashPotion) {
+                            setSplashPotion();
+                        }
+                    }
                 }
 
                 //Splash Potion
-                else if (StringUtil.equalsStrings(prefix, "splash", "splashPotion", " splash-potion")) {
-                    getItem().setType(Material.SPLASH_POTION);
+                else if (StringUtil.equalsStrings(prefix, "splash", "splashPotion", "splash-potion")) {
+                    setSplashPotion();
                 }
 
                 //Author
@@ -725,6 +733,32 @@ public class Items {
     }
 
     /**
+     * Sets the item to be a splash potion
+     *
+     * @return Items
+     */
+    public Items setSplashPotion() {
+
+        if (BimmCore.supports(13)) {
+            if (getItem().getType() == Material.POTION)
+                getItem().setType(Material.matchMaterial("SPLASH_POTION"));
+        } else {
+            if (!(getItemMeta() instanceof PotionMeta))
+                return this;
+            PotionMeta potionMeta = (PotionMeta) getItemMeta();
+            Potion potion = null;
+            if (BimmCore.supports(12))
+                potion = new Potion(potionMeta.getBasePotionData().getType());
+            else
+                potion = new Potion(PotionType.getByEffect(potionMeta.getCustomEffects().get(0).getType()));
+
+            potion.setSplash(true);
+            potion.apply(getItem());
+        }
+        return this;
+    }
+
+    /**
      * Add Item Attribute using BimmCore
      *
      * @param attribute AttributeType
@@ -1074,11 +1108,13 @@ public class Items {
             if (itemMeta instanceof FireworkEffectMeta) {
                 FireworkEffectMeta fireworkEffectMeta = (FireworkEffectMeta) itemMeta;
                 FireworkEffect fireworkEffect = fireworkEffectMeta.getEffect();
-                string.append(" firework:").append(fireworkEffect.getType().name()).append(",").append(fireworkEffect.hasTrail()).append(",").append(fireworkEffect.hasFlicker()).append(",");
-                for (Color fireworkColor : fireworkEffect.getColors())
-                    string.append(" firework-color:").append(fireworkColor.getRed()).append(",").append(fireworkColor.getGreen()).append(",").append(fireworkColor.getBlue()).append(",");
-                for (Color fireworkFadeColor : fireworkEffect.getFadeColors())
-                    string.append(" firework-fade-color:").append(fireworkFadeColor.getRed()).append(",").append(fireworkFadeColor.getGreen()).append(",").append(fireworkFadeColor.getBlue()).append(",");
+                if (fireworkEffect != null) {
+                    string.append(" firework:").append(fireworkEffect.getType().name()).append(",").append(fireworkEffect.hasTrail()).append(",").append(fireworkEffect.hasFlicker()).append(",");
+                    for (Color fireworkColor : fireworkEffect.getColors())
+                        string.append(" firework-color:").append(fireworkColor.getRed()).append(",").append(fireworkColor.getGreen()).append(",").append(fireworkColor.getBlue()).append(",");
+                    for (Color fireworkFadeColor : fireworkEffect.getFadeColors())
+                        string.append(" firework-fade-color:").append(fireworkFadeColor.getRed()).append(",").append(fireworkFadeColor.getGreen()).append(",").append(fireworkFadeColor.getBlue()).append(",");
+                }
             }
 
             //Skulls
