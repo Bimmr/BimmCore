@@ -122,11 +122,18 @@ public class MenuManager implements Listener {
                             if (menu.getClickEvent() != null) {
                                 menu.getClickEvent().setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
                                 menu.getClickEvent().click();
+
+                                if (menu.getClickEvent().doNothing)
+                                    return;
                             }
                             //Call individual item's ClickEvent
-                            if (menu.getClickEvent(inv.getContents()[position]) != null) {
-                                menu.getClickEvent(inv.getContents()[position]).setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
-                                menu.getClickEvent(inv.getContents()[position]).click();
+                            ClickEvent itemClickEvent = menu.getClickEvent(inv.getContents()[position]);
+                            if (itemClickEvent != null) {
+                                itemClickEvent.setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
+                                itemClickEvent.click();
+
+                                if (itemClickEvent.doNothing)
+                                    return;
                             }
 
                             //Update the player's inventory

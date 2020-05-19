@@ -15,6 +15,8 @@ public abstract class ClickEvent {
     private ItemStack item;
     private InventoryClickEvent event;
 
+    protected boolean doNothing = false;
+
     protected Menu menuObject;
 
     /**
@@ -88,4 +90,9 @@ public abstract class ClickEvent {
     public int getPage() {
         return page;
     }
+
+    public void doNothing() {
+        this.doNothing = true;
+    }
+
 }
