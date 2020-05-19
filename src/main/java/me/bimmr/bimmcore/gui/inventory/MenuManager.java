@@ -105,6 +105,7 @@ public class MenuManager implements Listener {
                     if (cooldown.isCooledDown(player.getUniqueId())) {
                         cooldown.addToCooldown(player.getUniqueId());
 
+                        System.out.println(1);
                         //Check if clicked on page navigation
                         if (page > 0 && position == inv.getSize() - 9) {
                             menu.setClose(true);
@@ -128,6 +129,7 @@ public class MenuManager implements Listener {
                                 menu.getClickEvent(inv.getContents()[position]).setup((Player) event.getWhoClicked(), menu.getCurrentPage(player), position, inv.getContents()[position], event);
                                 menu.getClickEvent(inv.getContents()[position]).click();
                             }
+                            System.out.println(2);
 
                             //Update the player's inventory
                             player.updateInventory();
@@ -150,7 +152,7 @@ public class MenuManager implements Listener {
     private boolean isBorderItem(Menu menu, ItemStack itemStack) {
         boolean isBorder = false;
         if (itemStack != null)
-            if (itemStack.hasItemMeta() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
+            if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() && ChatColor.stripColor(itemStack.getItemMeta().getDisplayName()).length() == 0)
                 isBorder = true;
             else if (menu.isBordered() && (menu.getBorderCorners().isSimilar(itemStack) || menu.getBorderSides().isSimilar(itemStack)))
                 isBorder = true;
