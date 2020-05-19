@@ -724,6 +724,7 @@ public class Menu {
     public void open(int page, Player player) {
         if (this.inventories.isEmpty())
             build();
+
         //Re-register if not registered
         if (MenuManager.getMenuGUI(this.inventories.get(page)) == null)
             MenuManager.register(this);

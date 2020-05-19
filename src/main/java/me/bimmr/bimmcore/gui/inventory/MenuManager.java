@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.UUID;
+
 /**
  * The Manager for {@link Menu} classes
  */
@@ -56,7 +57,7 @@ public class MenuManager implements Listener {
     public static Menu getMenuGUI(Inventory inventory) {
         for (Menu menu : menus) {
             for (Inventory inv : menu.getInventories())
-                if (inv.equals(inventory))
+                if (inv == inventory)
                     return menu;
         }
         return null;
@@ -105,11 +106,15 @@ public class MenuManager implements Listener {
                         cooldown.addToCooldown(player.getUniqueId());
 
                         //Check if clicked on page navigation
-                        if (page > 0 && position == inv.getSize() - 9)
+                        if (page > 0 && position == inv.getSize() - 9) {
+                            menu.setClose(true);
+                            menu.setDestroy(false);
                             menu.openPreviousPage(player);
-                        else if (menu.getPages().size() > 1 && page < menu.getPages().size() - 1 && position == inv.getSize() - 1)
+                        } else if (menu.getPages().size() > 1 && page < menu.getPages().size() - 1 && position == inv.getSize() - 1) {
+                            menu.setClose(true);
+                            menu.setDestroy(false);
                             menu.openNextPage(player);
-                        else if (isBorderItem(menu, inv.getContents()[position]))
+                        } else if (isBorderItem(menu, inv.getContents()[position]))
                             ;//Do nothing if border item
 
                         else {
