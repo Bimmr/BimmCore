@@ -261,8 +261,6 @@ public class Book {
          * @return Get the Book as an ItemStack
          */
         private static ItemStack getAsItemStack(Book book) {
-            for (ArrayList page : book.getLines())
-                System.out.println(page.size());
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
 
             //create the book

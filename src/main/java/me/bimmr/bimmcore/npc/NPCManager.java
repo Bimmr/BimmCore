@@ -95,10 +95,12 @@ public class NPCManager implements Listener {
 
     @EventHandler
     public void npcTargeted(EntityTargetEvent e) {
-        int id = e.getTarget().getEntityId();
-        NPCBase npcBase = getNPC(id);
-        if (npcBase != null)
-            e.setCancelled(true);
+        if (e.getTarget() != null) {
+            int id = e.getTarget().getEntityId();
+            NPCBase npcBase = getNPC(id);
+            if (npcBase != null)
+                e.setCancelled(true);
+        }
     }
 
     @EventHandler
