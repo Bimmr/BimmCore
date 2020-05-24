@@ -39,7 +39,7 @@ public abstract class TimedObject {
                     this.time = 0L;
                 this.time++;
             }
-        }).runTaskTimer((Plugin) BimmCore.getInstance(), 0L, 1L);
+        }).runTaskTimer(BimmCore.getInstance(), 0L, 1L);
     }
 
     public void onTaskRun(long time) {}
