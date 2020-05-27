@@ -6,7 +6,9 @@ package me.bimmr.bimmcore.items.attributes;
  */
 @Deprecated
 public enum Slot {
+    @Deprecated
     MAIN_HAND("mainhand"),
+    HAND("mainhand"),
     OFF_HAND("offhand"),
     FEET("feet"),
     LEGS("legs"),
