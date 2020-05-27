@@ -113,6 +113,55 @@ public class Coords {
      *
      * @return the location
      */
+    public static Location asLocation(String string) {
+        String[] list = string.split(",");
+        String world = list[0];
+        int x = Integer.parseInt(list[1]);
+        int y = Integer.parseInt(list[2]);
+        int z = Integer.parseInt(list[3]);
+        float yaw = 0;
+        float pitch = 0;
+
+        if (StringUtils.countMatches(string, ",") == 5) {
+           yaw = Float.parseFloat(list[4]);
+           pitch = Float.parseFloat(list[5]);
+        }
+        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+    }
+
+    /**
+     * As location ignore yaw and pitch location.
+     *
+     * @return the location
+     */
+    public static Location asLocationIgnoreYawAndPitch(String string) {
+        String[] list = string.split(",");
+        String world = list[0];
+        int x = Integer.parseInt(list[1]);
+        int y = Integer.parseInt(list[2]);
+        int z = Integer.parseInt(list[3]);
+
+        return new Location(Bukkit.getWorld(world), x, y, z);
+    }
+
+    public static String toString(Location location) {
+        return location.getWorld() + "," + location.getX() + "," + location.getY() + "," + location.getZ() + "," + location.getYaw() + "," + location.getPitch();
+    }
+
+    /**
+     * To string ignore yaw and pitch string.
+     *
+     * @return the string
+     */
+    public static String toStringIgnoreYawAndPitch(Location location) {
+        return location.getWorld() + "," + location.getX() + "," + location.getY() + "," + location.getZ();
+    }
+
+    /**
+     * As location location.
+     *
+     * @return the location
+     */
     public Location asLocation() {
         return new Location(Bukkit.getWorld(this.world), this.x, this.y, this.z, this.yaw, this.pitch);
     }
@@ -194,7 +243,6 @@ public class Coords {
         this.y = y;
     }
 
-
     /**
      * Gets z.
      *
@@ -212,7 +260,6 @@ public class Coords {
     public void setZ(int z) {
         this.z = z;
     }
-
 
     /**
      * Gets pitch.
@@ -249,4 +296,5 @@ public class Coords {
     public void setYaw(float yaw) {
         this.yaw = yaw;
     }
+
 }
