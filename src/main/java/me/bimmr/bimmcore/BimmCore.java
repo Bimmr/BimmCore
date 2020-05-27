@@ -17,12 +17,14 @@ import me.bimmr.bimmcore.messages.Title;
 import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
+import me.bimmr.bimmcore.misc.Coords;
 import me.bimmr.bimmcore.misc.Scroller;
 import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCClickEvent;
 import me.bimmr.bimmcore.npc.NPCManager;
 import me.bimmr.bimmcore.npc.player.NPCPlayer;
 import me.bimmr.bimmcore.reflection.Reflection;
+import me.bimmr.bimmcore.utils.MetricsLite;
 import me.bimmr.bimmcore.utils.TimeUtil;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.Bukkit;
@@ -142,6 +144,15 @@ public class BimmCore extends JavaPlugin implements Listener {
             npcManager.getNPCPlayerListener().start();
         else
             System.out.println("Unable to start NPCPlayer Listener on server reloads");
+
+        FileManager fileManager = new FileManager(this);
+        if (fileManager.fileExists("Holograms.yml")) {
+            Config holograms = fileManager.getConfig("Holograms.yml");
+            holograms.getKeys().forEach(uuid -> {
+                new Hologram(holograms.getBoolean(uuid + ".viewer"), Coords.asLocation(holograms.getString(uuid + ".location")), holograms.get().getStringList(uuid + ".text"));
+            });
+        }
+        MetricsLite metrics = new MetricsLite(this, 7671);
     }
 
     public void onDisable() {
@@ -149,7 +160,6 @@ public class BimmCore extends JavaPlugin implements Listener {
         npcBaseList.addAll(NPCManager.getAllNPCs());
         for (NPCBase npcBase : npcBaseList)
             npcBase.destroy();
-
     }
 
     @EventHandler
