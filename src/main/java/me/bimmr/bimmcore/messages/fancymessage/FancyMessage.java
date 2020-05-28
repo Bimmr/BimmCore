@@ -160,6 +160,7 @@ public class FancyMessage {
      */
     public FancyMessage changePage(String page) {
         builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, page));
+
         return this;
     }
 
@@ -171,6 +172,15 @@ public class FancyMessage {
      * @param fce The FancyClickEvent
      * @return The FancyMessage
      */
+    public FancyMessage onClick(FancyClick fce) {
+        FancyClickEvent fancyClickEvent = new FancyClickEvent() {
+            @Override
+            public void onClick() {
+                fce.onClick();
+            }
+        };
+        return onClick(fancyClickEvent);
+    }
     public FancyMessage onClick(FancyClickEvent fce) {
         FancyMessageListener.chats.add(fce);
         return command("/BimmCore " + fce.getUUID());
