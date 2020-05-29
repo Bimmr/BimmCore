@@ -3,7 +3,6 @@ package me.bimmr.bimmcore.items.attributes;
 /**
  * Attribute Class
  */
-@Deprecated
 public class Attribute {
     private AttributeType attribute;
     private Slot          slot;

@@ -44,7 +44,6 @@ public class Items {
 
     private ItemStack item = new ItemStack(Material.AIR);
     private ItemMeta itemMeta;
-    private ItemAttributes itemAttributes;
 
     /**
      * Instantiates a new Items.
@@ -327,13 +326,10 @@ public class Items {
                     String[] valueSplit = value.split(",");
                     String attribute = valueSplit[0];
                     String slot = valueSplit[1];
-                    Double level = Double.parseDouble(valueSplit[2]);
+                    double level = Double.parseDouble(valueSplit[2]);
                     String operation = valueSplit[3];
-                    if (BimmCore.supports(13)) {
-                        if (this.itemAttributes == null)
-                            this.itemAttributes = new ItemAttributes(getItem());
-                        addAttribute(attribute, slot, level, operation);
-                    }
+
+                    addAttribute(attribute, slot, level, operation);
                 }
             } catch (Exception e) {
                 Bukkit.getConsoleSender().sendMessage("Error while parsing " + ChatColor.RED + data + ChatColor.GRAY + " from " + ChatColor.RED + string);
@@ -716,19 +712,20 @@ public class Items {
      * @return Items items
      */
     public Items addAttribute(String attribute, String slot, double level, String operation) {
-        if (!hasItemMeta())
-            return this;
 
-        ItemMeta itemMeta = getItemMeta();
+
         if (BimmCore.supports(13)) {
-            itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
+            if (!hasItemMeta())
+                return this;
 
+            ItemMeta itemMeta = getItemMeta();
+            itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
+            setItemMeta(itemMeta);
         } else {
-            if (this.itemAttributes == null)
-                this.itemAttributes = new ItemAttributes(getItem());
-            this.itemAttributes.addAttribute(new me.bimmr.bimmcore.items.attributes.Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), level, Operation.valueOf(operation)));
+            this.item = ItemAttributes.addAttribute(getItem(), new me.bimmr.bimmcore.items.attributes.Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), level, Operation.valueOf(operation)));
+            if(this.item.hasItemMeta())
+                this.itemMeta = this.item.getItemMeta();
         }
-        setItemMeta(itemMeta);
         return this;
     }
 
@@ -768,10 +765,7 @@ public class Items {
      * @return Items items
      */
     public Items addAttribute(AttributeType attribute, Slot slot, double level, Operation operation) {
-
-        if (this.itemAttributes == null)
-            this.itemAttributes = new ItemAttributes(getItem());
-        this.itemAttributes.addAttribute(new me.bimmr.bimmcore.items.attributes.Attribute(attribute, slot, level, operation));
+        this.item = ItemAttributes.addAttribute(getItem(), new me.bimmr.bimmcore.items.attributes.Attribute(attribute, slot, level, operation));
         return this;
     }
 
@@ -1057,12 +1051,11 @@ public class Items {
                         AttributeModifier attributeModifier = entry.getValue();
                         string.append(" attribute:").append(attributeModifier.getName()).append(",").append(attributeModifier.getSlot()).append(",").append(attributeModifier.getAmount()).append(",").append(attributeModifier.getOperation().name());
                     }
-                } else {
-                    if (this.itemAttributes != null)
-                        for (me.bimmr.bimmcore.items.attributes.Attribute attribute : this.itemAttributes.getAttributes())
-                            string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
-
                 }
+
+            } else {
+                for (me.bimmr.bimmcore.items.attributes.Attribute attribute : ItemAttributes.getAttributes(getItem()))
+                    string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
             }
 
             //Potions

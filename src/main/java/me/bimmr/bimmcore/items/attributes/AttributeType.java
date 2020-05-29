@@ -5,46 +5,52 @@ package me.bimmr.bimmcore.items.attributes;
  * <p>
  * Used from 1.8.8 - 1.13
  */
-@Deprecated
 public enum AttributeType {
-    @Deprecated
-    MAX_HEALTH("generic.maxHealth"),
     GENERIC_MAX_HEALTH("generic.maxHealth"),
     @Deprecated
-    FOLLOW_RANGE("generic.followRange"),
+    MAX_HEALTH("generic.maxHealth"),
     GENERIC_FOLLOW_RANGE("generic.followRange"),
     @Deprecated
-    KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
+    FOLLOW_RANGE("generic.followRange"),
     GENERIC_KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
     @Deprecated
-    MOVEMENT_SPEED("generic.movementSpeed"),
+    KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
     GENERIC_MOVEMENT_SPEED("generic.movementSpeed"),
     @Deprecated
-    ATTACK_DAMAGE("generic.attackDamage"),
+    MOVEMENT_SPEED("generic.movementSpeed"),
     GENERIC_ATTACK_DAMAGE("generic.attackDamage"),
     @Deprecated
-    ARMOR("generic.armor"),
+    ATTACK_DAMAGE("generic.attackDamage"),
     GENERIC_ARMOR("generic.armor"),
-    @Deprecated
-    ARMOR_THOUGHNESS("generic.armorToughness"),
     GENERIC_ARMOR_THOUGHNESS("generic.armorToughness"),
     @Deprecated
-    ATTACK_SPEED("generic.attackSpeed"),
+    ARMOR("generic.armor"),
+    @Deprecated
+    ARMOR_THOUGHNESS("generic.armorToughness"),
     GENERIC_ATTACK_SPEED("generic.attackSpeed"),
     @Deprecated
-    LUCK("generic.luck"),
+    ATTACK_SPEED("generic.attackSpeed"),
     GENERIC_LUCK("generic.luck"),
     @Deprecated
-    JUMP_STRENGTH("horse.jumpStrength"),
+    LUCK("generic.luck"),
     GENERIC_JUMP_STRENGTH("horse.jumpStrength"),
     @Deprecated
-    SPAWN_REINFORCEMENTS("zombie.spawnReinforcements"),
-    GENERIC_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements");
+    JUMP_STRENGTH("horse.jumpStrength"),
+    GENERIC_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements"),
+    @Deprecated
+    SPAWN_REINFORCEMENTS("zombie.spawnReinforcements");
 
     private String name;
 
-    private AttributeType(String name) {
+    AttributeType(String name) {
         this.name = name;
+    }
+
+    public static AttributeType getByName(String name) {
+        for (AttributeType type : AttributeType.values())
+            if (type.name.equals(name))
+                return type;
+        return null;
     }
 
     /**
