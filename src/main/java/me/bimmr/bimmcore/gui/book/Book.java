@@ -6,7 +6,6 @@ import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
-import net.minecraft.server.v1_15_R1.PacketPlayOutCustomPayload;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -247,7 +246,6 @@ public class Book {
                 Method value = Reflection.getMethod(enumHandClass, "valueOf", String.class);
                 mainHandEnum = Reflection.invokeMethod(value, null, "MAIN_HAND");
             } else if (BimmCore.supports(13)) {
-                PacketPlayOutCustomPayload pe;
                 craftKeyClass = Reflection.getNMSClass("MinecraftKey");
                 craftKeyConstructor = Reflection.getConstructor(craftKeyClass, String.class);
                 packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, craftKeyClass, packetDataSerializer);

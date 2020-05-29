@@ -6,7 +6,7 @@
     <name>BimmCore</name>
     <groupId>me.bimmr</groupId>
     <artifactId>bimmcore</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -140,14 +140,5 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <repository>
-            <id>codemc-releases</id>
-            <url>https://repo.codemc.io/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>codemc-snapshots</id>
-            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+
 </project>
