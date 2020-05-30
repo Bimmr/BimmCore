@@ -10,6 +10,7 @@ import me.bimmr.bimmcore.gui.inventory.MenuManager;
 import me.bimmr.bimmcore.hologram.Hologram;
 import me.bimmr.bimmcore.hologram.HologramLine;
 import me.bimmr.bimmcore.items.Items;
+import me.bimmr.bimmcore.items.attributes.*;
 import me.bimmr.bimmcore.messages.ActionBar;
 import me.bimmr.bimmcore.messages.BossBar;
 import me.bimmr.bimmcore.messages.MessageDisplay;
@@ -164,7 +165,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (false && e.getMessage().startsWith("/BTest")) {
+        if (true && e.getMessage().startsWith("/BTest")) {
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
@@ -180,21 +181,17 @@ public class BimmCore extends JavaPlugin implements Listener {
             }
             if (e.getMessage().contains("Book")) {
                 Book book = new Book();
-                book.addLine("Test");
+                book.addLine(""+ChatColor.DARK_AQUA+ChatColor.BOLD+"Book Header");
                 book.addBlankLine();
-                book.setLine(3, "testing Set");
+                book.setLine(3, "Line 1");
+                book.addBlankLine();
 
-                book.addLine(new FancyMessage("test").onClick(new FancyClickEvent() {
-                    @Override
-                    public void onClick() {
-                        e.getPlayer().sendMessage("test");
-                    }
-                }));
+                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick(() -> e.getPlayer().sendMessage("test")));
                 book.show(e.getPlayer());
             }
             if (e.getMessage().contains("Chat")) {
                 System.out.println(FancyMessageListener.chats.size());
-                ChatMenu previous = null;
+
                 new ChatMenu("[ McInfected Kit " + ChatColor.GREEN + "Private " + ChatColor.WHITE + "]", ChatColor.DARK_GREEN, ChatMenu.HeightControl.AUTO_EXTERNAL)
                         .setSpacedFormat(true)
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").tooltip("Click to set to item in hand").then("  ").then(ChatColor.GREEN + "Leggings: ").then(ChatColor.GRAY + "Diamond_Leggings").showItem(new Items(new ItemStack(Material.DIAMOND_LEGGINGS)).addEnchantment(Enchantment.DAMAGE_ALL, 1).getItem()))
@@ -205,26 +202,27 @@ public class BimmCore extends JavaPlugin implements Listener {
 
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
-                        .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✎" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.LIGHT_PURPLE + "Rename Kit "))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✕" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.RED + "Unload Kit"))
                         .addLine(new FancyMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "✖" + ChatColor.DARK_GRAY + "]").then("  ").then(ChatColor.DARK_RED + "Delete Kit"))
 
                         .show(e.getPlayer());
             }
+            if (e.getMessage().contains("Attribute")) {
+                ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER));
+                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER));
+                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1));
+                e.getPlayer().getInventory().setItemInHand(sword);
+            }
+            if (e.getMessage().contains("Item")) {
+                Items items = new Items(e.getPlayer().getInventory().getItemInHand());
+                e.getPlayer().sendMessage(items.toString());
+            }
             if (e.getMessage().contains("Hologram")) {
-                Scroller scroller = new Scroller("test message", 7, 2);
-                Hologram hologram = new Hologram(e.getPlayer().getLocation(), "Test");
+                Scroller scroller = new Scroller("&aThis &bIs &ca &dTest &fMessage", 12, 3);
+                Hologram hologram = new Hologram(e.getPlayer().getLocation(), "Scrolling Holograms:");
                 hologram.addBlankLine();
-                hologram.addText(scroller.current(), new TimedEvent(5, this) {
+                hologram.addText(scroller.current(), new TimedEvent(2, this) {
                     @Override
                     public void run() {
                         HologramLine line = (HologramLine) getAttachedObject();
@@ -233,7 +231,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                 }, true);
             }
             if (e.getMessage().contains("Action")) {
-                Scroller scroller = new Scroller("test message", 7, 2);
+                Scroller scroller = new Scroller("&aThis &bIs &ca &dTest &fMessage", 12, 3);
                 new ActionBar(scroller.current(), 10, new TimedEvent(5) {
                     @Override
                     public void run() {
@@ -278,7 +276,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                         if (getPlayer().isSneaking())
                             npc.setName("Notch");
                         else
-                            npc.setName("brenden23");
+                            npc.setName("Bimmr");
                     }
                 });
             }
@@ -299,7 +297,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                         if (getPlayer().isSneaking())
                             npcBase.setName("Notch");
                         else
-                            npcBase.setName("brenden23");
+                            npcBase.setName("Bimmr");
                     }
                 });
             }
