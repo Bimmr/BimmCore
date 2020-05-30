@@ -4,6 +4,8 @@ import me.bimmr.bimmcore.reflection.Reflection;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class ItemAttributes {
     private static Class<?> classNBTTagString = Reflection.getNMSClass("NBTTagString");
     private static Class<?> classNBTTagInt = Reflection.getNMSClass("NBTTagInt");
     private static Class<?> classNBTTagDouble = Reflection.getNMSClass("NBTTagDouble");
+    private static Class<?> classNBTTagFloat = Reflection.getNMSClass("NBTTagFloat");
     private static Class<?> classNBTTagLong = Reflection.getNMSClass("NBTTagLong");
 
     private static Constructor<?> constructorNBTTagCompound = Reflection.getConstructor(classNBTTagCompound);
@@ -35,6 +38,7 @@ public class ItemAttributes {
     private static Constructor<?> constructorNBTTagString = Reflection.getConstructor(classNBTTagString, String.class);
     private static Constructor<?> constructorNBTTagInt = Reflection.getConstructor(classNBTTagInt, int.class);
     private static Constructor<?> constructorNBTTagDouble = Reflection.getConstructor(classNBTTagDouble, double.class);
+    private static Constructor<?> constructorNBTTagFloat = Reflection.getConstructor(classNBTTagFloat, float.class);
     private static Constructor<?> constructorNBTTagLong = Reflection.getConstructor(classNBTTagLong, long.class);
 
     private static Method methodNMSItemHasTag = Reflection.getMethod(classNMSItemStack, "hasTag");
@@ -51,13 +55,10 @@ public class ItemAttributes {
 
     private static Object getNBTTagCompound(Object nmsItemStack) {
         Object hasTags = Reflection.invokeMethod(methodNMSItemHasTag, nmsItemStack);
-        if ((Boolean) hasTags) {
-            System.out.println("Getting Tags");
+        if ((Boolean) hasTags)
             return Reflection.invokeMethod(methodNMSItemGetTag, nmsItemStack);
-        } else {
-            System.out.println("Creating Tags");
+        else
             return Reflection.newInstance(constructorNBTTagCompound);
-        }
     }
 
     private static Object getNBTAttributeList(Object nbtTagCompound) {
@@ -78,7 +79,15 @@ public class ItemAttributes {
 
         Reflection.invokeMethod(set, att, "AttributeName", Reflection.newInstance(constructorNBTTagString, attribute.getName()));
         Reflection.invokeMethod(set, att, "Name", Reflection.newInstance(constructorNBTTagString, attribute.getName()));
-        Reflection.invokeMethod(set, att, "Amount", Reflection.newInstance(constructorNBTTagDouble, value));
+        try {
+            set.invoke(att, "Amount", Reflection.newInstance(constructorNBTTagDouble, value));
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            try {
+                set.invoke(att, "Amount", Reflection.newInstance(constructorNBTTagFloat, value));
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                ex.printStackTrace();
+            }
+        }
         Reflection.invokeMethod(set, att, "Operation", Reflection.newInstance(constructorNBTTagInt, operation.getID()));
         Reflection.invokeMethod(set, att, "UUIDLeast", Reflection.newInstance(constructorNBTTagLong, uuid.getLeastSignificantBits()));
         Reflection.invokeMethod(set, att, "UUIDMost", Reflection.newInstance(constructorNBTTagLong, uuid.getMostSignificantBits()));
@@ -103,11 +112,29 @@ public class ItemAttributes {
 //        net.minecraft.server.v1_15_R1.NBTTagList nbtTagList = nbtTagCompound.get("AttributeModifiers") != null ? nbtTagCompound.getList("AttributeModifiers", 10) : new net.minecraft.server.v1_15_R1.NBTTagList();
         Object nbtTagList = getNBTAttributeList(nbtTagCompound);
 
-//        NBTTagCompound attributeDetails = (NBTTagCompound) createNBTCompound(attribute.getAttribute(), attribute.getSlot(), attribute.getValue(), attribute.getOperation());
-        Object attributeDetails = createNBTCompound(attribute.getAttribute(), attribute.getSlot(), attribute.getValue(), attribute.getOperation());
+        //Add any defaults
+        int listSize = (int) Reflection.invokeMethod(getListSize, nbtTagList);
+        System.out.println(listSize);
+        if (listSize == 0) {
+            double armor, toughness, damage, attackSpeed;
+            if ((armor = AttributeDefaults.getDefaultArmor(itemStack.getType())) > 0) {
+                System.out.println("Default Armor");
+                Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR, AttributeDefaults.getEquipmentSlot(itemStack.getType()), armor, Operation.ADD_NUMBER));
+            }if ((toughness = AttributeDefaults.getDefaultArmorToughness(itemStack.getType())) > 0) {
+                System.out.println("Default toughness");
+                Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR_THOUGHNESS, AttributeDefaults.getEquipmentSlot(itemStack.getType()), toughness, Operation.ADD_NUMBER));
+            }if ((damage = AttributeDefaults.getDefaultAttackDamage(itemStack.getType())) > 0) {
+                System.out.println("Default damage");
+                Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_DAMAGE, AttributeDefaults.getEquipmentSlot(itemStack.getType()), damage, Operation.ADD_NUMBER));
+            } if ((attackSpeed = AttributeDefaults.getDefaultAttackSpeed(itemStack.getType())) > 0){
+                System.out.println("Default attackSpeed");
+                Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_SPEED, AttributeDefaults.getEquipmentSlot(itemStack.getType()), attackSpeed, Operation.ADD_NUMBER));
+        }}
 
+//        NBTTagCompound attributeDetails = (NBTTagCompound) createNBTCompound(attribute.getAttribute(), attribute.getSlot(), attribute.getValue(), attribute.getOperation());
 //        nbtTagList.add(attributeDetails);
-        Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, attributeDetails);
+        Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(attribute.getAttribute(), attribute.getSlot(), attribute.getValue(), attribute.getOperation()));
+
 
 //        nbtTagCompound.set("AttributeModifiers", nbtTagList);
         Reflection.invokeMethod(methodSetNBTOnCompound, nbtTagCompound, "AttributeModifiers", nbtTagList);
@@ -134,7 +161,20 @@ public class ItemAttributes {
             name = Reflection.get(classNBTTagString, "data", name);
 
             Object amount = Reflection.invokeMethod(getCompoundValue, attribute, "Amount");
-            amount = Reflection.get(classNBTTagDouble, "data", amount);
+
+            try {
+                Field field = classNBTTagDouble.getDeclaredField("data");
+                field.setAccessible(true);
+                amount = field.get(amount);
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                try {
+                    Field field = classNBTTagFloat.getDeclaredField("data");
+                    field.setAccessible(true);
+                    amount = field.get(amount);
+                } catch (IllegalAccessException | NoSuchFieldException ex) {
+                    ex.printStackTrace();
+                }
+            }
 
             Object operation = Reflection.invokeMethod(getCompoundValue, attribute, "Operation");
             operation = Reflection.get(classNBTTagInt, "data", operation);
@@ -143,7 +183,7 @@ public class ItemAttributes {
             if (slot != null)
                 slot = Reflection.get(classNBTTagString, "data", slot);
 
-            Attribute attr = new Attribute(AttributeType.getByName((String) name), slot == null ? Slot.ALL : Slot.getByName((String) slot), (double) amount, Operation.getByID((int) operation));
+            Attribute attr = new Attribute(AttributeType.getByName((String) name), slot == null ? Slot.ALL : Slot.getByName((String) slot), (float) amount, Operation.getByID((int) operation));
             list.add(attr);
         }
 

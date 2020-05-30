@@ -14,7 +14,7 @@ public class Attribute {
      * @param attribute Attribute Type
      * @param slot Attribute Slot
      * @param value Attribute Level
-     * @param operation Attribute Opperation
+     * @param operation Attribute Operation
      */
     public Attribute(AttributeType attribute, Slot slot, double value, Operation operation) {
         this.attribute = attribute;
