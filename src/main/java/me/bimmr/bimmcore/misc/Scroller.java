@@ -46,8 +46,10 @@ public class Scroller {
 
         //Add all positions to list
         for (int i = 0; i < originalMessage.length() - width; i++)
-            if (i > 0 && originalMessage.substring(i - 1, i).charAt(0) != ChatColor.COLOR_CHAR)
-                positions.add(originalMessage.substring(i, i + width));
+            if (i > 0 && originalMessage.substring(i - 1, i).charAt(0) != ChatColor.COLOR_CHAR) {
+                int colours = (int)originalMessage.substring(i, i + width).chars().filter(c-> c == ChatColor.COLOR_CHAR).count()*2;
+                positions.add(originalMessage.substring(i, i + width+colours));
+            }
 
         StringBuilder line = new StringBuilder(positions.get(position));
         if (line.charAt(line.length() - 1) == ChatColor.COLOR_CHAR)
