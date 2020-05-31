@@ -9,11 +9,13 @@ public enum Operation {
     ADD_NUMBER(0),
     @Deprecated
     ADD(0),
+
     MULTIPLY_SCALAR_1(1),
     @Deprecated
     MULTIPLY(1),
     @Deprecated
     MULTIPLY_PERCENTAGE(1),
+
     ADD_SCALAR(2),
     @Deprecated
     PERCENT(2),

@@ -120,16 +120,20 @@ public class ItemAttributes {
             if ((armor = AttributeDefaults.getDefaultArmor(itemStack.getType())) > 0) {
                 System.out.println("Default Armor");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR, AttributeDefaults.getEquipmentSlot(itemStack.getType()), armor, Operation.ADD_NUMBER));
-            }if ((toughness = AttributeDefaults.getDefaultArmorToughness(itemStack.getType())) > 0) {
+            }
+            if ((toughness = AttributeDefaults.getDefaultArmorToughness(itemStack.getType())) > 0) {
                 System.out.println("Default toughness");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR_THOUGHNESS, AttributeDefaults.getEquipmentSlot(itemStack.getType()), toughness, Operation.ADD_NUMBER));
-            }if ((damage = AttributeDefaults.getDefaultAttackDamage(itemStack.getType())) > 0) {
+            }
+            if ((damage = AttributeDefaults.getDefaultAttackDamage(itemStack.getType())) > 0) {
                 System.out.println("Default damage");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_DAMAGE, AttributeDefaults.getEquipmentSlot(itemStack.getType()), damage, Operation.ADD_NUMBER));
-            } if ((attackSpeed = AttributeDefaults.getDefaultAttackSpeed(itemStack.getType())) > 0){
+            }
+            if ((attackSpeed = AttributeDefaults.getDefaultAttackSpeed(itemStack.getType())) > 0) {
                 System.out.println("Default attackSpeed");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_SPEED, AttributeDefaults.getEquipmentSlot(itemStack.getType()), attackSpeed, Operation.ADD_NUMBER));
-        }}
+            }
+        }
 
 //        NBTTagCompound attributeDetails = (NBTTagCompound) createNBTCompound(attribute.getAttribute(), attribute.getSlot(), attribute.getValue(), attribute.getOperation());
 //        nbtTagList.add(attributeDetails);
@@ -160,21 +164,26 @@ public class ItemAttributes {
             Object name = Reflection.invokeMethod(getCompoundValue, attribute, "AttributeName");
             name = Reflection.get(classNBTTagString, "data", name);
 
-            Object amount = Reflection.invokeMethod(getCompoundValue, attribute, "Amount");
+            Object compound = Reflection.invokeMethod(getCompoundValue, attribute, "Amount");
+            Field field = null;
+            Object amount = null;
 
+            //TODO: DOESN'T WORK
             try {
-                Field field = classNBTTagDouble.getDeclaredField("data");
+                field = classNBTTagDouble.getDeclaredField("data");
                 field.setAccessible(true);
-                amount = field.get(amount);
-            } catch (IllegalAccessException | NoSuchFieldException e) {
+                amount = field.get(compound);
+            } catch (Exception e) {
+
+            }
+            if (amount == null)
                 try {
-                    Field field = classNBTTagFloat.getDeclaredField("data");
+                    field = classNBTTagFloat.getDeclaredField("data");
                     field.setAccessible(true);
-                    amount = field.get(amount);
-                } catch (IllegalAccessException | NoSuchFieldException ex) {
+                    amount = field.get(compound);
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            }
 
             Object operation = Reflection.invokeMethod(getCompoundValue, attribute, "Operation");
             operation = Reflection.get(classNBTTagInt, "data", operation);
@@ -183,8 +192,11 @@ public class ItemAttributes {
             if (slot != null)
                 slot = Reflection.get(classNBTTagString, "data", slot);
 
-            Attribute attr = new Attribute(AttributeType.getByName((String) name), slot == null ? Slot.ALL : Slot.getByName((String) slot), (float) amount, Operation.getByID((int) operation));
-            list.add(attr);
+            if (amount != null) {
+                Attribute attr = new Attribute(AttributeType.getByName((String) name), slot == null ? Slot.ALL : Slot.getByName((String) slot), Double.parseDouble(amount.toString()), Operation.getByID((int) operation));
+                list.add(attr);
+            }
+
         }
 
         return list;
