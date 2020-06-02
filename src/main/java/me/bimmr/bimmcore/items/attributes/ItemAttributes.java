@@ -114,23 +114,18 @@ public class ItemAttributes {
 
         //Add any defaults
         int listSize = (int) Reflection.invokeMethod(getListSize, nbtTagList);
-        System.out.println(listSize);
         if (listSize == 0) {
             double armor, toughness, damage, attackSpeed;
             if ((armor = AttributeDefaults.getDefaultArmor(itemStack.getType())) > 0) {
-                System.out.println("Default Armor");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR, AttributeDefaults.getEquipmentSlot(itemStack.getType()), armor, Operation.ADD_NUMBER));
             }
             if ((toughness = AttributeDefaults.getDefaultArmorToughness(itemStack.getType())) > 0) {
-                System.out.println("Default toughness");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ARMOR_THOUGHNESS, AttributeDefaults.getEquipmentSlot(itemStack.getType()), toughness, Operation.ADD_NUMBER));
             }
             if ((damage = AttributeDefaults.getDefaultAttackDamage(itemStack.getType())) > 0) {
-                System.out.println("Default damage");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_DAMAGE, AttributeDefaults.getEquipmentSlot(itemStack.getType()), damage, Operation.ADD_NUMBER));
             }
             if ((attackSpeed = AttributeDefaults.getDefaultAttackSpeed(itemStack.getType())) > 0) {
-                System.out.println("Default attackSpeed");
                 Reflection.invokeMethod(methodNBTTagListAdd, nbtTagList, createNBTCompound(AttributeType.GENERIC_ATTACK_SPEED, AttributeDefaults.getEquipmentSlot(itemStack.getType()), attackSpeed, Operation.ADD_NUMBER));
             }
         }
@@ -168,7 +163,6 @@ public class ItemAttributes {
             Field field = null;
             Object amount = null;
 
-            //TODO: DOESN'T WORK
             try {
                 field = classNBTTagDouble.getDeclaredField("data");
                 field.setAccessible(true);
