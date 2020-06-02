@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A Utilities class to create a Hologram
@@ -19,6 +20,17 @@ public class Hologram extends TimedObject {
     private List<HologramLine> hologramLines;
     private Viewer viewer;
     private Location location;
+    private UUID uuid;
+
+    /**
+     * Create a Hologram
+     * Shows to all, TimedEvent is null
+     *
+     * @param location The location for the hologram line
+     */
+    public Hologram(Location location) {
+        this(true, location, "", null, false);
+    }
 
     /**
      * Create a Hologram
@@ -166,6 +178,7 @@ public class Hologram extends TimedObject {
      * @param startTimedEvent If timed even is starting right away
      */
     public Hologram(boolean showToAll, Location location, List<String> text, TimedEvent timedEvent, boolean startTimedEvent) {
+        this.uuid = UUID.randomUUID();
         this.location = location;
         this.hologramLines = new ArrayList<>();
         for (String line : text) {
@@ -422,4 +435,5 @@ public class Hologram extends TimedObject {
     public void remove(Player player) {
         remove(player.getName());
     }
+
 }
