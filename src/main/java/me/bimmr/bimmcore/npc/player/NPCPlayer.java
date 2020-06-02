@@ -241,7 +241,6 @@ public class NPCPlayer extends NPCBase {
         return this.entityPlayer != null && this.viewer.isViewing(player.getName());
     }
 
-
     private static class NPCAPI {
 
         private static Class<?> craftServerClass = Reflection.getCraftClass("CraftServer");
