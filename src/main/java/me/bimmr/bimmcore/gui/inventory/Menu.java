@@ -610,15 +610,21 @@ public class Menu {
         for (int pageIndex = 0; pageIndex < this.pages.size(); pageIndex++) {
             ArrayList<ItemStack> items = this.pages.get(pageIndex);
 
-            if (this.bordered && items.size() == 0)
-                items.add(null);
-            while (this.bordered && getRows(items.size(), 7) * 9 < this.size) {
-                items.add(null);
-            }
+            if (bordered)
+                while (getRows(items.size(), 7) * 9 < this.size) {
+                    items.add(null);
+                }
+            else
+                while (getRows(items.size(), 9) * 9 < this.size) {
+                    items.add(null);
+                }
+
             if (this.centered && this.pageSlot.containsKey(pageIndex))
                 items = centerLastRow(items, this.pageSlot.get(pageIndex));
+
             if (this.bordered)
                 items = outline(items);
+
             HashMap<Integer, ItemStack> toSetAfter = new HashMap<>();
             for (Map.Entry<Integer[], ItemStack> e : this.toSetItems.entrySet()) {
                 if (e.getKey()[0] == pageIndex) {
@@ -632,7 +638,7 @@ public class Menu {
                     items.set(slot, e.getValue());
                 }
             }
-            int invSize = 1;
+            int invSize;
 
             //If automatic size
             if (this.size == -1)
@@ -640,7 +646,7 @@ public class Menu {
 
                 //If manual size
             else
-                invSize = getRows(this.size, 9.0D) + 2;
+                invSize = getRows(this.size, bordered ? 7.0D : 9.0D) + (bordered ? 2 : pages.size() > 1 ? 1 : 0);
 
             invSize *= 9;
 
@@ -671,13 +677,24 @@ public class Menu {
     private ArrayList<ItemStack> centerLastRow(ArrayList<ItemStack> items, int lastAddPlace) {
         int count = lastAddPlace;
         int itemsPerRow = this.bordered ? 7 : 9;
+        boolean spaceCenter = false;
         int lastRowCount = count % itemsPerRow;
         int lastRowStart = count - lastRowCount;
+
         if (lastRowCount == 0)
             return items;
+
+        if (lastRowCount % 2 == 0)
+            spaceCenter = true;
+
+
         int toShift = itemsPerRow / 2 - lastRowCount / 2;
+
         for (int i = 0; i < toShift; i++)
             items.add(lastRowStart, null);
+        if (spaceCenter) {
+            items.add(lastRowStart+toShift+(lastRowCount/2), null);
+        }
         return items;
     }
 
