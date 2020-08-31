@@ -2,6 +2,7 @@ package me.bimmr.bimmcore;
 
 import me.bimmr.bimmcore.files.Config;
 import me.bimmr.bimmcore.files.FileManager;
+import me.bimmr.bimmcore.gui.anvil.Anvil;
 import me.bimmr.bimmcore.gui.book.Book;
 import me.bimmr.bimmcore.gui.chat.ChatMenu;
 import me.bimmr.bimmcore.gui.inventory.ClickEvent;
@@ -10,15 +11,15 @@ import me.bimmr.bimmcore.gui.inventory.MenuManager;
 import me.bimmr.bimmcore.hologram.Hologram;
 import me.bimmr.bimmcore.hologram.HologramLine;
 import me.bimmr.bimmcore.items.Items;
-import me.bimmr.bimmcore.items.attributes.*;
+import me.bimmr.bimmcore.items.attributes.AttributeType;
+import me.bimmr.bimmcore.items.attributes.Operation;
+import me.bimmr.bimmcore.items.attributes.Slot;
 import me.bimmr.bimmcore.messages.ActionBar;
 import me.bimmr.bimmcore.messages.BossBar;
 import me.bimmr.bimmcore.messages.MessageDisplay;
 import me.bimmr.bimmcore.messages.Title;
-import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessageListener;
-import me.bimmr.bimmcore.misc.Coords;
 import me.bimmr.bimmcore.misc.Scroller;
 import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCClickEvent;
@@ -146,13 +147,6 @@ public class BimmCore extends JavaPlugin implements Listener {
         else
             System.out.println("Unable to start NPCPlayer Listener on server reloads");
 
-        FileManager fileManager = new FileManager(this);
-        if (fileManager.fileExists("Holograms.yml")) {
-            Config holograms = fileManager.getConfig("Holograms.yml");
-            holograms.getKeys().forEach(uuid -> {
-                new Hologram(holograms.getBoolean(uuid + ".viewer"), Coords.asLocation(holograms.getString(uuid + ".location")), holograms.get().getStringList(uuid + ".text"));
-            });
-        }
         MetricsLite metrics = new MetricsLite(this, 7671);
     }
 
@@ -161,11 +155,12 @@ public class BimmCore extends JavaPlugin implements Listener {
         npcBaseList.addAll(NPCManager.getAllNPCs());
         for (NPCBase npcBase : npcBaseList)
             npcBase.destroy();
+        Bukkit.getScheduler().cancelTasks(this);
     }
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (true && e.getMessage().startsWith("/BTest")) {
+        if (false && e.getMessage().startsWith("/BTest")) {
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
@@ -181,12 +176,12 @@ public class BimmCore extends JavaPlugin implements Listener {
             }
             if (e.getMessage().contains("Book")) {
                 Book book = new Book();
-                book.addLine(""+ChatColor.DARK_AQUA+ChatColor.BOLD+"Book Header");
+                book.addLine("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Book Header");
                 book.addBlankLine();
                 book.setLine(3, "Line 1");
                 book.addBlankLine();
 
-                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick(() -> e.getPlayer().sendMessage("test")));
+                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick((fce) -> fce.getPlayer().sendMessage("test")));
                 book.show(e.getPlayer());
             }
             if (e.getMessage().contains("Chat")) {
@@ -209,9 +204,18 @@ public class BimmCore extends JavaPlugin implements Listener {
             }
             if (e.getMessage().contains("Attribute")) {
                 ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER));
-                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER));
-                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1));
+//                Pre 1.13
+//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER));
+//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER));
+//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1));
+
+//                Post 1.13
+                Items item = new Items(sword);
+                item.addAttribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER);
+                item.addAttribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER);
+                item.addAttribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1);
+
+
                 e.getPlayer().getInventory().setItemInHand(sword);
             }
             if (e.getMessage().contains("Item")) {
@@ -301,6 +305,11 @@ public class BimmCore extends JavaPlugin implements Listener {
                     }
                 });
             }
+            if (e.getMessage().contains("AnvilTest")) {
+                Anvil a = new Anvil("Test", "Default", null);
+                a.open(e.getPlayer());
+            }
+
             e.setCancelled(true);
         }
     }
