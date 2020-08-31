@@ -1,6 +1,8 @@
 package me.bimmr.bimmcore.commands;
 
+import me.bimmr.bimmcore.gui.chat.ChatMenu;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,10 +57,13 @@ public abstract class SuperCommand extends SubCommand {
     }
 
     public void sendAllSubFancyMessage(CommandSender sender) {
-        sender.sendMessage(getCommandExampleHeader());
-
-        for (int i = 0; i < subCommands.size(); i++)
-            subCommands.get(i).getFancyMessage().send((Player) sender);
+        ChatMenu menu = new ChatMenu(ChatColor.DARK_RED + getCommandExampleHeader(), ChatColor.DARK_GREEN, 5, ChatMenu.HeightControl.MANUAL_EXTERNAL);
+        menu.setSpacedFormat(true);
+        for (SubCommand command : subCommands)
+            if (command.getPermission() == null || sender.hasPermission(command.getPermission())) {
+                menu.addLine(command.getFancyMessage());
+            }
+        menu.show((Player) sender);
     }
 
     @Override
