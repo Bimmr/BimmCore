@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.utils.timed;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -14,6 +15,18 @@ public abstract class TimedObject {
         return this.timedEvent;
     }
 
+    public void setTimedEvent(Timed timed, int time) {
+       setTimedEvent(timed, time, false);
+    }
+    public void setTimedEvent(Timed timed, int time, boolean autoStart) {
+        TimedEvent timedEvent = new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        };
+        setTimedEvent(timedEvent, autoStart);
+    }
     public void setTimedEvent(TimedEvent timedEvent) {
         setTimedEvent(timedEvent, false);
     }
@@ -28,6 +41,8 @@ public abstract class TimedObject {
     }
 
     public void startTask() {
+        if (TimedObject.this.timedEvent != null)
+            TimedObject.this.timedEvent.run();
         this.task = (new BukkitRunnable() {
             long time = 0L;
 
