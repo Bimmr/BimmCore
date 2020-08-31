@@ -1,9 +1,9 @@
 package me.bimmr.bimmcore.scoreboard;
 
 import com.google.common.base.Splitter;
-import me.bimmr.bimmcore.utils.StringUtil;
-import me.bimmr.bimmcore.utils.timed.TimedObject;
+import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
@@ -15,16 +15,16 @@ import java.util.Iterator;
  */
 public class BoardLine extends TimedObject {
 
-    private Team   team;
+    private Team team;
     private String key;
-    private int    lineNo;
+    private int lineNo;
 
     private String text;
 
     private Score score;
-    private int   value;
+    private int value;
 
-    private Board      board;
+    private Board board;
 
     /**
      * Create a BoardLine
@@ -92,8 +92,12 @@ public class BoardLine extends TimedObject {
      * @param autoStartTimedEvent the auto start timed event
      */
     public BoardLine(String text, int value, TimedEvent timedEvent, boolean autoStartTimedEvent) {
-        this.text = text.substring(0, Math.min(30, text.length()));
-        setValue(value);
+        if (BimmCore.supports(13))
+            this.text = text.substring(0, Math.min(120, text.length()));
+        else
+            this.text = text.substring(0, Math.min(30, text.length()));
+
+        this.value = value;
         setTimedEvent(timedEvent, autoStartTimedEvent);
     }
 
@@ -106,15 +110,9 @@ public class BoardLine extends TimedObject {
         this.board = board;
 
         this.lineNo = board.getLines().size();
-        if (lineNo < 16) {
-            if (lineNo > 9) {
-                this.key = "" + ChatColor.COLOR_CHAR + (lineNo - 9) + ChatColor.RESET + ChatColor.RESET;
-            } else
-                this.key = "" + ChatColor.COLOR_CHAR + lineNo + ChatColor.RESET;
-            team = board.getScoreboard().registerNewTeam("" + key);
-
-            build();
-        }
+        this.key = "" + ChatColor.COLOR_CHAR + Integer.toHexString(lineNo);
+        team = board.getScoreboard().registerNewTeam("" + key);
+        build();
     }
 
 
@@ -133,8 +131,11 @@ public class BoardLine extends TimedObject {
      * @param text the text
      */
     public void setText(String text) {
-        this.text = text.substring(0, Math.min(30, text.length()));
-        build();
+        if (BimmCore.supports(13))
+            this.text = text.substring(0, Math.min(120, text.length()));
+        else
+            this.text = text.substring(0, Math.min(30, text.length()));
+        update();
     }
 
     /**
@@ -154,52 +155,36 @@ public class BoardLine extends TimedObject {
     public void setValue(int value) {
         this.value = value;
 
-        if (score != null)
-            this.score.setScore(value);
+        build();
     }
 
     /**
      * Build the BoardLine
      */
     public void build() {
-        text = StringUtil.addColor(text);
 
-        Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
-        String prefix = iterator.next();
+        if (this.team == null)
+            if ((this.team = this.board.getScoreboard().getTeam("" + this.key)) == null)
+                this.team = this.board.getScoreboard().registerNewTeam("" + this.key);
 
-        if (team == null) {
-            if ((team = board.getScoreboard().getTeam("" + key)) == null)
-                team = board.getScoreboard().registerNewTeam("" + key);
-        }
-        team.setPrefix(prefix);
+        if (!this.team.hasEntry(this.key))
+            team.addEntry(this.key);
 
-        if (!team.hasEntry(key))
-            team.addEntry(key);
+        if (this.score == null)
+            this.score = this.board.getObjective().getScore(this.key);
 
-        if (score == null)
-            score = board.getObjective().getScore(key);
-
-        if (value == -1)
-            score.setScore(16 - lineNo);
+        if (this.value == -1)
+            this.score.setScore(16 - this.lineNo);
         else
-            score.setScore(value);
+            this.score.setScore(this.value);
+    }
 
-
-        if (text.length() > 16) {
-            String prefixColor = ChatColor.getLastColors(prefix);
-            String suffix = iterator.next();
-
-            if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
-                prefix = prefix.substring(0, prefix.length() - 1);
-                team.setPrefix(prefix);
-                prefixColor = ChatColor.getByChar(suffix.charAt(0)).toString();
-                suffix = suffix.substring(1);
-            }
-
-            team.setSuffix((prefixColor == null ? ChatColor.RESET : prefixColor) + suffix);
-
-            //System.out.println(team.getPrefix() + "|" + team.getSuffix() + "[" + team.getPrefix().length() + "-" + team.getSuffix().length() + "]");
-        }
+    public void update() {
+        Iterator<String> iterator = Splitter.fixedLength(BimmCore.supports(13) ? 64 : 16).split(this.text).iterator();
+        String prefix = iterator.next();
+        this.team.setPrefix(prefix);
+        if (iterator.hasNext())
+            this.team.setSuffix(ChatColor.getLastColors(prefix) + iterator.next());
     }
 
     /**
@@ -220,12 +205,20 @@ public class BoardLine extends TimedObject {
         this.team = team;
     }
 
+    public void clear() {
+        if (this.key != null)
+            this.board.getScoreboard().resetScores(this.key);
+        if (this.team != null)
+            this.team.unregister();
+    }
+
     /**
      * Remove a line from a Board
      */
-    public void remove() {
-        this.board.getScoreboard().resetScores(this.key);
-        this.team.unregister();
+    public void reset() {
+        clear();
+        if (getTimedEvent() != null)
+            stopTask();
     }
 
 }

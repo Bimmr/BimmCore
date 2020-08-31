@@ -1,29 +1,32 @@
 package me.bimmr.bimmcore.scoreboard;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.utils.timed.TimedObject;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
+import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Scoreboard wrapper API
  */
 public class Board extends TimedObject {
     private List<BoardLine> lines;
+    private Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    private Objective objective;
+    private String name;
 
     public Board(String title) {
-        this(title, -1, (TimedEvent)null, false);
+        this(title, -1, (TimedEvent) null, false);
     }
 
     public Board(String title, int size) {
-        this(title, size, (TimedEvent)null, false);
+        this(title, size, (TimedEvent) null, false);
     }
 
     public Board(String title, TimedEvent timedEvent) {
@@ -38,18 +41,13 @@ public class Board extends TimedObject {
         this(name, size, timedEvent, false);
     }
 
-    private Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
-    private Objective objective;
-
-    private String name;
-
     @SuppressWarnings("deprecation")
     public Board(String name, int size, TimedEvent timedEvent, boolean startTimedEvent) {
+        String boardName = "BC" + name.substring(0, Math.min(14, name.length()));
         if (BimmCore.supports(13))
-            this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy", name);
+            this.objective = this.scoreboard.registerNewObjective(boardName, "dummy", name);
         else
-            this.objective = this.scoreboard.registerNewObjective("BC" + name.substring(0, Math.min(14, name.length())), "dummy");
+            this.objective = this.scoreboard.registerNewObjective(boardName, "dummy");
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(name);
@@ -67,15 +65,17 @@ public class Board extends TimedObject {
         this.lines.remove(lineNo);
     }
 
-    public void setText(int lineNo, String text) {
+    public BoardLine setText(int lineNo, String text) {
         BoardLine line;
         if ((line = getBoardLine(lineNo)) != null) {
             line.setText(text);
         } else {
             for (int i = this.lines.size(); i < lineNo; i++)
                 addBlankLine();
-            add(text);
+            line = new BoardLine(text);
+            add(line);
         }
+        return line;
     }
 
     public void add(BoardLine boardLine) {
@@ -83,11 +83,14 @@ public class Board extends TimedObject {
         this.lines.add(boardLine);
     }
 
-    public void add(String line) {
-        add(line, -1);
+    public BoardLine add(String line) {
+        BoardLine boardLine = new BoardLine(line, -1);
+        add(boardLine);
+        return boardLine;
     }
 
     public void add(int index, String line) {
+
         add(index, line, -1);
     }
 
@@ -141,19 +144,24 @@ public class Board extends TimedObject {
     public void setTitle(String title) {
         this.objective.setDisplayName(title);
     }
-    @SuppressWarnings("deprecation")
-    public void reset() {
+
+    public void clear(){
         if (this.objective != null) {
             for (BoardLine line : this.lines) {
-                if (line.getTeam() != null) {
-                    line.getTeam().unregister();
-                    line.setTeam((Team)null);
-                }
+                line.reset();
             }
+        }
+        this.lines.clear();
+    }
+
+
+    @SuppressWarnings("deprecation")
+    public void reset() {
+        clear();
+        if (this.objective != null) {
             this.objective.unregister();
             this.objective = null;
         }
-        this.lines.clear();
         if (BimmCore.supports(13))
             this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), "dummy", this.name);
         else
@@ -161,6 +169,9 @@ public class Board extends TimedObject {
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(getName());
+
+        if(timedEvent != null)
+            stopTask();
     }
 
     public void addBlankLine() {
@@ -169,7 +180,7 @@ public class Board extends TimedObject {
 
     public void remove(BoardLine line) {
         this.lines.remove(line);
-        line.remove();
+        line.reset();
     }
 
     public void setDisplayName(String name) {
