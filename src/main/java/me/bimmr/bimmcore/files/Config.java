@@ -53,6 +53,18 @@ public class Config {
         return get().get(key);
     }
 
+    public int getInt(String key) {
+        return get().getInt(key);
+    }
+
+    public boolean getBoolean(String key) {
+        return get().getBoolean(key);
+    }
+
+    public String getString(String key) {
+        return get().getString(key);
+    }
+
     public Config reload() {
         if (this.file == null)
             this.file = new File(fileManager.getPlugin().getDataFolder(), this.name);
@@ -84,7 +96,7 @@ public class Config {
         if (this.config == null || this.file == null)
             return this;
         try {
-            if (this.config.getConfigurationSection("").getKeys(true).size() != 0)
+            if (getKeys("", true).size() > 0)
                 this.config.save(this.file);
         } catch (IOException ex) {
             ex.printStackTrace();
