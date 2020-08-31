@@ -176,7 +176,7 @@ public class FancyMessage {
         FancyClickEvent fancyClickEvent = new FancyClickEvent() {
             @Override
             public void onClick() {
-                fce.onClick();
+                fce.onClick(this);
             }
         };
         return onClick(fancyClickEvent);
@@ -273,6 +273,5 @@ public class FancyMessage {
 
         return plainTxt.toString();
     }
-
 
 }
