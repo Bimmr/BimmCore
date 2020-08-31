@@ -57,7 +57,9 @@ public class Reflection {
             e.printStackTrace();
         }
         return null;
-    }/**
+    }
+
+    /**
      * Get a class
      *
      * @param name the name
@@ -158,6 +160,17 @@ public class Reflection {
      */
     public static Object invokeMethod(Class<?> c, String methodName, Object object) {
         return invokeMethod(c, methodName, object, null, null);
+    }
+
+    /**
+     * Invoke a method on an object
+     *
+     * @param methodName the method name
+     * @param object     the object
+     * @return the object
+     */
+    public static Object invokeMethod(String methodName, Object object) {
+        return invokeMethod(object.getClass(), methodName, object, null, null);
     }
 
     /**
@@ -287,6 +300,22 @@ public class Reflection {
     /**
      * Assumes field isn't private
      *
+     * @param fieldName The field
+     * @param object    The Object
+     * @return Get the Object from the Field
+     */
+    public static Object get(String fieldName, Object object) {
+        try {
+            return get(object.getClass().getDeclaredField(fieldName), object);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Assumes field isn't private
+     *
      * @param c         The Class
      * @param fieldName The field
      * @param object    The Object
@@ -294,13 +323,10 @@ public class Reflection {
      */
     public static Object get(Class<?> c, String fieldName, Object object) {
         try {
-            Field field = c.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            e.printStackTrace();
+            return get(c.getDeclaredField(fieldName), object);
+        } catch (NoSuchFieldException e) {
+            return null;
         }
-        return null;
     }
 
     /**
