@@ -17,14 +17,16 @@ public class StringUtil {
     /**
      * Gets a String with &amp; converted to ChatColor#COLOUR_CHAR
      *
-     * @param string
-     * @return
+     * @param string the string
+     * @return string
      */
     public static String addColor(String string) {
         return ChatColor.translateAlternateColorCodes('&', string.replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar())).replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar())));
     }
 
     /**
+     * Add color list.
+     *
      * @param strings List of Strings
      * @return Get the list of strings with colours added
      */
@@ -37,8 +39,8 @@ public class StringUtil {
     /**
      * Gets a String with ChatColor#COLOUR_CHAR converted to '&amp;'
      *
-     * @param string
-     * @return
+     * @param string the string
+     * @return string
      */
     public static String replaceToYAMLFriendlyColors(String string) {
         return string.replaceAll("" + ChatColor.COLOR_CHAR, "&");
@@ -47,10 +49,11 @@ public class StringUtil {
     /**
      * Combine args between startAt and endAt to a single string joined by ' '
      *
-     * @param args
-     * @param startAt
-     * @param endAt
-     * @return
+     * @param args     the args
+     * @param startAt  the start at
+     * @param endAt    the end at
+     * @param useComma the use comma
+     * @return string
      */
     public static String combineArgs(String[] args, int startAt, int endAt, boolean useComma) {
         endAt++;
@@ -64,8 +67,8 @@ public class StringUtil {
     /**
      * Change every individual word in a string to proper case
      *
-     * @param line
-     * @return
+     * @param line the line
+     * @return propercase
      */
     public static String getPropercase(String line) {
         try {
@@ -88,8 +91,8 @@ public class StringUtil {
     /**
      * Get a string splitting at '|' to make a List of type String
      *
-     * @param line
-     * @return
+     * @param line the line
+     * @return lines from string
      */
     public static List<String> getLinesFromString(String line) {
         List<String> lines = new ArrayList<String>();
@@ -102,8 +105,8 @@ public class StringUtil {
     /**
      * Get a string with every char having a different color
      *
-     * @param string
-     * @return
+     * @param string the message
+     * @return the message with each letter as a different colour
      */
     public static String rainbowChatColor(String string) {
         int lastColor = 0;
@@ -121,10 +124,23 @@ public class StringUtil {
         return newMessage.toString();
     }
 
+    /**
+     * Gets indexed colour.
+     *
+     * @param index the index
+     * @return the indexed colour
+     */
     public static ChatColor getIndexedColour(int index) {
         return getIndexedColour(index, "123456789abcde");
     }
 
+    /**
+     * Gets indexed colour.
+     *
+     * @param index   the index
+     * @param colours the colours
+     * @return the indexed colour
+     */
     public static ChatColor getIndexedColour(int index, String colours) {
         index = Math.min(index, index % colours.length());
         char colour = colours.toCharArray()[index];
@@ -134,9 +150,9 @@ public class StringUtil {
     /**
      * Make a string a specific length, filling with white spaces
      *
-     * @param string
-     * @param length
-     * @return
+     * @param string the string
+     * @param length the length
+     * @return the string as the length
      */
     public static String fixedLengthString(String string, int length) {
         if (length <= string.length())
@@ -148,10 +164,10 @@ public class StringUtil {
     /**
      * Check if the string is in the list of strings
      *
-     * @param caseSensitive
-     * @param string
-     * @param strings
-     * @return
+     * @param caseSensitive is it case sensitive
+     * @param string        the string to check
+     * @param strings       all the possible matches
+     * @return if the string matches
      */
     public static boolean equalsStrings(boolean caseSensitive, String string, String... strings) {
         for (String item : strings)
@@ -162,11 +178,24 @@ public class StringUtil {
         return false;
     }
 
+    /**
+     * Equals strings boolean.
+     *
+     * @param string  the string
+     * @param strings the strings
+     * @return the boolean
+     */
     public static boolean equalsStrings(String string, String... strings) {
         return equalsStrings(false, string, strings);
     }
 
 
+    /**
+     * String from map string.
+     *
+     * @param map the map
+     * @return the string
+     */
     public static String stringFromMap(Map<String, Object> map) {
         StringBuilder result = new StringBuilder("");
         for (Object key : map.keySet()) {
@@ -176,6 +205,12 @@ public class StringUtil {
         return result.toString();
     }
 
+    /**
+     * Map from string map.
+     *
+     * @param string the string
+     * @return the map
+     */
     public static Map<String, Object> mapFromString(String string) {
         Map<String, Object> map = new HashMap<>();
         for (String part : string.split(" ")) {
@@ -185,14 +220,33 @@ public class StringUtil {
         return map;
     }
 
+    /**
+     * Gets centered message.
+     *
+     * @param message the message
+     * @return the centered message
+     */
     public static FancyMessage getCenteredMessage(FancyMessage message) {
         return getCenteredMessage(message, "");
     }
 
+    /**
+     * Gets centered message.
+     *
+     * @param message the message
+     * @return the centered message
+     */
     public static String getCenteredMessage(String message) {
         return getCenteredMessage(message, "");
     }
 
+    /**
+     * Gets centered message.
+     *
+     * @param fancyMessage the fancy message
+     * @param format       the format
+     * @return the centered message
+     */
     public static FancyMessage getCenteredMessage(FancyMessage fancyMessage, String format) {
         if (fancyMessage == null)
             fancyMessage = new FancyMessage("");
@@ -237,6 +291,12 @@ public class StringUtil {
         return fm;
     }
 
+    /**
+     * Line wraps int.
+     *
+     * @param message the message
+     * @return the int
+     */
     public static int lineWraps(String message) {
 
         if (message == null || message.length() == 0)
@@ -262,6 +322,13 @@ public class StringUtil {
         return messagePxSize / (maxLength + 1);
     }
 
+    /**
+     * Gets centered message.
+     *
+     * @param message the message
+     * @param format  the format
+     * @return the centered message
+     */
     public static String getCenteredMessage(String message, String format) {
         if (message == null)
             message = "";
@@ -314,102 +381,393 @@ public class StringUtil {
 
     private enum DefaultFontInfo {
 
+        /**
+         * A default font info.
+         */
         A('A', 5),
+        /**
+         * A default font info.
+         */
         a('a', 5),
+        /**
+         * B default font info.
+         */
         B('B', 5),
+        /**
+         * B default font info.
+         */
         b('b', 5),
+        /**
+         * C default font info.
+         */
         C('C', 5),
+        /**
+         * C default font info.
+         */
         c('c', 5),
+        /**
+         * D default font info.
+         */
         D('D', 5),
+        /**
+         * D default font info.
+         */
         d('d', 5),
+        /**
+         * E default font info.
+         */
         E('E', 5),
+        /**
+         * E default font info.
+         */
         e('e', 5),
+        /**
+         * F default font info.
+         */
         F('F', 5),
+        /**
+         * F default font info.
+         */
         f('f', 4),
+        /**
+         * G default font info.
+         */
         G('G', 5),
+        /**
+         * G default font info.
+         */
         g('g', 5),
+        /**
+         * H default font info.
+         */
         H('H', 5),
+        /**
+         * H default font info.
+         */
         h('h', 5),
+        /**
+         * default font info.
+         */
         I('I', 3),
+        /**
+         * default font info.
+         */
         i('i', 1),
+        /**
+         * J default font info.
+         */
         J('J', 5),
+        /**
+         * J default font info.
+         */
         j('j', 5),
+        /**
+         * K default font info.
+         */
         K('K', 5),
+        /**
+         * K default font info.
+         */
         k('k', 4),
+        /**
+         * L default font info.
+         */
         L('L', 5),
+        /**
+         * L default font info.
+         */
         l('l', 1),
+        /**
+         * M default font info.
+         */
         M('M', 5),
+        /**
+         * M default font info.
+         */
         m('m', 5),
+        /**
+         * N default font info.
+         */
         N('N', 5),
+        /**
+         * N default font info.
+         */
         n('n', 5),
+        /**
+         * O default font info.
+         */
         O('O', 5),
+        /**
+         * O default font info.
+         */
         o('o', 5),
+        /**
+         * P default font info.
+         */
         P('P', 5),
+        /**
+         * P default font info.
+         */
         p('p', 5),
+        /**
+         * Q default font info.
+         */
         Q('Q', 5),
+        /**
+         * Q default font info.
+         */
         q('q', 5),
+        /**
+         * R default font info.
+         */
         R('R', 5),
+        /**
+         * R default font info.
+         */
         r('r', 5),
+        /**
+         * S default font info.
+         */
         S('S', 5),
+        /**
+         * S default font info.
+         */
         s('s', 5),
+        /**
+         * T default font info.
+         */
         T('T', 5),
+        /**
+         * T default font info.
+         */
         t('t', 4),
+        /**
+         * U default font info.
+         */
         U('U', 5),
+        /**
+         * U default font info.
+         */
         u('u', 5),
+        /**
+         * V default font info.
+         */
         V('V', 5),
+        /**
+         * V default font info.
+         */
         v('v', 5),
+        /**
+         * W default font info.
+         */
         W('W', 5),
+        /**
+         * W default font info.
+         */
         w('w', 5),
+        /**
+         * X default font info.
+         */
         X('X', 5),
+        /**
+         * X default font info.
+         */
         x('x', 5),
+        /**
+         * Y default font info.
+         */
         Y('Y', 5),
+        /**
+         * Y default font info.
+         */
         y('y', 5),
+        /**
+         * Z default font info.
+         */
         Z('Z', 5),
+        /**
+         * Z default font info.
+         */
         z('z', 5),
+        /**
+         * Num 1 default font info.
+         */
         NUM_1('1', 5),
+        /**
+         * Num 2 default font info.
+         */
         NUM_2('2', 5),
+        /**
+         * Num 3 default font info.
+         */
         NUM_3('3', 5),
+        /**
+         * Num 4 default font info.
+         */
         NUM_4('4', 5),
+        /**
+         * Num 5 default font info.
+         */
         NUM_5('5', 5),
+        /**
+         * Num 6 default font info.
+         */
         NUM_6('6', 5),
+        /**
+         * Num 7 default font info.
+         */
         NUM_7('7', 5),
+        /**
+         * Num 8 default font info.
+         */
         NUM_8('8', 5),
+        /**
+         * Num 9 default font info.
+         */
         NUM_9('9', 5),
+        /**
+         * Num 0 default font info.
+         */
         NUM_0('0', 5),
+        /**
+         * Exclamation point default font info.
+         */
         EXCLAMATION_POINT('!', 1),
+        /**
+         * At symbol default font info.
+         */
         AT_SYMBOL('@', 6),
+        /**
+         * Num sign default font info.
+         */
         NUM_SIGN('#', 5),
+        /**
+         * Dollar sign default font info.
+         */
         DOLLAR_SIGN('$', 5),
+        /**
+         * Percent default font info.
+         */
         PERCENT('%', 5),
+        /**
+         * Up arrow default font info.
+         */
         UP_ARROW('^', 5),
+        /**
+         * Ampersand default font info.
+         */
         AMPERSAND('&', 5),
+        /**
+         * Asterisk default font info.
+         */
         ASTERISK('*', 5),
+        /**
+         * Left parenthesis default font info.
+         */
         LEFT_PARENTHESIS('(', 4),
+        /**
+         * Right perenthesis default font info.
+         */
         RIGHT_PERENTHESIS(')', 4),
+        /**
+         * Minus default font info.
+         */
         MINUS('-', 5),
+        /**
+         * Underscore default font info.
+         */
         UNDERSCORE('_', 5),
+        /**
+         * Plus sign default font info.
+         */
         PLUS_SIGN('+', 5),
+        /**
+         * Equals sign default font info.
+         */
         EQUALS_SIGN('=', 5),
+        /**
+         * Left curl brace default font info.
+         */
         LEFT_CURL_BRACE('{', 4),
+        /**
+         * Right curl brace default font info.
+         */
         RIGHT_CURL_BRACE('}', 4),
+        /**
+         * Left bracket default font info.
+         */
         LEFT_BRACKET('[', 3),
+        /**
+         * Right bracket default font info.
+         */
         RIGHT_BRACKET(']', 3),
+        /**
+         * Colon default font info.
+         */
         COLON(':', 1),
+        /**
+         * Semi colon default font info.
+         */
         SEMI_COLON(';', 1),
+        /**
+         * Double quote default font info.
+         */
         DOUBLE_QUOTE('"', 3),
+        /**
+         * Single quote default font info.
+         */
         SINGLE_QUOTE('\'', 1),
+        /**
+         * Left arrow default font info.
+         */
         LEFT_ARROW('<', 4),
+        /**
+         * Right arrow default font info.
+         */
         RIGHT_ARROW('>', 4),
+        /**
+         * Question mark default font info.
+         */
         QUESTION_MARK('?', 5),
+        /**
+         * Slash default font info.
+         */
         SLASH('/', 5),
+        /**
+         * Back slash default font info.
+         */
         BACK_SLASH('\\', 5),
+        /**
+         * Line default font info.
+         */
         LINE('|', 1),
+        /**
+         * Tilde default font info.
+         */
         TILDE('~', 5),
+        /**
+         * Tick default font info.
+         */
         TICK('`', 2),
+        /**
+         * Period default font info.
+         */
         PERIOD('.', 1),
+        /**
+         * Comma default font info.
+         */
         COMMA(',', 1),
+        /**
+         * Space default font info.
+         */
         SPACE(' ', 3),
+        /**
+         * Left one quarter block default font info.
+         */
         LEFT_ONE_QUARTER_BLOCK('▎', 2),
+        /**
+         * Default default font info.
+         */
         DEFAULT('a', 4);
 
         private char character;
@@ -420,6 +778,12 @@ public class StringUtil {
             this.length = length;
         }
 
+        /**
+         * Gets default font info.
+         *
+         * @param c the c
+         * @return the default font info
+         */
         public static DefaultFontInfo getDefaultFontInfo(char c) {
             for (DefaultFontInfo dFI : DefaultFontInfo.values()) {
                 if (dFI.getCharacter() == c) return dFI;
@@ -427,14 +791,29 @@ public class StringUtil {
             return DefaultFontInfo.DEFAULT;
         }
 
+        /**
+         * Gets character.
+         *
+         * @return the character
+         */
         public char getCharacter() {
             return this.character;
         }
 
+        /**
+         * Gets length.
+         *
+         * @return the length
+         */
         public int getLength() {
             return this.length;
         }
 
+        /**
+         * Gets bold length.
+         *
+         * @return the bold length
+         */
         public int getBoldLength() {
             if (this == DefaultFontInfo.SPACE) return this.getLength();
             return this.length + 1;

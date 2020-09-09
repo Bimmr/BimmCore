@@ -111,6 +111,7 @@ public class Coords {
     /**
      * As location location.
      *
+     * @param string the string
      * @return the location
      */
     public static Location asLocation(String string) {
@@ -132,6 +133,7 @@ public class Coords {
     /**
      * As location ignore yaw and pitch location.
      *
+     * @param string the string
      * @return the location
      */
     public static Location asLocationIgnoreYawAndPitch(String string) {
@@ -144,6 +146,12 @@ public class Coords {
         return new Location(Bukkit.getWorld(world), x, y, z);
     }
 
+    /**
+     * To string string.
+     *
+     * @param location the location
+     * @return the string
+     */
     public static String toString(Location location) {
         return location.getWorld() + "," + location.getX() + "," + location.getY() + "," + location.getZ() + "," + location.getYaw() + "," + location.getPitch();
     }
@@ -151,6 +159,7 @@ public class Coords {
     /**
      * To string ignore yaw and pitch string.
      *
+     * @param location the location
      * @return the string
      */
     public static String toStringIgnoreYawAndPitch(Location location) {

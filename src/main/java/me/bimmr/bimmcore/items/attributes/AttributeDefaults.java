@@ -3,7 +3,7 @@ package me.bimmr.bimmcore.items.attributes;
 import org.bukkit.Material;
 
 /**
- * Attribute Default values & Slots
+ * Attribute Default values &amp; Slots
  * Written by: StarTux
  */
 public class AttributeDefaults {

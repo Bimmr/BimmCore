@@ -312,6 +312,7 @@ public class ChatMenu {
      * @param footer    the footer
      * @param lineColor the line color
      * @param height    the height
+     * @param heightControl the heightcontroller
      */
     public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this.title = title;
@@ -595,6 +596,8 @@ public class ChatMenu {
 
     /**
      * Add blank line chat menu.
+     *
+     * @param page the page
      *
      * @return the chat menu
      */

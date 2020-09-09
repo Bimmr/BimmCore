@@ -14,10 +14,10 @@ public class InventoryUtil {
     /**
      * Checks if the inventory contains the number of items given
      *
-     * @param inventory
-     * @param itemStack
-     * @param quantity
-     * @return
+     * @param inventory the inventory
+     * @param itemStack the itemstack
+     * @param quantity the amount
+     * @return if the inventory contains the quantity of itemstack
      */
     public static boolean containsItem(Inventory inventory, ItemStack itemStack, int quantity) {
         int found = 0;
@@ -41,10 +41,10 @@ public class InventoryUtil {
      * <p>
      * Will return a true or false depending on if all the items were removed
      *
-     * @param inventory
-     * @param itemStack
-     * @param quantity
-     * @return
+     * @param inventory the inventory
+     * @param itemStack the itemstack
+     * @param quantity the quantity
+     * @return if able to remove all the items
      */
     public static boolean removeItem(Inventory inventory, ItemStack itemStack, int quantity) {
 

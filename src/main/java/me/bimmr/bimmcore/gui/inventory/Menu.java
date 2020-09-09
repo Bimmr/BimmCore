@@ -425,6 +425,7 @@ public class Menu {
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
      *
      * @param items The ItemStack
+     * @param clickEvent  The ClickEvent
      * @return The MenuGUI
      */
     public Menu addItem(Items items, ClickEvent clickEvent) {
@@ -595,6 +596,7 @@ public class Menu {
      *
      * @param slot  The slot number
      * @param items The ItemStack
+     * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
     public Menu setItem(int slot, Items items, ClickEvent clickEvent) {

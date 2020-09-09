@@ -18,6 +18,11 @@ public abstract class SuperCommand extends SubCommand {
 
     private List<SubCommand> subCommands;
 
+    /**
+     * Instantiates a new Super command.
+     *
+     * @param name the name
+     */
     public SuperCommand(String name) {
         super(name);
         subCommands = new ArrayList<>();
@@ -36,13 +41,28 @@ public abstract class SuperCommand extends SubCommand {
             sender.sendMessage(getAllSubCommandExample());
     }
 
+    /**
+     * Gets invalid sub command message.
+     *
+     * @return the invalid sub command message
+     */
     public abstract String getInvalidSubCommandMessage();
 
     @Override
     public abstract List<String> getAliases();
 
+    /**
+     * Gets command example header.
+     *
+     * @return the command example header
+     */
     public abstract String getCommandExampleHeader();
 
+    /**
+     * Gets all sub command example.
+     *
+     * @return the all sub command example
+     */
     public String getAllSubCommandExample() {
         String example = "";
 
@@ -56,6 +76,11 @@ public abstract class SuperCommand extends SubCommand {
         return getCommandExampleHeader() + "\n" + example;
     }
 
+    /**
+     * Send all sub fancy message.
+     *
+     * @param sender the sender
+     */
     public void sendAllSubFancyMessage(CommandSender sender) {
         ChatMenu menu = new ChatMenu(ChatColor.DARK_RED + getCommandExampleHeader(), ChatColor.DARK_GREEN, 5, ChatMenu.HeightControl.MANUAL_EXTERNAL);
         menu.setSpacedFormat(true);
@@ -93,8 +118,8 @@ public abstract class SuperCommand extends SubCommand {
     /**
      * Get the SubCommand that matches the command
      *
-     * @param command
-     * @return
+     * @param command the command
+     * @return sub command
      */
     public SubCommand getSubCommand(String command) {
         for (SubCommand subCommand : subCommands)
@@ -106,7 +131,7 @@ public abstract class SuperCommand extends SubCommand {
     /**
      * Add a subcommand
      *
-     * @param subCommand
+     * @param subCommand the sub command
      */
     public void addSubCommand(SubCommand subCommand) {
         this.subCommands.add(subCommand);
@@ -115,7 +140,7 @@ public abstract class SuperCommand extends SubCommand {
     /**
      * Remove a subcommand
      *
-     * @param subCommand
+     * @param subCommand the sub command
      */
     public void removeSubCommand(SubCommand subCommand) {
         this.subCommands.remove(subCommand);

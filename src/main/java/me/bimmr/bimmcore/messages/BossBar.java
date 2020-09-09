@@ -139,7 +139,7 @@ public class BossBar extends MessageDisplay {
     /**
      * Clear the BossBar being shown to the player
      *
-     * @param player
+     * @param player the player
      */
     public static void clear(Player player) {
         if (isRunning(player)) {
@@ -152,6 +152,8 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
+     * Gets boss bar.
+     *
      * @param player The player
      * @return Get the BossBar being shown to the player
      */
@@ -173,7 +175,7 @@ public class BossBar extends MessageDisplay {
     /**
      * Get the time
      *
-     * @return
+     * @return the time left
      */
     @Override
     public int getTime() {
@@ -191,6 +193,8 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
+     * Gets bukkit bar.
+     *
      * @return Get the BukkitBossBar
      */
     public org.bukkit.boss.BossBar getBukkitBar() {
@@ -198,6 +202,8 @@ public class BossBar extends MessageDisplay {
     }
 
     /**
+     * Gets timed event.
+     *
      * @return Get the TimedEvent
      */
     @Override

@@ -97,9 +97,9 @@ public class NPCPlayer extends NPCBase {
     }
 
     /**
-     * Sets skin.
-     *
-     * @param nameOrUUID The player's name or
+     * Set the skin
+     * @param nameOrUUID the name of uuid
+     * @param refresh to refresh the npc's skin right away
      */
     public void setSkin(String nameOrUUID, boolean refresh) {
         if (skins.containsKey(nameOrUUID)) {

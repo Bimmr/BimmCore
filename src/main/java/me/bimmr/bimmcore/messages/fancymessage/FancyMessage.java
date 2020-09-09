@@ -47,7 +47,7 @@ public class FancyMessage {
     /**
      * Constructor with first text
      *
-     * @param string
+     * @param string the String to start with
      */
     public FancyMessage(String string) {
         builder = new ComponentBuilder(ChatColor.RESET + string);

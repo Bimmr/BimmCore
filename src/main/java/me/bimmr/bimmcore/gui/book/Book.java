@@ -182,6 +182,8 @@ public class Book {
     /**
      * Add blank line chat menu.
      *
+     * @param page the page
+     *
      * @return the chat menu
      */
     public Book addBlankLine(int page) {

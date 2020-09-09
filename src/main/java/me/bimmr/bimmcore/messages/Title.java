@@ -195,7 +195,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the Title text
      *
-     * @return
+     * @return the text
      */
     @Override
     public String getText() {
@@ -205,7 +205,7 @@ public class Title extends MessageDisplay {
     /**
      * Set the Title text
      *
-     * @param text
+     * @param text the text
      */
     @Override
     public void setText(String text) {
@@ -251,7 +251,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the Show time
      *
-     * @return
+     * @return the time
      */
     @Override
     public int getTime() {
@@ -261,7 +261,7 @@ public class Title extends MessageDisplay {
     /**
      * Send the Title to the player
      *
-     * @param player
+     * @param player the player
      */
     @Override
     public void send(final Player player) {
@@ -289,7 +289,7 @@ public class Title extends MessageDisplay {
     /**
      * Stop sending the title to the player
      *
-     * @param player
+     * @param player the player
      */
     @Override
     public void stop(Player player) {
@@ -299,7 +299,7 @@ public class Title extends MessageDisplay {
     /**
      * Get the TimedEvent
      *
-     * @return
+     * @return timed event
      */
     @Override
     public TimedEvent getTimedEvent() {
@@ -309,7 +309,7 @@ public class Title extends MessageDisplay {
     /**
      * Set the TimedEvent
      *
-     * @param timedEvent
+     * @param timedEvent the timed event
      */
     @Override
     public void setTimedEvent(TimedEvent timedEvent) {

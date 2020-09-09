@@ -110,7 +110,7 @@ public class BoardLine extends TimedObject {
         this.board = board;
 
         this.lineNo = board.getLines().size();
-        this.key = "" + ChatColor.COLOR_CHAR + Integer.toHexString(lineNo);
+        this.key = ""+ChatColor.COLOR_CHAR+"B"+ChatColor.COLOR_CHAR+"C"+ChatColor.COLOR_CHAR+"-" + ChatColor.COLOR_CHAR + Integer.toHexString(lineNo);
         team = board.getScoreboard().registerNewTeam("" + key);
         build();
     }
@@ -195,6 +195,7 @@ public class BoardLine extends TimedObject {
     public Team getTeam() {
         return this.team;
     }
+
 
     /**
      * Set the Line's team
