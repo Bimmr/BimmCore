@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.hologram;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.utils.timed.Timed;
 import me.bimmr.bimmcore.utils.timed.TimedObject;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
@@ -43,12 +44,48 @@ public class HologramLine extends TimedObject {
      * @param hologram  The Hologram
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line
+     * @param timed The timed event to run
+     * @param time  the time
+     */
+    public HologramLine(Hologram hologram,  Location location, String text, Timed timed, int time) {
+        this(hologram, location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+    /**
+     * Create a HologramLine - Should only be used by Holograms
+     * Doesn't start TimedEvent right away
+     *
+     * @param hologram  The Hologram
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line
      * @param timedEvent The timed event to run
      */
     public HologramLine(Hologram hologram,  Location location, String text, TimedEvent timedEvent) {
         this(hologram, location, text, timedEvent, false);
     }
 
+    /**
+     * Create a HologramLine - Should only be used by Holograms
+     *
+     * @param hologram  The Hologram
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line
+     * @param timed      The timed event to run
+     * @param time the time
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public HologramLine(Hologram hologram, Location location, String text, Timed timed, int time, boolean startTimedEvent) {
+        this(hologram, location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
+    }
     /**
      * Create a HologramLine - Should only be used by Holograms
      *

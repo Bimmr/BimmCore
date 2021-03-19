@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.hologram;
 
 import me.bimmr.bimmcore.reflection.Viewer;
+import me.bimmr.bimmcore.utils.timed.Timed;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.Location;
@@ -85,12 +86,48 @@ public class Hologram extends TimedObject {
      * @param showToAll  If the hologram is shown to all
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a String
+     * @param timed The timed event to run
+     * @param time the time
+     */
+    public Hologram(boolean showToAll, Location location, String text, Timed timed, int time ) {
+        this(showToAll, location, Arrays.asList(text), new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+    /**
+     * Create a Hologram
+     * Doesn't start TimedEvent
+     *
+     * @param showToAll  If the hologram is shown to all
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line as a String
      * @param timedEvent The timed event to run
      */
     public Hologram(boolean showToAll, Location location, String text, TimedEvent timedEvent) {
         this(showToAll, location, Arrays.asList(text), timedEvent, false);
     }
 
+    /**
+     * Create a Hologram
+     * Doesn't start TimedEvent
+     *
+     * @param showToAll  If the hologram is shown to all
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line as a List
+     * @param timed The timed event to run
+     * @param time  the time
+     */
+    public Hologram(boolean showToAll, Location location, List<String> text, Timed timed, int time) {
+        this(showToAll, location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
     /**
      * Create a Hologram
      * Doesn't start TimedEvent
@@ -110,12 +147,46 @@ public class Hologram extends TimedObject {
      *
      * @param location   The location for the hologram line
      * @param text       The text for the hologram line as a List
+     * @param timed The timed event to run
+     * @param time
+     */
+    public Hologram(Location location, List<String> text, Timed timed, int time) {
+        this(location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+    /**
+     * Create a Hologram
+     * Shows to all, Doesn't start TimedEvent
+     *
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line as a List
      * @param timedEvent The timed event to run
      */
     public Hologram(Location location, List<String> text, TimedEvent timedEvent) {
         this(true, location, text, timedEvent, false);
     }
 
+    /**
+     * Create a Hologram
+     * Shows to all, Doesn't start Timed Event
+     *
+     * @param location   The location for the hologram line
+     * @param text       The text for the hologram line as a String
+     * @param timed The timed event to run
+     * @param time the time
+     */
+    public Hologram(Location location, String text, Timed timed, int time) {
+        this(location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
     /**
      * Create a Hologram
      * Shows to all, Doesn't start Timed Event
@@ -134,13 +205,49 @@ public class Hologram extends TimedObject {
      *
      * @param location        The location for the hologram line
      * @param text            The text for the hologram line as a String
+     * @param timed      The timed event to run
+     * @param time  the time
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public Hologram(Location location, String text, Timed timed, int time, boolean startTimedEvent) {
+        this(location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
+    }
+    /**
+     * Create a Hologram
+     * Shows to all
+     *
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line as a String
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
      */
     public Hologram(Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
-        this(true, location, Arrays.asList(text), timedEvent, startTimedEvent);
+        this(true, location, text, timedEvent, startTimedEvent);
     }
 
+    /**
+     * Create a Hologram
+     * Shows to all
+     *
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line as a List
+     * @param timed      The timed event to run
+     * @param time  the time
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public Hologram(Location location, List<String> text, Timed timed, int time, boolean startTimedEvent) {
+        this(location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
+    }
     /**
      * Create a Hologram
      * Shows to all
@@ -160,6 +267,24 @@ public class Hologram extends TimedObject {
      * @param showToAll       If the hologram is shown to all
      * @param location        The location for the hologram line
      * @param text            The text for the hologram line as a String
+     * @param timed      The timed event to run
+     * @param time  the time
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public Hologram(boolean showToAll, Location location, String text, Timed timed, int time, boolean startTimedEvent) {
+        this(showToAll, location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
+    }
+    /**
+     * Create a Hologram
+     *
+     * @param showToAll       If the hologram is shown to all
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line as a String
      * @param timedEvent      The timed event to run
      * @param startTimedEvent If timed even is starting right away
      */
@@ -167,6 +292,25 @@ public class Hologram extends TimedObject {
         this(showToAll, location, Arrays.asList(text), timedEvent, startTimedEvent);
     }
 
+
+    /**
+     * Create a Hologram
+     *
+     * @param showToAll       If the hologram is shown to all
+     * @param location        The location for the hologram line
+     * @param text            The text for the hologram line as a List
+     * @param timed           The timed event to run
+     * @param time            the time
+     * @param startTimedEvent If timed even is starting right away
+     */
+    public Hologram(boolean showToAll, Location location, List<String> text, Timed timed, int time, boolean startTimedEvent) {
+        this(showToAll, location, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
+    }
 
     /**
      * Create a Hologram
@@ -259,6 +403,26 @@ public class Hologram extends TimedObject {
      * Doesn't auto-start the TimedEvent
      * Calls {@link #setText(int, String, TimedEvent, boolean)}
      *
+     * @param line  The line number
+     * @param text  The text
+     * @param timed The TimedEvent
+     * @param time  The time
+     * @return The Hologram
+     */
+    public Hologram setText(int line, String text, Timed timed, int time) {
+        return setText(line, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        });
+    }
+
+    /**
+     * Set the text of line x and attach a TimedEvent
+     * Doesn't auto-start the TimedEvent
+     * Calls {@link #setText(int, String, TimedEvent, boolean)}
+     *
      * @param line       The line number
      * @param text       The text
      * @param timedEvent The TimedEvent
@@ -266,6 +430,25 @@ public class Hologram extends TimedObject {
      */
     public Hologram setText(int line, String text, TimedEvent timedEvent) {
         return setText(line, text, timedEvent, false);
+    }
+
+    /**
+     * Set the text of line x and attach a TimedEvent and say if it auto-starts
+     *
+     * @param line                The line number
+     * @param text                The text
+     * @param timed               The TimedEvent
+     * @param time                the time
+     * @param timedEventAutoStart If the TimedEvent auto-starts
+     * @return The Hologram
+     */
+    public Hologram setText(int line, String text, Timed timed, int time, boolean timedEventAutoStart) {
+        return setText(line, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, timedEventAutoStart);
     }
 
     /**
@@ -301,6 +484,24 @@ public class Hologram extends TimedObject {
     /**
      * Sets hologram line.
      *
+     * @param line  the line
+     * @param text  the text
+     * @param timed the timed event
+     * @param time  the time
+     * @return the hologram line
+     */
+    public Hologram setHologramLine(int line, String text, Timed timed, int time) {
+        return setHologramLine(line, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        });
+    }
+
+    /**
+     * Sets hologram line.
+     *
      * @param line       the line
      * @param text       the text
      * @param timedEvent the timed event
@@ -308,6 +509,25 @@ public class Hologram extends TimedObject {
      */
     public Hologram setHologramLine(int line, String text, TimedEvent timedEvent) {
         return setHologramLine(line, text, timedEvent, false);
+    }
+
+    /**
+     * Sets hologram line.
+     *
+     * @param line            the line
+     * @param text            the text
+     * @param timed           the timed event
+     * @param time            the time
+     * @param startTimedEvent the start timed event
+     * @return the hologram line
+     */
+    public Hologram setHologramLine(int line, String text, Timed timed, int time, boolean startTimedEvent) {
+        return setHologramLine(line, text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
     }
 
     /**
@@ -354,12 +574,49 @@ public class Hologram extends TimedObject {
      * TimedEvent doesn't auto-start
      * Calls {@link #addText(String, TimedEvent, boolean)}
      *
+     * @param text  The text
+     * @param timed The TimedEvent
+     * @param time  the time
+     * @return The hologram
+     */
+    public Hologram addText(String text, Timed timed, int time) {
+        return addText(text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+
+    /**
+     * Add text to the hologram with an attached TimedEvent
+     * TimedEvent doesn't auto-start
+     * Calls {@link #addText(String, TimedEvent, boolean)}
+     *
      * @param text       The text
      * @param timedEvent The TimedEvent
      * @return The hologram
      */
     public Hologram addText(String text, TimedEvent timedEvent) {
         return addText(text, timedEvent, false);
+    }
+
+    /**
+     * Add text to the hologram with an attached TimedEvent and saying if it auto-starts
+     *
+     * @param text            The text
+     * @param timed           The TimedEvent
+     * @param time            the time
+     * @param startTimedEvent If the TimedEvent auto-starts
+     * @return The Hologram
+     */
+    public Hologram addText(String text, Timed timed, int time, boolean startTimedEvent) {
+        return addText(text, new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, startTimedEvent);
     }
 
     /**

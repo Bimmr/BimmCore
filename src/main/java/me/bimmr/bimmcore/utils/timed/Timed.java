@@ -1,7 +1,7 @@
 package me.bimmr.bimmcore.utils.timed;
 
 @FunctionalInterface
-public interface Timed {
+public interface Timed<T> {
 
-    void onRun(TimedEvent timedEvent);
+    void onRun(TimedEvent<T> timedEvent);
 }

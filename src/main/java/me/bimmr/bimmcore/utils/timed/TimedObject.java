@@ -1,8 +1,6 @@
 package me.bimmr.bimmcore.utils.timed;
 
 import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.messages.fancymessage.FancyClickEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 

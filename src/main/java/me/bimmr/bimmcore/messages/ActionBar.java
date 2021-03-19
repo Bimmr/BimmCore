@@ -1,6 +1,7 @@
 package me.bimmr.bimmcore.messages;
 
 import me.bimmr.bimmcore.BimmCore;
+import me.bimmr.bimmcore.utils.timed.Timed;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
@@ -44,10 +45,43 @@ public class ActionBar extends MessageDisplay {
      * Create an actionbar
      *
      * @param text The Text
+     * @param timed The TimedEvent
+     * @param timer the timer
+     */
+    public ActionBar(String text, Timed timed, int timer ) {
+        this(text, 2, new TimedEvent(timer) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+
+    /**
+     * Create an actionbar
+     *
+     * @param text The Text
      * @param timedEvent The TimedEvent
      */
     public ActionBar(String text, TimedEvent timedEvent) {
         this(text, 2, timedEvent, false);
+    }
+
+    /**
+     * Create an actionbar
+     *
+     * @param text The Text
+     * @param timed The TimedEvent
+     * @param timer the timer
+     * @param autoStartTimedEvent If the TimedEvent autostarts
+     */
+    public ActionBar(String text, Timed timed, int timer, boolean autoStartTimedEvent) {
+        this(text, 2, new TimedEvent(timer) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, autoStartTimedEvent);
     }
 
     /**
@@ -66,12 +100,42 @@ public class ActionBar extends MessageDisplay {
      *
      * @param text The text
      * @param time The time
+     * @param timed If the TimedEvent Autostarts
+     * @param timer the timer
+     */
+    public ActionBar(String text, int time, Timed timed, int timer) {
+        this(text, time,new TimedEvent(timer) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        }, false);
+    }
+    /**
+     * Create an actionbar
+     *
+     * @param text The text
+     * @param time The time
      * @param timedEvent If the TimedEvent Autostarts
      */
     public ActionBar(String text, int time, TimedEvent timedEvent) {
         this(text,time,timedEvent, false);
     }
     /**
+     * Create an actionbar
+     *
+     * @param text The Text
+     * @param time The time
+     * @param timed The TimedEvent
+     * @param time time;
+     * @param autoStartTimedEvent If the TimedEvent autostarts
+     */
+    public ActionBar(String text, int time, Timed timed, int timer, boolean autoStartTimedEvent) {
+        this.text = text;
+        this.time = time;
+
+        this.setTimedEvent(timed, timer, autoStartTimedEvent);
+    }/**
      * Create an actionbar
      *
      * @param text The Text
@@ -167,6 +231,19 @@ public class ActionBar extends MessageDisplay {
         return timedEvent;
     }
 
+    /**
+     * Set the TimedEvent
+     *
+     * @param timed The TimedEvent
+     */
+    public void setTimedEvent(Timed timed, int time) {
+        this.setTimedEvent(new TimedEvent(time) {
+            @Override
+            public void run() {
+                timed.onRun(this);
+            }
+        });
+    }
     /**
      * Set the TimedEvent
      *

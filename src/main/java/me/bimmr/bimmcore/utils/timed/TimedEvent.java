@@ -3,9 +3,9 @@ package me.bimmr.bimmcore.utils.timed;
 /**
  * Created by Randy on 05/23/16.
  */
-public abstract class TimedEvent implements Cloneable {
+public abstract class TimedEvent<T> implements Cloneable {
 
-    private Object attachedObject;
+    private T attachedObject;
     private int    ticks;
 
     /**
@@ -14,7 +14,7 @@ public abstract class TimedEvent implements Cloneable {
      * @param ticks          the ticks
      * @param attachedObject the attached object
      */
-    public TimedEvent(int ticks, Object attachedObject) {
+    public TimedEvent(int ticks, T attachedObject) {
         this.ticks = ticks;
         this.attachedObject = attachedObject;
     }
@@ -34,7 +34,7 @@ public abstract class TimedEvent implements Cloneable {
      *
      * @return attached object
      */
-    public Object getAttachedObject() {
+    public T getAttachedObject() {
         return this.attachedObject;
     }
 
@@ -43,7 +43,7 @@ public abstract class TimedEvent implements Cloneable {
      *
      * @param attachedObject the attached object
      */
-    public void setAttachedObject(Object attachedObject) {
+    public void setAttachedObject(T attachedObject) {
         this.attachedObject = attachedObject;
     }
 
@@ -71,9 +71,9 @@ public abstract class TimedEvent implements Cloneable {
     public abstract void run();
 
 
-    public TimedEvent clone() {
+    public TimedEvent<T> clone() {
         try {
-            return (TimedEvent) super.clone();
+            return (TimedEvent<T>) super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
