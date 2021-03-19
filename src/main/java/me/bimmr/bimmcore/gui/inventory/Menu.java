@@ -74,7 +74,7 @@ public class Menu {
      * @param name The menu's name
      */
     public Menu(String name) {
-        this(name, -1, null, null, null);
+        this(name, -1, (ClickEvent)null, null, null);
     }
 
     /**
@@ -85,9 +85,24 @@ public class Menu {
      * @param size The menu's size (-1 will make it automatic)
      */
     public Menu(String name, int size) {
-        this(name, size, null, null, null);
+        this(name, size, (ClickEvent)null, null, null);
     }
 
+    /**
+     * Create a MenuGUI
+     * Size is automatic, No borders, No corners
+     *
+     * @param name       The menu's name
+     * @param menuClick The ClickEvent
+     */
+    public Menu(String name, MenuClick menuClick) {
+        this(name, -1, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        }, null, null);
+    }
     /**
      * Create a MenuGUI
      * Size is automatic, No borders, No corners
@@ -99,6 +114,22 @@ public class Menu {
         this(name, -1, clickEvent, null, null);
     }
 
+    /**
+     * Create a MenuGUI
+     * No borders, No corners
+     *
+     * @param name       The menu's name
+     * @param size       The Size
+     * @param menuClick The ClickEvent
+     */
+    public Menu(String name, int size, MenuClick menuClick) {
+        this(name, size, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        }, null, null);
+    }
     /**
      * Create a MenuGUI
      * No borders, No corners
@@ -120,7 +151,7 @@ public class Menu {
      * @param borderSides   The ItemStack for the borders
      */
     public Menu(String name, ItemStack borderCorners, ItemStack borderSides) {
-        this(name, -1, null, borderCorners, borderSides);
+        this(name, -1, (ClickEvent)null, borderCorners, borderSides);
     }
 
     /**
@@ -133,9 +164,26 @@ public class Menu {
      * @param borderSides   The ItemStack for the borders
      */
     public Menu(String name, int size, ItemStack borderCorners, ItemStack borderSides) {
-        this(name, size, null, borderCorners, borderSides);
+        this(name, size, (ClickEvent)null, borderCorners, borderSides);
     }
 
+    /**
+     * Create a MenuGUI
+     * Size is automatic
+     *
+     * @param name          The menu's name
+     * @param menuClick    The ClickEvent
+     * @param borderCorners The ItemStack for the corners
+     * @param borderSides   The ItemStack for the borders
+     */
+    public Menu(String name, MenuClick menuClick, ItemStack borderCorners, ItemStack borderSides) {
+        this(name, -1, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        }, borderCorners, borderSides);
+    }
     /**
      * Create a MenuGUI
      * Size is automatic
@@ -149,6 +197,23 @@ public class Menu {
         this(name, -1, clickEvent, borderCorners, borderSides);
     }
 
+    /**
+     * Create a MenuGUI
+     *
+     * @param name          The menu's name
+     * @param size          The menu's size (-1 will make it automatic)
+     * @param menuClick    The ClickEvent
+     * @param borderCorners The ItemStack for the corners
+     * @param borderSides   The ItemStack for the borders
+     */
+    public Menu(String name, int size, MenuClick menuClick, ItemStack borderCorners, ItemStack borderSides) {
+        this(name, size, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        }, borderCorners, borderSides);
+    }
     /**
      * Create a MenuGUI
      *
@@ -351,9 +416,25 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu addItem(int page, ItemStack itemStack) {
-        return addItem(page, itemStack, null);
+        return addItem(page, itemStack, (ClickEvent)null);
     }
 
+    /**
+     * Add an Item to the MenuGUI
+     *
+     * @param page       The page to add the item to
+     * @param itemStack  The ItemStack to add
+     * @param menuClick The ClickedEvent
+     * @return The MenuGUI
+     */
+    public Menu addItem(int page, ItemStack itemStack, MenuClick menuClick) {
+        return addItem(page, itemStack, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Add an Item to the MenuGUI
      *
@@ -362,6 +443,7 @@ public class Menu {
      * @param clickEvent The ClickEvent
      * @return The MenuGUI
      */
+    @Deprecated
     public Menu addItem(int page, ItemStack itemStack, ClickEvent clickEvent) {
 
         if (clickEvent != null) {
@@ -403,20 +485,37 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu addItem(int page, Items items) {
-        return addItem(page, items.getItem(), null);
+        return addItem(page, items.getItem(), (ClickEvent)null);
     }
 
     /**
      * Add a formatted Item
      * Page is 0, ClickEvent is null
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
-     * =
      *
      * @param items The ItemStack
      * @return The MenuGUI
      */
     public Menu addItem(Items items) {
-        return addItem(0, items.getItem(), null);
+        return addItem(0, items.getItem(), (ClickEvent)null);
+    }
+
+    /**
+     * Add a formatted Item
+     * Page is 0
+     * Call {@link #addItem(int, ItemStack, ClickEvent)}
+     *
+     * @param items The ItemStack
+     * @param menuClick  The MenuItemClick
+     * @return The MenuGUI
+     */
+    public Menu addItem(Items items, MenuClick menuClick) {
+        return addItem(0, items.getItem(), new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
     }
 
     /**
@@ -438,10 +537,27 @@ public class Menu {
      *
      * @param page       The page to add the item to
      * @param items      The ItemStack
-     * @param clickEvent The ClickEvent
+     * @param menuClick The ClickedEvent
      * @return The MenuGUI
      */
-    public Menu addItem(int page, Items items, ClickEvent clickEvent) {
+    public Menu addItem(int page, Items items, MenuClick menuClick) {
+        return addItem(page, items, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
+        /**
+         * Add a formatted Item
+         * Call {@link #addItem(int, ItemStack, ClickEvent)}
+         *
+         * @param page       The page to add the item to
+         * @param items      The ItemStack
+         * @param clickEvent The ClickEvent
+         * @return The MenuGUI
+         */
+        public Menu addItem(int page, Items items, ClickEvent clickEvent) {
         return addItem(page, items.getItem(), clickEvent);
     }
 
@@ -454,10 +570,26 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu addItem(ItemStack itemStack) {
-        addItem(0, itemStack, null);
+        addItem(0, itemStack, (ClickEvent)null);
         return this;
     }
 
+    /**
+     * Add an ItemStack
+     * Call {@link #addItem(int, ItemStack, ClickEvent)}
+     *
+     * @param itemStack  The ItemStack
+     * @param menuClick The ClickedEvent
+     * @return The MenuGUI
+     */
+    public Menu addItem(ItemStack itemStack, MenuClick menuClick) {
+        return addItem(itemStack, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Add an ItemStack
      * Call {@link #addItem(int, ItemStack, ClickEvent)}
@@ -471,6 +603,23 @@ public class Menu {
         return this;
     }
 
+    /**
+     * Set an Item in the Menu
+     *
+     * @param page       The page
+     * @param slot       The slot number
+     * @param item       The ItemStack
+     * @param menuClick The ClickEvent
+     * @return The MenuGUI
+     */
+    public Menu setItem(int page, int slot, ItemStack item, MenuClick menuClick) {
+        return setItem(page, slot, item, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Set an Item in the Menu
      *
@@ -519,7 +668,7 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu setItem(int page, int slot, ItemStack item) {
-        return setItem(page, slot, item, null);
+        return setItem(page, slot, item, (ClickEvent)null);
     }
 
     /**
@@ -535,6 +684,24 @@ public class Menu {
         return setItem(page, slot, items.getItem());
     }
 
+    /**
+     * Set an Item in the Menu
+     * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
+     *
+     * @param page       The page
+     * @param slot       The slot number
+     * @param items      The ItemStack
+     * @param menuClick The ClickEvent
+     * @return The MenuGUI
+     */
+    public Menu setItem(int page, int slot, Items items, MenuClick menuClick) {
+        return setItem(page, slot, items.getItem(), new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Set an Item in the Menu
      * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
@@ -559,9 +726,27 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu setItem(int slot, ItemStack item) {
-        return setItem(0, slot, item, null);
+        return setItem(0, slot, item, (ClickEvent)null);
     }
 
+    /**
+     * Set an Item in the Menu
+     * Page is 0
+     * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
+     *
+     * @param slot       The slot number
+     * @param item       The ItemStack
+     * @param menuClick The ClickEvent
+     * @return The MenuGUI
+     */
+    public Menu setItem(int slot, ItemStack item, MenuClick menuClick) {
+        return setItem(0, slot, item, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Set an Item in the Menu
      * Page is 0
@@ -586,9 +771,27 @@ public class Menu {
      * @return The MenuGUI
      */
     public Menu setItem(int slot, Items items) {
-        return setItem(0, slot, items, null);
+        return setItem(0, slot, items, (ClickEvent)null);
     }
 
+    /**
+     * Set an Item in the Menu
+     * Page is 0
+     * Calls {@link #setItem(int, int, ItemStack, ClickEvent)}
+     *
+     * @param slot  The slot number
+     * @param items The ItemStack
+     * @param menuClick The ClickEvent
+     * @return The MenuGUI
+     */
+    public Menu setItem(int slot, Items items, MenuClick menuClick) {
+        return setItem(0, slot, items, new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Set an Item in the Menu
      * Page is 0
@@ -818,6 +1021,19 @@ public class Menu {
         return this.clickEvent;
     }
 
+    /**
+     * Set the ClickEvent
+     *
+     * @param menuClick the click event
+     */
+    public void setClickEvent(MenuClick menuClick) {
+        setClickEvent(new ClickEvent() {
+            @Override
+            public void click() {
+                menuClick.click(this);
+            }
+        });
+    }
     /**
      * Set the ClickEvent
      *
