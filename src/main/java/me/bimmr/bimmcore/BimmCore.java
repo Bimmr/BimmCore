@@ -165,12 +165,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
                 menu.setItem(1, 3, new Items(Material.BOOK).setDisplayName("Testing Set"));
-                menu.addItem(2, new Items(Material.DIAMOND_BLOCK).setDisplayName("Testing Add"), new ClickEvent() {
-                    @Override
-                    public void click() {
-                        e.getPlayer().sendMessage("test");
-                    }
-                });
+                menu.addItem(2, new Items(Material.DIAMOND_BLOCK).setDisplayName("Testing Add"), clickEvent -> clickEvent.getPlayer().sendMessage("Clicked"));
                 menu.build();
                 menu.open(e.getPlayer());
             }
@@ -181,7 +176,7 @@ public class BimmCore extends JavaPlugin implements Listener {
                 book.setLine(3, "Line 1");
                 book.addBlankLine();
 
-                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick((fce) -> fce.getPlayer().sendMessage("test")));
+                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick(fce -> fce.getPlayer().sendMessage("test")));
                 book.show(e.getPlayer());
             }
             if (e.getMessage().contains("Chat")) {
@@ -226,13 +221,10 @@ public class BimmCore extends JavaPlugin implements Listener {
                 Scroller scroller = new Scroller("&aThis &bIs &ca &dTest &fMessage", 12, 3);
                 Hologram hologram = new Hologram(e.getPlayer().getLocation(), "Scrolling Holograms:");
                 hologram.addBlankLine();
-                hologram.addText(scroller.current(), new TimedEvent(2, this) {
-                    @Override
-                    public void run() {
-                        HologramLine line = (HologramLine) getAttachedObject();
-                        line.setText(scroller.next());
-                    }
-                }, true);
+                hologram.addText(scroller.current(), timedEvent -> {
+                    HologramLine line = (HologramLine) timedEvent.getAttachedObject();
+                    line.setText(scroller.next());
+                }, 1, true);
             }
             if (e.getMessage().contains("Action")) {
                 Scroller scroller = new Scroller("&aThis &bIs &ca &dTest &fMessage", 12, 3);
