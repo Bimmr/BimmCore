@@ -92,10 +92,12 @@ public class BoardLine extends TimedObject {
      * @param autoStartTimedEvent the auto start timed event
      */
     public BoardLine(String text, int value, TimedEvent timedEvent, boolean autoStartTimedEvent) {
-        if (BimmCore.supports(13))
-            this.text = text.substring(0, Math.min(120, text.length()));
-        else
-            this.text = text.substring(0, Math.min(30, text.length()));
+//        if (BimmCore.supports(13))
+//            this.text = text.substring(0, Math.min(120, text.length()));
+//        else
+//            this.text = text.substring(0, Math.min(30, text.length()));
+
+        this.text= text;
 
         this.value = value;
         setTimedEvent(timedEvent, autoStartTimedEvent);
@@ -182,7 +184,13 @@ public class BoardLine extends TimedObject {
     public void update() {
         Iterator<String> iterator = Splitter.fixedLength(BimmCore.supports(13) ? 64 : 16).split(this.text).iterator();
         String prefix = iterator.next();
+
+        if(prefix.length() > 0 && prefix.charAt(prefix.length()-1) == ChatColor.COLOR_CHAR){
+            iterator = Splitter.fixedLength(BimmCore.supports(13) ? 63 : 15).split(this.text).iterator();
+            prefix = iterator.next();
+        }
         this.team.setPrefix(prefix);
+
         if (iterator.hasNext())
             this.team.setSuffix(ChatColor.getLastColors(prefix) + iterator.next());
     }
