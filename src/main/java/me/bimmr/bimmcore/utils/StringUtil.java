@@ -5,7 +5,11 @@ import me.bimmr.bimmcore.misc.RandomChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -15,13 +19,77 @@ public class StringUtil {
     private final static int CENTER_PX = 154;
 
     /**
-     * Gets a String with &amp; converted to ChatColor#COLOUR_CHAR
+     * Adds colour to the string
+     * <br> - Supports &1 Old Colour code
+     * <br> - Supports &123456 Hex Colour code
+     * <br - Supports <&#123456>Gradient Colours</&#654321>
      *
      * @param string the string
      * @return string
      */
     public static String addColor(String string) {
-        return ChatColor.translateAlternateColorCodes('&', string.replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar())).replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar())));
+
+        String msg = ChatColor.translateAlternateColorCodes('&',string)
+                .replaceAll("&x", "&" + String.valueOf(RandomChatColor.getColor().getChar()))
+                .replaceAll("&y", "&" + String.valueOf(RandomChatColor.getFormat().getChar()));
+
+        //Add Gradients
+        Pattern gradient = Pattern.compile("<&#[0-9a-fA-F]{6}>[^<]*</&#[0-9a-fA-F]{6}>");
+        Matcher gradientMatcher = gradient.matcher(msg);
+        while(gradientMatcher.find()) {
+            String gradientMsg = gradientMatcher.group();
+
+            String message = gradientMsg.substring(10,gradientMsg.length()-11);
+            String start = gradientMsg.substring(3,9);
+            String end = gradientMsg.substring(gradientMsg.length()-7, gradientMsg.length()-1);
+
+            msg = msg.replace(gradientMsg, addGradients(message, start, end));
+        }
+
+        //Custom Hex Colours
+        Pattern hex = Pattern.compile("&#[0-9a-fA-F]{6}");
+        Matcher hexMatcher = hex.matcher(msg);
+
+        while(hexMatcher.find()){
+            String hexCode = hexMatcher.group();
+            msg = msg.replace(hexCode, ""+net.md_5.bungee.api.ChatColor.of(hexCode.substring(1)));
+        }
+
+        return msg;
+    }
+
+    public static String addGradient(String string, String startHex, String endHex){
+        String msg = addGradients(string, startHex, endHex);
+        msg = StringUtil.addColor(msg);
+        return msg;
+    }
+
+    private static String addGradients(String string, String startHex, String endHex){
+        StringBuilder sb = new StringBuilder();
+
+        int startRed = Integer.parseInt(startHex.substring(0, 2), 16);
+        int endRed = Integer.parseInt(endHex.substring(0, 2), 16);
+        int startGreen = Integer.parseInt(startHex.substring(2, 4), 16);
+        int endGreen= Integer.parseInt(endHex.substring(2, 4), 16);
+        int startBlue = Integer.parseInt(startHex.substring(4, 6), 16);
+        int endBlue = Integer.parseInt(endHex.substring(4, 6), 16);
+
+        for(int i = 0; i <string.length(); i++){
+            if(string.toCharArray()[i] == ChatColor.COLOR_CHAR || (i != 0 && string.toCharArray()[i-1] == ChatColor.COLOR_CHAR )) {
+                sb.append(string.toCharArray()[i]);
+                continue;
+            }
+
+            int red = (int)(startRed + (float)(endRed - startRed) / (string.length() - 1) * i);
+            int green = (int)(startGreen + (float)(endGreen - startGreen) / (string.length() - 1) * i);
+            int blue = (int)(startBlue + (float)(endBlue - startBlue) / (string.length() - 1) * i);
+
+            StringBuilder color = new StringBuilder(Integer.toHexString(red) + Integer.toHexString(green) + Integer.toHexString(blue));
+            while(color.length() < 6) color.append("0");
+
+            sb.append("&#" + color + string.toCharArray()[i]);
+        }
+        return sb.toString();
     }
 
     /**
