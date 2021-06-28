@@ -5,6 +5,8 @@ import me.bimmr.bimmcore.utils.timed.Timed;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -167,7 +169,9 @@ public class ActionBar extends MessageDisplay {
      */
     public static void clear(Player player) {
         if (isRunning(player)) {
-            if (BimmCore.supports(11))
+            if (BimmCore.supports(17))
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(""));
+            else if (BimmCore.supports(11))
                 ActionBarAPI.sendActionBar(player, "");
             else
                 ActionBarAPIOld.sendActionBar(player, "");
@@ -288,7 +292,9 @@ public class ActionBar extends MessageDisplay {
                     clear(player);
 
                 else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    if (BimmCore.supports(11))
+                    if (BimmCore.supports(17))
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(text));
+                    else if (BimmCore.supports(11))
                         ActionBarAPI.sendActionBar(player, text);
                     else
                         ActionBarAPIOld.sendActionBar(player, text);

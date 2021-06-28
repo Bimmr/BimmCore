@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.mojang.datafixers.util.Pair;
 import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.reflection.Packets;
@@ -20,9 +21,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -98,8 +97,9 @@ public class NPCPlayer extends NPCBase {
 
     /**
      * Set the skin
+     *
      * @param nameOrUUID the name of uuid
-     * @param refresh to refresh the npc's skin right away
+     * @param refresh    to refresh the npc's skin right away
      */
     public void setSkin(String nameOrUUID, boolean refresh) {
         if (skins.containsKey(nameOrUUID)) {
@@ -245,32 +245,32 @@ public class NPCPlayer extends NPCBase {
 
         private static Class<?> craftServerClass = Reflection.getCraftClass("CraftServer");
         private static Class<?> craftWorldClass = Reflection.getCraftClass("CraftWorld");
-        private static Class<?> playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
-        private static Class<?> worldServerClass = Reflection.getNMSClass("WorldServer");
-        private static Class<?> worldClass = Reflection.getNMSClass("World");
-        private static Class<?> minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
-        private static Class<?> entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
-        private static Class<?> entityClass = Reflection.getNMSClass("Entity");
-        private static Class<?> enumPlayerInfoActionClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
-        private static Class<?> entityHumanClass = Reflection.getNMSClass("EntityHuman");
-        private static Class<?> packetPlayOutNamedEntitySpawnClass = Reflection.getNMSClass("PacketPlayOutNamedEntitySpawn");
-        private static Class<?> packetPlayOutEntityEquipmentClass = Reflection.getNMSClass("PacketPlayOutEntityEquipment");
-        private static Class<?> packetPlayOutEntityDestroyClass = Reflection.getNMSClass("PacketPlayOutEntityDestroy");
-        private static Class<?> packetPlayOutEntityHeadRotationClass = Reflection.getNMSClass("PacketPlayOutEntityHeadRotation");
+        private static Class<?> playerInteractManagerClass;
+        private static Class<?> worldServerClass;
+        private static Class<?> worldClass;
+        private static Class<?> minecraftServerClass;
+        private static Class<?> entityPlayerClass;
+        private static Class<?> entityClass;
+        private static Class<?> enumPlayerInfoActionClass;
+        private static Class<?> entityHumanClass;
+        private static Class<?> packetPlayOutNamedEntitySpawnClass;
+        private static Class<?> packetPlayOutEntityEquipmentClass;
+        private static Class<?> packetPlayOutEntityDestroyClass;
+        private static Class<?> packetPlayOutEntityHeadRotationClass;
         private static Class<?> craftItemStackClass = Reflection.getCraftClass("inventory.CraftItemStack");
-        private static Class<?> itemStackClass = Reflection.getNMSClass("ItemStack");
-        private static Class<?> enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
-        private static Class<?> packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
+        private static Class<?> itemStackClass;
+        private static Class<?> enumItemSlotClass;
+        private static Class<?> packetPlayOutPlayerInfoClass;
 
         private static Constructor<?> playerInteractManagerConstructor;
-        private static Constructor<?> entityConstructor = Reflection.getConstructor(entityPlayerClass, minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
-        private static Constructor<?> packetPlayOutEntityHeadRotationConstructor = Reflection.getConstructor(packetPlayOutEntityHeadRotationClass, entityClass, byte.class);
-        private static Constructor<?> packetPlayOutNamedEntitySpawnConstructor = Reflection.getConstructor(packetPlayOutNamedEntitySpawnClass, entityHumanClass);
-        private static Constructor<?> packetPlayOutEntityEquipmentConstructor = Reflection.getConstructor(packetPlayOutEntityEquipmentClass, int.class, enumItemSlotClass, itemStackClass);
-        private static Constructor<?> playOutEntityDestroyConstructor = Reflection.getConstructor(packetPlayOutEntityDestroyClass, int[].class);
+        private static Constructor<?> entityConstructor;
+        private static Constructor<?> packetPlayOutEntityHeadRotationConstructor;
+        private static Constructor<?> packetPlayOutNamedEntitySpawnConstructor;
+        private static Constructor<?> packetPlayOutEntityEquipmentConstructor;
+        private static Constructor<?> playOutEntityDestroyConstructor;
 
-        private static Method asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
-        private static Method setLocation = Reflection.getMethod(entityPlayerClass, "setLocation", double.class, double.class, double.class, float.class, float.class);
+        private static Method asNMSCopy;
+        private static Method setLocation;
 
         private static Object itemSlotEnumMainHand;
         private static Object itemSlotEnumOffHand;
@@ -283,10 +283,61 @@ public class NPCPlayer extends NPCBase {
         private static Object playerInfoActionEnumRemove;
 
         static {
-            if (BimmCore.supports(14))
+            if (BimmCore.supports(17)) {
+                playerInteractManagerClass = Reflection.getNMClass("server.level.PlayerInteractManager");
+                worldServerClass = Reflection.getNMClass("server.level.WorldServer");
+                worldClass = Reflection.getNMWClass("level.World");
+                minecraftServerClass = Reflection.getNMClass("server.MinecraftServer");
+                entityPlayerClass = Reflection.getNMClass("server.level.EntityPlayer");
+                entityClass = Reflection.getNMWClass("entity.Entity");
+                enumPlayerInfoActionClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
+                entityHumanClass = Reflection.getNMWClass("entity.player.EntityHuman");
+                packetPlayOutNamedEntitySpawnClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutNamedEntitySpawn");
+                packetPlayOutEntityEquipmentClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutEntityEquipment");
+                packetPlayOutEntityDestroyClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutEntityDestroy");
+                packetPlayOutEntityHeadRotationClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutEntityHeadRotation");
+                itemStackClass = Reflection.getNMWClass("item.ItemStack");
+                enumItemSlotClass = Reflection.getNMWClass("entity.EnumItemSlot");
+                packetPlayOutPlayerInfoClass = Reflection.getNMClass("network.protocol.game.PacketPlayOutPlayerInfo");
+                entityConstructor = Reflection.getConstructor(entityPlayerClass, minecraftServerClass, worldServerClass, GameProfile.class);
+                playOutEntityDestroyConstructor = Reflection.getConstructor(packetPlayOutEntityDestroyClass, int.class);
+            } else {
+                playerInteractManagerClass = Reflection.getNMSClass("PlayerInteractManager");
+                worldServerClass = Reflection.getNMSClass("WorldServer");
+                worldClass = Reflection.getNMSClass("World");
+                minecraftServerClass = Reflection.getNMSClass("MinecraftServer");
+                entityPlayerClass = Reflection.getNMSClass("EntityPlayer");
+                entityClass = Reflection.getNMSClass("Entity");
+                enumPlayerInfoActionClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
+                entityHumanClass = Reflection.getNMSClass("EntityHuman");
+                packetPlayOutNamedEntitySpawnClass = Reflection.getNMSClass("PacketPlayOutNamedEntitySpawn");
+                packetPlayOutEntityEquipmentClass = Reflection.getNMSClass("PacketPlayOutEntityEquipment");
+                packetPlayOutEntityDestroyClass = Reflection.getNMSClass("PacketPlayOutEntityDestroy");
+                packetPlayOutEntityHeadRotationClass = Reflection.getNMSClass("PacketPlayOutEntityHeadRotation");
+                craftItemStackClass = Reflection.getCraftClass("inventory.CraftItemStack");
+                itemStackClass = Reflection.getNMSClass("ItemStack");
+                enumItemSlotClass = Reflection.getNMSClass("EnumItemSlot");
+                packetPlayOutPlayerInfoClass = Reflection.getNMSClass("PacketPlayOutPlayerInfo");
+                entityConstructor = Reflection.getConstructor(entityPlayerClass, minecraftServerClass, worldServerClass, GameProfile.class, playerInteractManagerClass);
+                playOutEntityDestroyConstructor = Reflection.getConstructor(packetPlayOutEntityDestroyClass, int[].class);
+            }
+            if(BimmCore.supports(16))
+                packetPlayOutEntityEquipmentConstructor = Reflection.getConstructor(packetPlayOutEntityEquipmentClass, int.class, List.class);
+            else
+                packetPlayOutEntityEquipmentConstructor = Reflection.getConstructor(packetPlayOutEntityEquipmentClass, int.class, enumItemSlotClass, itemStackClass);
+
+            if (BimmCore.supports(17))
+                playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, entityPlayerClass);
+            else if (BimmCore.supports(14))
                 playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldServerClass);
             else
                 playerInteractManagerConstructor = Reflection.getConstructor(playerInteractManagerClass, worldClass);
+
+            packetPlayOutEntityHeadRotationConstructor = Reflection.getConstructor(packetPlayOutEntityHeadRotationClass, entityClass, byte.class);
+            packetPlayOutNamedEntitySpawnConstructor = Reflection.getConstructor(packetPlayOutNamedEntitySpawnClass, entityHumanClass);
+
+            asNMSCopy = Reflection.getMethod(craftItemStackClass, "asNMSCopy", ItemStack.class);
+            setLocation = Reflection.getMethod(entityPlayerClass, "setLocation", double.class, double.class, double.class, float.class, float.class);
 
             itemSlotEnumMainHand = enumItemSlotClass.getEnumConstants()[0];
             itemSlotEnumOffHand = enumItemSlotClass.getEnumConstants()[1];
@@ -385,7 +436,13 @@ public class NPCPlayer extends NPCBase {
             }
             Object craftItem = getCraftItemStack(item);
             int id = getEntityID(entity);
-            Object packetPlayOutEntityEquipment = Reflection.newInstance(packetPlayOutEntityEquipmentConstructor, id, oSlot, craftItem);
+            Object packetPlayOutEntityEquipment;
+            if (BimmCore.supports(16)) {
+                List<Pair<Object, Object>> list = new ArrayList<>();
+                list.add(new Pair<>(oSlot, craftItem));
+                packetPlayOutEntityEquipment = Reflection.newInstance(packetPlayOutEntityEquipmentConstructor, id, list);
+            } else
+                packetPlayOutEntityEquipment = Reflection.newInstance(packetPlayOutEntityEquipmentConstructor, id, oSlot, craftItem);
             Packets.sendPacket(player, packetPlayOutEntityEquipment);
         }
 
@@ -403,10 +460,15 @@ public class NPCPlayer extends NPCBase {
             Object worldServer = Reflection.getHandle(craftWorld);
             Object craftServer = craftServerClass.cast(Bukkit.getServer());
             Object minecraftServer = Reflection.invokeMethod(craftServerClass, "getServer", craftServer);
-            Object playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, worldServer);
-
-//            EntityPlayer entityPlayer = new EntityPlayer((MinecraftServer) minecraftServer, (WorldServer) worldServer, npcPlayer.getGameProfile(), playerInteractManager);
-            Object entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldServer, npcPlayer.getGameProfile(), playerInteractManager);
+            Object playerInteractManager;
+            Object entityPlayer;
+            if (BimmCore.supports(17)) {
+                entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldServer, npcPlayer.getGameProfile());
+                playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, entityPlayer);
+            } else {
+                playerInteractManager = Reflection.newInstance(playerInteractManagerConstructor, worldServer);
+                entityPlayer = Reflection.newInstance(entityConstructor, minecraftServer, worldServer, npcPlayer.getGameProfile(), playerInteractManager);
+            }
             return entityPlayer;
         }
 
@@ -421,7 +483,12 @@ public class NPCPlayer extends NPCBase {
             entities[0] = npcPlayer.entityPlayer;
             Constructor<?> packetPlayOutPlayerInfoConstructor = Reflection.getConstructor(packetPlayOutPlayerInfoClass, enumPlayerInfoActionClass, entities.getClass());
             Object packetPlayOutPlayerInfoRemove = Reflection.newInstance(packetPlayOutPlayerInfoConstructor, playerInfoActionEnumRemove, entities);
-            Object playOutEntityDestroyPacket = Reflection.newInstance(playOutEntityDestroyConstructor, new int[]{npcPlayer.getId()});
+            Object playOutEntityDestroyPacket;
+            if (BimmCore.supports(17))
+                playOutEntityDestroyPacket = Reflection.newInstance(playOutEntityDestroyConstructor, npcPlayer.getId());
+            else
+                playOutEntityDestroyPacket = Reflection.newInstance(playOutEntityDestroyConstructor, new int[]{npcPlayer.getId()});
+
             Packets.sendPacket(player, packetPlayOutPlayerInfoRemove, playOutEntityDestroyPacket);
         }
 

@@ -267,23 +267,34 @@ public class Title extends MessageDisplay {
     public void send(final Player player) {
         clear(player);
         titles.put(player.getName(), this);
-        tasks.put(player.getName(), new BukkitRunnable() {
-            int timeLeft = time * (time == Integer.MAX_VALUE ? 1 : 20);
+        if(getTimedEvent() == null){
+            if(BimmCore.supports(17))
+                player.sendTitle(text, subTitle, fadeIn, time, fadeOut);
+            else
+                TitleAPI.sendTitle(player, text, subTitle, fadeIn, time, fadeOut);
+        }else {
 
-            @Override
-            public void run() {
-                if (timedEvent != null && timeLeft % timedEvent.getTicks() == 0)
-                    timedEvent.run();
+            tasks.put(player.getName(), new BukkitRunnable() {
+                int timeLeft = time * (time == Integer.MAX_VALUE ? 1 : 20);
 
-                if (timeLeft <= 0)
-                    clear(player);
+                @Override
+                public void run() {
+                    if (timedEvent != null && timeLeft % timedEvent.getTicks() == 0)
+                        timedEvent.run();
 
-                else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                    TitleAPI.sendTitle(player, text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
+                    if (timeLeft <= 0)
+                        clear(player);
 
-                timeLeft--;
-            }
-        }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
+                    else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
+                        if(BimmCore.supports(17))
+                            player.sendTitle(text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
+                        else
+                            TitleAPI.sendTitle(player, text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
+
+                    timeLeft--;
+                }
+            }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
+        }
     }
 
     /**

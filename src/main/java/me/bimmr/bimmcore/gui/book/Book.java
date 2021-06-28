@@ -6,6 +6,9 @@ import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.messages.fancymessage.FancyMessage;
 import me.bimmr.bimmcore.reflection.Packets;
 import me.bimmr.bimmcore.reflection.Reflection;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -152,7 +155,6 @@ public class Book {
         ArrayList<FancyMessage> list = lines.get(page);
         while (line > list.size())
             list.add(new FancyMessage());
-
         list.add(message);
         lines.add(page, list);
         lines.remove(page + 1);
@@ -209,7 +211,10 @@ public class Book {
      * @param player The player
      */
     public void show(Player player) {
-        BookAPI.openBook(this, player);
+        if(BimmCore.supports(16)){
+            player.openBook(getAsItem());
+        }else
+            BookAPI.openBook(this, player);
     }
 
 
@@ -217,6 +222,33 @@ public class Book {
      * @return Get the book as an ItemStack
      */
     public ItemStack getAsItem() {
+        if(BimmCore.supports(16)){
+            ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
+
+            //create the book
+            BookMeta bookMeta = (BookMeta) iBook.getItemMeta();
+
+            for (int page = 0; page < this.getLines().size(); page++) {
+
+                ComponentBuilder builder = new ComponentBuilder();
+
+                ArrayList<FancyMessage> lines = this.getLines(page);
+                for (int line = 0; line < lines.size() && line < MAX_LINE_HEIGHT; line++)
+                    builder.append(lines.get(line).getBaseComponents()).append("\n");
+
+                bookMeta.spigot().addPage(builder.create());
+            }
+
+            //set the title and author of this book
+            bookMeta.setTitle(this.title);
+            bookMeta.setAuthor(this.author);
+
+            //update the ItemStack with this new meta
+            iBook.setItemMeta(bookMeta);
+
+
+            return iBook;
+        }else
         return BookAPI.getAsItemStack(this);
     }
 
@@ -241,7 +273,7 @@ public class Book {
 
         static {
 
-            if (BimmCore.supports(14)) {
+           if (BimmCore.supports(14)) {
                 packetPlayOutOpenBookClass = Reflection.getNMSClass("PacketPlayOutOpenBook");
                 enumHandClass = Reflection.getNMSClass("EnumHand");
                 packetPlayOutOpenBookConstructor = Reflection.getConstructor(packetPlayOutOpenBookClass, enumHandClass);
@@ -311,7 +343,6 @@ public class Book {
             ItemStack old = p.getInventory().getItem(slot);
 
             p.getInventory().setItem(slot, iBook);
-
             if (BimmCore.supports(14)) {
                 Object packetPlayOutOpenBookInstance = Reflection.newInstance(packetPlayOutOpenBookConstructor, mainHandEnum);
                 Packets.sendPacket(p, packetPlayOutOpenBookInstance);

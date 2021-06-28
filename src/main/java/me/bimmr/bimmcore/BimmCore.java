@@ -160,7 +160,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (false && e.getMessage().startsWith("/BTest")) {
+        if (true && e.getMessage().startsWith("/BTest")) {
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
@@ -173,10 +173,10 @@ public class BimmCore extends JavaPlugin implements Listener {
                 Book book = new Book();
                 book.addLine("" + ChatColor.DARK_AQUA + ChatColor.BOLD + "Book Header");
                 book.addBlankLine();
-                book.setLine(3, "Line 1");
+                book.setLine(4, "Line 1 on 4");
                 book.addBlankLine();
-
-                book.addLine(new FancyMessage("Another line - Line 2").tooltip("Hover Message").onClick(fce -> fce.getPlayer().sendMessage("test")));
+                book.nextPage();
+                book.addLine(new FancyMessage("Another line - With Hover").tooltip("Hover Message").onClick(fce -> fce.getPlayer().sendMessage("test")));
                 book.show(e.getPlayer());
             }
             if (e.getMessage().contains("Chat")) {
@@ -255,6 +255,8 @@ public class BimmCore extends JavaPlugin implements Listener {
             }
             if (e.getMessage().contains("NPCPlayer")) {
                 NPCPlayer npc = new NPCPlayer("Bimmr", e.getPlayer().getLocation());
+                npc.equip(NPCBase.ItemSlots.MAINHAND, new ItemStack(Material.DIAMOND_SWORD));
+                npc.equip(NPCBase.ItemSlots.HEAD, new ItemStack(Material.DIAMOND_HELMET));
                 npc.setNPCClickEvent(new NPCClickEvent() {
                     @Override
                     public void onRightClick() {

@@ -41,6 +41,51 @@ public class Reflection {
         }
         return null;
     }
+    /**
+     * Get a craft class
+     * (net.minecraft)
+     *
+     * @param name the name
+     * @return nms class
+     */
+    public static Class<?> getNMClass(String name) {
+        try {
+            return Class.forName("net.minecraft." + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * Get a craft class
+     * (net.minecraft)
+     *
+     * @param name the name
+     * @return nms class
+     */
+    public static Class<?> getNMWClass(String name) {
+        try {
+            return Class.forName("net.minecraft.world." + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * Get a craft class
+     * (net.minecraft.nbt)
+     *
+     * @param name the name
+     * @return nms class
+     */
+    public static Class<?> getNBTClass(String name) {
+        try {
+            return Class.forName("net.minecraft.nbt." + name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     /**
