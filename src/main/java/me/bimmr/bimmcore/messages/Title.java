@@ -269,9 +269,9 @@ public class Title extends MessageDisplay {
         titles.put(player.getName(), this);
         if(getTimedEvent() == null){
             if(BimmCore.supports(17))
-                player.sendTitle(text, subTitle, fadeIn, time, fadeOut);
+                player.sendTitle(text, subTitle, fadeIn*20, time*20, fadeOut*20);
             else
-                TitleAPI.sendTitle(player, text, subTitle, fadeIn, time, fadeOut);
+                TitleAPI.sendTitle(player, text, subTitle, fadeIn*20, time*20, fadeOut*20);
         }else {
 
             tasks.put(player.getName(), new BukkitRunnable() {
@@ -338,8 +338,12 @@ public class Title extends MessageDisplay {
     public void clear(Player player) {
 
         if (isRunning(player)) {
-            TitleAPI.reset(player);
-            tasks.get(player.getName()).cancel();
+            if(BimmCore.supports(17))
+                player.sendTitle("","", 0,0,0);
+            else
+                TitleAPI.reset(player);
+            if(tasks.containsKey(player.getName()))
+                tasks.get(player.getName()).cancel();
             tasks.remove(player.getName());
             titles.remove(player.getName());
         }

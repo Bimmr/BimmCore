@@ -28,6 +28,7 @@ import me.bimmr.bimmcore.npc.player.NPCPlayer;
 import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.utils.MetricsLite;
 import me.bimmr.bimmcore.utils.TimeUtil;
+import me.bimmr.bimmcore.utils.VaultUtil;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -134,33 +135,34 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
-        npcManager = new NPCManager();
+        //npcManager = new NPCManager();
 
         loadTimeUtil();
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new FancyMessageListener(), this);
         Bukkit.getPluginManager().registerEvents(new MenuManager(), this);
-        Bukkit.getPluginManager().registerEvents(npcManager, this);
+//        Bukkit.getPluginManager().registerEvents(npcManager, this);
 
-        if (Reflection.getOnlinePlayers().length == 0)
-            npcManager.getNPCPlayerListener().start();
-        else
-            System.out.println("Unable to start NPCPlayer Listener on server reloads");
+//        if (Reflection.getOnlinePlayers().length == 0)
+//            npcManager.getNPCPlayerListener().start();
+//        else
+//            System.out.println("Unable to start NPCPlayer Listener on server reloads");
 
         MetricsLite metrics = new MetricsLite(this, 7671);
     }
 
     public void onDisable() {
-        ArrayList<NPCBase> npcBaseList = new ArrayList<>();
-        npcBaseList.addAll(NPCManager.getAllNPCs());
-        for (NPCBase npcBase : npcBaseList)
-            npcBase.destroy();
+//        ArrayList<NPCBase> npcBaseList = new ArrayList<>();
+//        npcBaseList.addAll(NPCManager.getAllNPCs());
+//        for (NPCBase npcBase : npcBaseList)
+//            npcBase.destroy();
         Bukkit.getScheduler().cancelTasks(this);
     }
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (true && e.getMessage().startsWith("/BTest")) {
+        if (false && e.getMessage().startsWith("/BTest")) {
+
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
                 menu.addItem(new Items(Material.GOLD_BLOCK).setDisplayName("Testing Add"));
