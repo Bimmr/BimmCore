@@ -269,8 +269,4 @@ public class BossBar extends MessageDisplay {
                     }
                 }.runTaskTimer(BimmCore.getInstance(), 0L, 1L));
     }
-
-    private class BossBarOldAPI {
-
-    }
 }

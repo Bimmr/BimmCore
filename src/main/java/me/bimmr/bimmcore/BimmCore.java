@@ -5,15 +5,11 @@ import me.bimmr.bimmcore.files.FileManager;
 import me.bimmr.bimmcore.gui.anvil.Anvil;
 import me.bimmr.bimmcore.gui.book.Book;
 import me.bimmr.bimmcore.gui.chat.ChatMenu;
-import me.bimmr.bimmcore.gui.inventory.ClickEvent;
 import me.bimmr.bimmcore.gui.inventory.Menu;
 import me.bimmr.bimmcore.gui.inventory.MenuManager;
 import me.bimmr.bimmcore.hologram.Hologram;
 import me.bimmr.bimmcore.hologram.HologramLine;
 import me.bimmr.bimmcore.items.Items;
-import me.bimmr.bimmcore.items.attributes.AttributeType;
-import me.bimmr.bimmcore.items.attributes.Operation;
-import me.bimmr.bimmcore.items.attributes.Slot;
 import me.bimmr.bimmcore.messages.ActionBar;
 import me.bimmr.bimmcore.messages.BossBar;
 import me.bimmr.bimmcore.messages.MessageDisplay;
@@ -25,14 +21,14 @@ import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCClickEvent;
 import me.bimmr.bimmcore.npc.NPCManager;
 import me.bimmr.bimmcore.npc.player.NPCPlayer;
-import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.utils.MetricsLite;
 import me.bimmr.bimmcore.utils.TimeUtil;
-import me.bimmr.bimmcore.utils.VaultUtil;
 import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,6 +37,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,12 +46,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 
 public class BimmCore extends JavaPlugin implements Listener {
-
-    /**
-     * @deprecated use {@link #supports(int)} instead
-     */
-    @Deprecated
-    public static boolean oldAPI = !supports(13);
 
     private static BimmCore instance;
     private NPCManager npcManager;
@@ -81,39 +72,6 @@ public class BimmCore extends JavaPlugin implements Listener {
         return (bcVersion >= versionNeeded);
     }
 
-    /**
-     * Check if the server is a version
-     * 1.15 -&gt; 15
-     * 1.12 -&gt; 12
-     * 1.8 -&gt; 8
-     *
-     * @param v The Version to support
-     * @return If the server is of version
-     */
-    public static boolean supports(double v) {
-        String serverVersion = Bukkit.getBukkitVersion();
-        int index = serverVersion.indexOf('-');
-        serverVersion = serverVersion.substring(0, index);
-
-        int lastDot = serverVersion.lastIndexOf('.');
-        if (v != Math.floor(v) && serverVersion.indexOf('.') != lastDot)
-            serverVersion = serverVersion.substring(0, lastDot);
-
-        serverVersion = serverVersion.substring(serverVersion.indexOf('.') + 1);
-        double version = Double.parseDouble(serverVersion);
-        //     15  <= 15.2
-        return v <= version;
-    }
-
-    /**
-     * Calls {@link #supports(double)}
-     *
-     * @param v The Version to support
-     * @return If the server is of version
-     */
-    public static boolean supports(int v) {
-        return supports(((double) v));
-    }
 
     private void loadTimeUtil() {
         FileManager fileManager = new FileManager(getInstance());
@@ -161,7 +119,7 @@ public class BimmCore extends JavaPlugin implements Listener {
 
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
-        if (false && e.getMessage().startsWith("/BTest")) {
+        if (true && e.getMessage().startsWith("/BTest")) {
 
             if (e.getMessage().contains("Menu")) {
                 Menu menu = new Menu("Test");
@@ -200,23 +158,16 @@ public class BimmCore extends JavaPlugin implements Listener {
                         .show(e.getPlayer());
             }
             if (e.getMessage().contains("Attribute")) {
-                ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-//                Pre 1.13
-//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER));
-//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER));
-//                sword = ItemAttributes.addAttribute(sword, new Attribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1));
-
-//                Post 1.13
-                Items item = new Items(sword);
-                item.addAttribute(AttributeType.GENERIC_MAX_HEALTH, Slot.HAND, 100, Operation.ADD_NUMBER);
-                item.addAttribute(AttributeType.GENERIC_ARMOR, Slot.HAND, 100, Operation.ADD_NUMBER);
-                item.addAttribute(AttributeType.GENERIC_MOVEMENT_SPEED, Slot.ALL, 3, Operation.MULTIPLY_SCALAR_1);
+                Items item = new Items(Material.DIAMOND_SWORD);
+                item.addAttribute(Attribute.GENERIC_MAX_HEALTH, EquipmentSlot.HAND, 100, AttributeModifier.Operation.ADD_NUMBER);
+                item.addAttribute(Attribute.GENERIC_ARMOR, EquipmentSlot.HAND, 100, AttributeModifier.Operation.ADD_NUMBER);
+                item.addAttribute(Attribute.GENERIC_MOVEMENT_SPEED, EquipmentSlot.OFF_HAND, 3, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
 
 
-                e.getPlayer().getInventory().setItemInHand(sword);
+                e.getPlayer().getInventory().setItemInMainHand(item.getItem());
             }
             if (e.getMessage().contains("Item")) {
-                Items items = new Items(e.getPlayer().getInventory().getItemInHand());
+                Items items = new Items(e.getPlayer().getInventory().getItemInMainHand());
                 e.getPlayer().sendMessage(items.toString());
             }
             if (e.getMessage().contains("Hologram")) {

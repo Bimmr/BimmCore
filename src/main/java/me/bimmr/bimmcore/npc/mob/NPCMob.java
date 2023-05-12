@@ -23,10 +23,6 @@ public class NPCMob extends NPCBase {
     public NPCMob(String name, Location location, EntityType entityType) {
         super(NPCType.MOB, name, location);
 
-        if (!BimmCore.supports(9)) {
-            BimmCore.getInstance().getLogger().log(Level.SEVERE, "Unable to create NPC Mob before MC 1.9");
-            return;
-        }
         this.entityType = entityType;
         create();
     }

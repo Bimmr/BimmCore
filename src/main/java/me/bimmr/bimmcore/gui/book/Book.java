@@ -211,10 +211,8 @@ public class Book {
      * @param player The player
      */
     public void show(Player player) {
-        if(BimmCore.supports(16)){
             player.openBook(getAsItem());
-        }else
-            BookAPI.openBook(this, player);
+
     }
 
 
@@ -222,7 +220,6 @@ public class Book {
      * @return Get the book as an ItemStack
      */
     public ItemStack getAsItem() {
-        if(BimmCore.supports(16)){
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
 
             //create the book
@@ -248,8 +245,7 @@ public class Book {
 
 
             return iBook;
-        }else
-        return BookAPI.getAsItemStack(this);
+
     }
 
     public static class BookAPI {
@@ -273,19 +269,12 @@ public class Book {
 
         static {
 
-           if (BimmCore.supports(14)) {
                 packetPlayOutOpenBookClass = Reflection.getNMSClass("PacketPlayOutOpenBook");
                 enumHandClass = Reflection.getNMSClass("EnumHand");
                 packetPlayOutOpenBookConstructor = Reflection.getConstructor(packetPlayOutOpenBookClass, enumHandClass);
                 Method value = Reflection.getMethod(enumHandClass, "valueOf", String.class);
                 mainHandEnum = Reflection.invokeMethod(value, null, "MAIN_HAND");
-            } else if (BimmCore.supports(13)) {
-                craftKeyClass = Reflection.getNMSClass("MinecraftKey");
-                craftKeyConstructor = Reflection.getConstructor(craftKeyClass, String.class);
-                packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, craftKeyClass, packetDataSerializer);
-            } else {
-                packetPlayOutCustomPayLoadConstructor = Reflection.getConstructor(packetPlayOutCustomPayLoad, String.class, packetDataSerializer);
-            }
+
         }
 
         /**
@@ -343,26 +332,10 @@ public class Book {
             ItemStack old = p.getInventory().getItem(slot);
 
             p.getInventory().setItem(slot, iBook);
-            if (BimmCore.supports(14)) {
                 Object packetPlayOutOpenBookInstance = Reflection.newInstance(packetPlayOutOpenBookConstructor, mainHandEnum);
                 Packets.sendPacket(p, packetPlayOutOpenBookInstance);
-            } else {
-                ByteBuf byteBuf = Unpooled.buffer(256);
-                byteBuf.setByte(0, (byte) 0);
-                byteBuf.writerIndex(1);
 
-                Object packetDataSerializerInstance = Reflection.newInstance(packetDataSerializerConstructor, byteBuf);
 
-                Object packetPlayOutCustomPayLoadInstance;
-
-                if (BimmCore.supports(13)) {
-                    Object craftKeyInstance = Reflection.newInstance(craftKeyConstructor, "minecraft:book_open");
-                    packetPlayOutCustomPayLoadInstance = Reflection.newInstance(packetPlayOutCustomPayLoadConstructor, craftKeyInstance, packetDataSerializerInstance);
-                } else
-                    packetPlayOutCustomPayLoadInstance = Reflection.newInstance(packetPlayOutCustomPayLoadConstructor, "MC|BOpen", packetDataSerializerInstance);
-
-                Packets.sendPacket(p, packetPlayOutCustomPayLoadInstance);
-            }
 
             p.getInventory().setItem(slot, old);
         }

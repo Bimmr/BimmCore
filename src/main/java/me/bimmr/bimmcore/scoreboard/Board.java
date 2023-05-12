@@ -5,6 +5,7 @@ import me.bimmr.bimmcore.utils.timed.TimedEvent;
 import me.bimmr.bimmcore.utils.timed.TimedObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -44,10 +45,8 @@ public class Board extends TimedObject {
     @SuppressWarnings("deprecation")
     public Board(String name, int size, TimedEvent timedEvent, boolean startTimedEvent) {
         String boardName = "BC" + name.substring(0, Math.min(14, name.length()));
-        if (BimmCore.supports(13))
             this.objective = this.scoreboard.registerNewObjective(boardName, "dummy", name);
-        else
-            this.objective = this.scoreboard.registerNewObjective(boardName, "dummy");
+
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(name);
@@ -155,17 +154,13 @@ public class Board extends TimedObject {
     }
 
 
-    @SuppressWarnings("deprecation")
     public void reset() {
         clear();
         if (this.objective != null) {
             this.objective.unregister();
             this.objective = null;
         }
-        if (BimmCore.supports(13))
-            this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), "dummy", this.name);
-        else
-            this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), "dummy");
+        this.objective = this.scoreboard.registerNewObjective("BC" + this.name.substring(0, Math.min(14, this.name.length())), Criteria.DUMMY, this.name);
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(getName());

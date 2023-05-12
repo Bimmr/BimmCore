@@ -1,7 +1,7 @@
-name: ${project.name}
-main: ${project.groupId}.${project.artifactId}.${project.name}
-version: ${project.version}
-softdepend: [ProtocolLib]
+name: BimmCore
+main: me.bimmr.bimmcore.BimmCore
+version: ${version}
+softdepend: [ProtocolLib, Crackshot, QualityArmory, Vault]
 api-version: 1.13
 commands:
     bimmlibchat:

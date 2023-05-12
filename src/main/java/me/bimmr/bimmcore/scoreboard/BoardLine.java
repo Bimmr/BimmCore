@@ -133,10 +133,7 @@ public class BoardLine extends TimedObject {
      * @param text the text
      */
     public void setText(String text) {
-        if (BimmCore.supports(13))
             this.text = text.substring(0, Math.min(120, text.length()));
-        else
-            this.text = text.substring(0, Math.min(30, text.length()));
         update();
     }
 
@@ -182,11 +179,11 @@ public class BoardLine extends TimedObject {
     }
 
     public void update() {
-        Iterator<String> iterator = Splitter.fixedLength(BimmCore.supports(13) ? 64 : 16).split(this.text).iterator();
+        Iterator<String> iterator = Splitter.fixedLength(64).split(this.text).iterator();
         String prefix = iterator.next();
 
         if(prefix.length() > 0 && prefix.charAt(prefix.length()-1) == ChatColor.COLOR_CHAR){
-            iterator = Splitter.fixedLength(BimmCore.supports(13) ? 63 : 15).split(this.text).iterator();
+            iterator = Splitter.fixedLength(63).split(this.text).iterator();
             prefix = iterator.next();
         }
         this.team.setPrefix(prefix);

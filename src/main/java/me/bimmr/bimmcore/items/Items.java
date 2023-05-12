@@ -2,17 +2,12 @@ package me.bimmr.bimmcore.items;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import me.bimmr.bimmcore.BimmCore;
-import me.bimmr.bimmcore.items.attributes.AttributeType;
-import me.bimmr.bimmcore.items.attributes.ItemAttributes;
-import me.bimmr.bimmcore.items.attributes.Operation;
-import me.bimmr.bimmcore.items.attributes.Slot;
-import me.bimmr.bimmcore.items.helpers.GlowEnchant;
 import me.bimmr.bimmcore.items.helpers.Items_Crackshot;
 import me.bimmr.bimmcore.items.helpers.Items_QualityArmory;
 import me.bimmr.bimmcore.reflection.Reflection;
 import me.bimmr.bimmcore.utils.StringUtil;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -22,7 +17,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
-import org.bukkit.potion.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.util.*;
@@ -40,7 +36,7 @@ import java.util.*;
  */
 public class Items {
 
-    public static final String INVALID_ITEM = "item:" + (BimmCore.supports(13) ? "PLAYER_HEAD" : "SKULL_ITEM damage:3") + " name:&eUnknown_Item owner:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmMyNzEwNTI3MTllZjY0MDc5ZWU4YzE0OTg5NTEyMzhhNzRkYWM0YzI3Yjk1NjQwZGI2ZmJkZGMyZDZiNWI2ZSJ9fX0=";
+    public static final String INVALID_ITEM = "item:PLAYER_HEAD name:&eUnknown_Item owner:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmMyNzEwNTI3MTllZjY0MDc5ZWU4YzE0OTg5NTEyMzhhNzRkYWM0YzI3Yjk1NjQwZGI2ZmJkZGMyZDZiNWI2ZSJ9fX0=";
 
     private ItemStack item = new ItemStack(Material.AIR);
     private ItemMeta itemMeta;
@@ -125,8 +121,6 @@ public class Items {
                 String prefix = dataSplit[0];
                 String value = dataSplit.length > 1 ? StringUtil.addColor(dataSplit[1]) : "";
 
-                boolean isOldSplashPotion = string.contains("splash") || string.contains("splashPotion") || string.contains("splash-potion");
-
                 //Crackshot or QualityArmory
                 if (StringUtil.equalsStrings(prefix, "gun", "weapon")) {
                     if (Bukkit.getServer().getPluginManager().getPlugin("CrackShot") != null)
@@ -139,8 +133,6 @@ public class Items {
                 else if (StringUtil.equalsStrings(prefix, "id", "item", "material", "type")) {
                     if (Material.matchMaterial(value) != null)
                         this.item = new ItemStack(Material.matchMaterial(value));
-                    else if (value.equalsIgnoreCase("player_head") && !BimmCore.supports(13))
-                        this.item = new ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, (short) 3);
                     else {
                         return new Items(INVALID_ITEM).addLore("Item: " + ChatColor.WHITE + value);
                     }
@@ -165,10 +157,7 @@ public class Items {
                     int level = valueSplit.length >= 2 ? Integer.parseInt(valueSplit[1]) : 1;
                     Enchantment enchantment = null;
 
-                    if (Enchantment.getByName(name.toUpperCase()) != null)
-                        enchantment = Enchantment.getByName(name.toUpperCase());
-                    else if (BimmCore.supports(13))
-                        enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
+                    enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
 
                     if (enchantment != null)
                         addEnchantment(enchantment, level);
@@ -201,21 +190,9 @@ public class Items {
                 else if (StringUtil.equalsStrings(prefix, "potion", "effect")) {
                     String[] valueSplit = value.split(",");
                     PotionMeta potionMeta = (PotionMeta) getItemMeta();
-                    if (BimmCore.supports(12) && StringUtil.equalsStrings(valueSplit[1], "true", "false")) {
-                        if (PotionType.valueOf(valueSplit[0].toUpperCase()) != null) {
-                            PotionData potionData = new PotionData(PotionType.valueOf(valueSplit[0].toUpperCase()), Boolean.parseBoolean(valueSplit[1]), Boolean.parseBoolean(valueSplit[2]));
-                            potionMeta.setBasePotionData(potionData);
-                            if (!BimmCore.supports(13) && isOldSplashPotion) {
-                                setSplashPotion();
-                            }
-                        }
-                        setItemMeta(potionMeta);
-                    } else if (PotionEffectType.getByName(valueSplit[0]) != null) {
+                    if (PotionEffectType.getByName(valueSplit[0]) != null) {
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.getByName(valueSplit[0].toUpperCase()), Integer.parseInt(valueSplit[1]) * 20, Integer.parseInt(valueSplit[2]) - 1);
                         addPotionEffect(potionEffect);
-                        if (!BimmCore.supports(13) && isOldSplashPotion) {
-                            setSplashPotion();
-                        }
                     }
                 }
 
@@ -533,8 +510,7 @@ public class Items {
             return this;
 
         ItemMeta itemMeta = getItemMeta();
-        if (BimmCore.supports(12))
-            itemMeta.setUnbreakable(value);
+        itemMeta.setUnbreakable(value);
         setItemMeta(itemMeta);
         return this;
     }
@@ -614,6 +590,7 @@ public class Items {
      * @return Items items
      */
     public Items addPotionEffect(PotionEffect value) {
+        //TOOD: Something about either this or reading is broken
         if (!hasItemMeta())
             return this;
 
@@ -636,12 +613,10 @@ public class Items {
             return this;
 
         ItemMeta itemMeta = getItemMeta();
-        if (BimmCore.supports(13)) {
-            itemMeta.addEnchant(GlowEnchant.getGlowEnchantment(), 1, true);
-        } else {
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (this.item.getEnchantments().isEmpty())
             addEnchantment(Enchantment.values()[0], 1);
-        }
+
         setItemMeta(itemMeta);
         return this;
     }
@@ -713,19 +688,13 @@ public class Items {
      */
     public Items addAttribute(String attribute, String slot, double level, String operation) {
 
+        if (!hasItemMeta())
+            return this;
 
-        if (BimmCore.supports(13)) {
-            if (!hasItemMeta())
-                return this;
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
+        setItemMeta(itemMeta);
 
-            ItemMeta itemMeta = getItemMeta();
-            itemMeta.addAttributeModifier(org.bukkit.attribute.Attribute.valueOf(attribute), new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, AttributeModifier.Operation.valueOf(operation), EquipmentSlot.valueOf(slot)));
-            setItemMeta(itemMeta);
-        } else {
-            this.item = ItemAttributes.addAttribute(getItem(), new me.bimmr.bimmcore.items.attributes.Attribute(AttributeType.valueOf(attribute), Slot.valueOf(slot), level, Operation.valueOf(operation)));
-            if(this.item.hasItemMeta())
-                this.itemMeta = this.item.getItemMeta();
-        }
         return this;
     }
 
@@ -736,38 +705,12 @@ public class Items {
      */
     public Items setSplashPotion() {
 
-        if (BimmCore.supports(13)) {
-            if (getItem().getType() == Material.POTION)
-                getItem().setType(Material.matchMaterial("SPLASH_POTION"));
-        } else {
-            if (!(getItemMeta() instanceof PotionMeta))
-                return this;
-            PotionMeta potionMeta = (PotionMeta) getItemMeta();
-            Potion potion = null;
-            if (BimmCore.supports(12))
-                potion = new Potion(potionMeta.getBasePotionData().getType());
-            else
-                potion = new Potion(PotionType.getByEffect(potionMeta.getCustomEffects().get(0).getType()));
+        if (getItem().getType() == Material.POTION)
+            getItem().setType(Material.matchMaterial("SPLASH_POTION"));
 
-            potion.setSplash(true);
-            potion.apply(getItem());
-        }
         return this;
     }
 
-    /**
-     * Add Item Attribute using BimmCore
-     *
-     * @param attribute AttributeType
-     * @param slot      Attribute's Slot
-     * @param level     Attribute's level
-     * @param operation Attribute's Operation
-     * @return Items items
-     */
-    public Items addAttribute(AttributeType attribute, Slot slot, double level, Operation operation) {
-        this.item = ItemAttributes.addAttribute(getItem(), new me.bimmr.bimmcore.items.attributes.Attribute(attribute, slot, level, operation));
-        return this;
-    }
 
     /**
      * Add Item Attribute using Bukkit
@@ -778,12 +721,12 @@ public class Items {
      * @param operation Attribute's Operation
      * @return Items items
      */
-    public Items addAttribute(org.bukkit.attribute.Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
+    public Items addAttribute(Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
         if (!hasItemMeta())
             return this;
 
         ItemMeta itemMeta = getItemMeta();
-        itemMeta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), "bimmcore" + attribute, level, operation, slot));
+        itemMeta.addAttributeModifier(attribute, new AttributeModifier(UUID.randomUUID(), attribute.toString(), level, operation, slot));
         setItemMeta(itemMeta);
         return this;
     }
@@ -804,13 +747,11 @@ public class Items {
             return setSkullSkin(value);
         else {
             SkullMeta skullMeta = (SkullMeta) getItemMeta();
-            if (BimmCore.supports(13)) {
-                if (value.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
-                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(value)));
-                else
-                    skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(value));
-            } else
-                skullMeta.setOwner(value);
+            if (value.matches("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(value)));
+            else
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(value));
+
             setItemMeta(skullMeta);
         }
         return this;
@@ -870,19 +811,16 @@ public class Items {
      * @return Items damage
      */
     public Items setDamage(int value) {
-        if (BimmCore.supports(13)) {
+        if (!hasItemMeta())
+            return this;
 
-            if (!hasItemMeta())
-                return this;
+        if (!(getItemMeta() instanceof Damageable))
+            return this;
 
-            if (!(getItemMeta() instanceof Damageable))
-                return this;
+        Damageable damageable = (Damageable) getItemMeta();
+        damageable.setDamage(value);
+        setItemMeta(damageable);
 
-            Damageable damageable = (Damageable) getItemMeta();
-            damageable.setDamage(value);
-            setItemMeta((ItemMeta) damageable);
-        } else
-            getItem().setDurability((short) value);
         return this;
     }
 
@@ -996,14 +934,10 @@ public class Items {
             ItemMeta itemMeta = getItemMeta();
 
             //Durability/Damage
-            if (BimmCore.supports(13) && itemMeta instanceof Damageable) {
+            if (itemMeta instanceof Damageable) {
                 Damageable damageable = (Damageable) itemMeta;
                 if (damageable.hasDamage())
                     string.append(" damage:").append(damageable.getDamage());
-            } else {
-                if (getItem().getDurability() != 0)
-                    string.append(" damage:").append(getItem().getDurability());
-
             }
 
             //Custom Name
@@ -1019,53 +953,37 @@ public class Items {
             //Enchantments
             if (getItem().getEnchantments().size() > 0) {
 
-                if (BimmCore.supports(13))
-                    for (Map.Entry<Enchantment, Integer> entry : getItemMeta().getEnchants().entrySet())
-                        if (!entry.getKey().getKey().getKey().equals("bimmcore_glow"))
-                            string.append(" enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
-                        else
-                            string.append(" glow");
-                else
-                    for (Map.Entry<Enchantment, Integer> entry : getItemMeta().getEnchants().entrySet())
-                        if (!entry.getKey().getName().equals("bimmcore_glow"))
-                            string.append(" enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
-                        else
-                            string.append(" glow");
-
+                if (this.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS))
+                    string.append(" glow");
             }
 
             if (itemMeta.getItemFlags().size() != 0)
                 for (ItemFlag itemFlag : itemMeta.getItemFlags())
                     string.append(" flag:").append(itemFlag.name());
 
-            if (BimmCore.supports(12) && itemMeta.isUnbreakable())
+            if (itemMeta.isUnbreakable())
                 string.append(" unbreakable");
 
-            if (BimmCore.supports(14) && itemMeta.hasCustomModelData()) {
+            if (itemMeta.hasCustomModelData()) {
                 string.append(" display:").append(itemMeta.getCustomModelData());
             }
 
-            if (BimmCore.supports(13)) {
-                if (itemMeta.hasAttributeModifiers()) {
-                    for (Map.Entry<org.bukkit.attribute.Attribute, AttributeModifier> entry : itemMeta.getAttributeModifiers().entries()) {
-                        AttributeModifier attributeModifier = entry.getValue();
-                        string.append(" attribute:").append(attributeModifier.getName()).append(",").append(attributeModifier.getSlot()).append(",").append(attributeModifier.getAmount()).append(",").append(attributeModifier.getOperation().name());
-                    }
+            if (itemMeta.hasAttributeModifiers()) {
+                for (Map.Entry<org.bukkit.attribute.Attribute, AttributeModifier> entry : itemMeta.getAttributeModifiers().entries()) {
+                    AttributeModifier attributeModifier = entry.getValue();
+                    string.append(" attribute:").append(attributeModifier.getName()).append(",").append(attributeModifier.getSlot()).append(",").append(attributeModifier.getAmount()).append(",").append(attributeModifier.getOperation().name());
                 }
-
-            } else {
-                for (me.bimmr.bimmcore.items.attributes.Attribute attribute : ItemAttributes.getAttributes(getItem()))
-                    string.append(" attribute:").append(attribute.getAttribute().toString()).append(",").append(attribute.getSlot().toString()).append(",").append(attribute.getValue()).append(",").append(attribute.getOperation().toString());
             }
+
 
             //Potions
             if (itemMeta instanceof PotionMeta) {
                 PotionMeta potionMeta = (PotionMeta) itemMeta;
-                if (BimmCore.supports(12))
-                    string.append(" potion:").append(potionMeta.getBasePotionData().getType().name()).append(",").append(potionMeta.getBasePotionData().isExtended()).append(",").append(potionMeta.getBasePotionData().isUpgraded());
                 if (potionMeta.hasCustomEffects())
                     for (PotionEffect p : potionMeta.getCustomEffects())
                         string.append(" potion:").append(p.getType().getName()).append(",").append(p.getDuration() / 20).append(",").append(p.getAmplifier() + 1);
+                else
+                    string.append(" potion:").append(potionMeta.getBasePotionData().getType().name()).append(",").append(potionMeta.getBasePotionData().isExtended()).append(",").append(potionMeta.getBasePotionData().isUpgraded());
 
             }
 
@@ -1113,34 +1031,25 @@ public class Items {
             //Skulls
             if (itemMeta instanceof SkullMeta) {
                 SkullMeta skullMeta = (SkullMeta) itemMeta;
-                if (BimmCore.supports(12)) {
-                    if (skullMeta.getOwningPlayer() != null)
-                        string.append(" owner:").append(skullMeta.getOwningPlayer().getUniqueId());
-                    else
-                        string.append(" owner:").append(getTexture());
+                if (skullMeta.getOwningPlayer() != null)
+                    string.append(" owner:").append(skullMeta.getOwningPlayer().getUniqueId());
+                else
+                    string.append(" owner:").append(getTexture());
 
-                } else {
-                    if (skullMeta.getOwner() != null)
-                        string.append(" owner:").append(skullMeta.getOwner());
-                    else
-                        string.append(" owner:").append(getTexture());
-                }
             }
+
 
             //Enchantment Storage
             if (itemMeta instanceof EnchantmentStorageMeta) {
                 EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) itemMeta;
 
-                if (BimmCore.supports(13))
-                    for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
-                        string.append(" stored-enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
-                else
-                    for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
-                        string.append(" stored-enchantment:").append(entry.getKey().getName()).append(",").append(entry.getValue());
+                for (Map.Entry<Enchantment, Integer> entry : enchantmentStorageMeta.getStoredEnchants().entrySet())
+                    string.append(" stored-enchantment:").append(entry.getKey().getKey().getKey()).append(",").append(entry.getValue());
+
             }
 
             //Tropical Fish
-            if (BimmCore.supports(13) && itemMeta instanceof TropicalFishBucketMeta) {
+            if (itemMeta instanceof TropicalFishBucketMeta) {
                 TropicalFishBucketMeta tropicalFishBucketMeta = (TropicalFishBucketMeta) itemMeta;
                 string.append(" tropical-fish:").append(tropicalFishBucketMeta.getBodyColor().name()).append(",").append(tropicalFishBucketMeta.getPattern().name()).append(",").append(tropicalFishBucketMeta.getPatternColor());
             }
@@ -1149,16 +1058,16 @@ public class Items {
                 MapMeta mapMeta = (MapMeta) itemMeta;
                 //TODO: MapMeta
             }
-            if (BimmCore.supports(14) && itemMeta instanceof CrossbowMeta) {
+            if (itemMeta instanceof CrossbowMeta) {
                 CrossbowMeta crossbowMeta = (CrossbowMeta) itemMeta;
                 //TODO: CrossbowMeta
             }
-            if (BimmCore.supports(12) && itemMeta instanceof SpawnEggMeta) {
+            if (itemMeta instanceof SpawnEggMeta) {
                 SpawnEggMeta spawnEggMeta = (SpawnEggMeta) itemMeta;
                 //TODO: SpawnEggMeta
             }
 
-            if (BimmCore.supports(15) && itemMeta instanceof SuspiciousStewMeta) {
+            if (itemMeta instanceof SuspiciousStewMeta) {
                 SuspiciousStewMeta suspiciousStewMeta = (SuspiciousStewMeta) itemMeta;
                 //TODO: SuspiciousStewMeta
             }

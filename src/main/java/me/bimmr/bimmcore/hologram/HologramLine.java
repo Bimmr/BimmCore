@@ -224,19 +224,14 @@ public class HologramLine extends TimedObject {
         private static Method getDataWatcherMethod;
 
         static {
-            if (BimmCore.supports(13)) {
                 armorStandConstructor = Reflection.getConstructor(nmsArmorStandClass, nmsWorldClass, double.class, double.class, double.class);
                 setCustomNameMethod = Reflection.getMethod(nmsEntityClass, "setCustomName", chatBaseComponent);
                 setNoGravityMethod = Reflection.getMethod(nmsEntityClass, "setNoGravity", boolean.class);
-            } else {
-                armorStandConstructor = Reflection.getConstructor(nmsArmorStandClass, nmsWorldClass);
-                setCustomNameMethod = Reflection.getMethod(nmsEntityClass, "setCustomName", String.class);
-            }
-            if (BimmCore.supports(15)) {
+
                 packetPlayOutEntityMetadataClass = Reflection.getNMSClass("PacketPlayOutEntityMetadata");
                 packetPlayOutEntityMetadataConstructor = Reflection.getConstructor(packetPlayOutEntityMetadataClass, int.class, nmsDataWatcherClass, boolean.class);
                 getDataWatcherMethod = Reflection.getMethod(nmsEntityClass, "getDataWatcher");
-            }
+
         }
 
         /**
@@ -247,10 +242,7 @@ public class HologramLine extends TimedObject {
          */
         private static void setText(Object entityArmorStand, String text) {
             Object iText;
-            if (BimmCore.supports(13))
                 iText = Reflection.newInstance(chatComponentTextConstructor, text);
-            else
-                iText = text;
 
             Reflection.invokeMethod(setCustomNameMethod, entityArmorStand, iText);
         }
@@ -267,14 +259,8 @@ public class HologramLine extends TimedObject {
             Object craftWorld = craftWorldClass.cast(location.getWorld());
             Object worldHandle = Reflection.getHandle(craftWorld);
 
-            if (BimmCore.supports(13)) {
                 entityArmorStand = Reflection.newInstance(armorStandConstructor, worldHandle, location.getX(), location.getY(), location.getZ());
-            } else {
-                entityArmorStand = Reflection.newInstance(armorStandConstructor, worldHandle);
-                Reflection.invokeMethod(setLocationMethod, entityArmorStand, location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
-            }
 
-            if (BimmCore.supports(13))
                 Reflection.invokeMethod(setNoGravityMethod, entityArmorStand, true);
 
 
@@ -307,13 +293,11 @@ public class HologramLine extends TimedObject {
          * @param p                The player
          */
         public static void showMetaDataToPlayer(Object entityArmorStand, Player p) {
-            if (BimmCore.supports(15)) {
                 Object id = getEntityID(entityArmorStand);
                 Object dataWatcher = Reflection.invokeMethod(getDataWatcherMethod, entityArmorStand);
                 Object packetPlayOutEntityMetaData = Reflection.newInstance(packetPlayOutEntityMetadataConstructor, id, dataWatcher, true);
                 Packets.sendPacket(p, packetPlayOutEntityMetaData);
 
-            }
         }
 
         /**

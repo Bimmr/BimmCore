@@ -268,10 +268,7 @@ public class Title extends MessageDisplay {
         clear(player);
         titles.put(player.getName(), this);
         if(getTimedEvent() == null){
-            if(BimmCore.supports(17))
                 player.sendTitle(text, subTitle, fadeIn*20, time*20, fadeOut*20);
-            else
-                TitleAPI.sendTitle(player, text, subTitle, fadeIn*20, time*20, fadeOut*20);
         }else {
 
             tasks.put(player.getName(), new BukkitRunnable() {
@@ -286,10 +283,7 @@ public class Title extends MessageDisplay {
                         clear(player);
 
                     else if (timeLeft % 20 == 0 || (timedEvent != null && timeLeft % timedEvent.getTicks() == 0))
-                        if(BimmCore.supports(17))
                             player.sendTitle(text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
-                        else
-                            TitleAPI.sendTitle(player, text, subTitle, timeLeft == time * 20 ? fadeIn * 20 : 0, 20, timeLeft - 20 <= 0 ? fadeOut * 20 : 0);
 
                     timeLeft--;
                 }
@@ -338,106 +332,12 @@ public class Title extends MessageDisplay {
     public void clear(Player player) {
 
         if (isRunning(player)) {
-            if(BimmCore.supports(17))
                 player.sendTitle("","", 0,0,0);
-            else
-                TitleAPI.reset(player);
             if(tasks.containsKey(player.getName()))
                 tasks.get(player.getName()).cancel();
             tasks.remove(player.getName());
             titles.remove(player.getName());
         }
-    }
-
-    /**
-     * The type Title api.
-     */
-    public static class TitleAPI {
-
-        private static Class<?> chatSerializer;
-        private static Method serializer;
-        private static Class<?> chatBaseComponent;
-        private static Constructor<?> chatConstructor;
-        private static Constructor<?> timeConstructor;
-        private static Class<?> titleAction;
-        private static Object timeEnum, titleEnum, subEnum, resetEnum;
-
-        static {
-            chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
-            chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
-            titleAction = Reflection.getNMSClass("PacketPlayOutTitle$EnumTitleAction");
-
-            try {
-                serializer = chatSerializer.getMethod("a", String.class);
-
-                Class<?> packetType = Reflection.getNMSClass("PacketPlayOutTitle");
-                chatConstructor = packetType.getConstructor(titleAction, chatBaseComponent);
-                timeConstructor = packetType.getConstructor(titleAction, chatBaseComponent, Integer.TYPE, Integer.TYPE, Integer.TYPE);
-
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-            titleEnum = titleAction.getEnumConstants()[0];
-            subEnum = titleAction.getEnumConstants()[1];
-
-            if (Reflection.getVersion().startsWith("v1_7_") || Reflection.getVersion().startsWith("v1_8_") || Reflection.getVersion().startsWith("v1_9_") || Reflection.getVersion().startsWith("v1_10_"))
-                timeEnum = titleAction.getEnumConstants()[2];
-            else {
-                timeEnum = titleAction.getEnumConstants()[3];
-                resetEnum = titleAction.getEnumConstants()[5];
-            }
-
-        }
-
-        /**
-         * Send title.
-         *
-         * @param player   the player
-         * @param title    the title
-         * @param subTitle the sub title
-         * @param fadeIn   the fade in
-         * @param show     the show
-         * @param fadeOut  the fade out
-         */
-        public static void sendTitle(Player player, String title, String subTitle, int fadeIn, int show, int fadeOut) {
-            try {
-                Object lengthPacket = timeConstructor.newInstance(timeEnum, null, fadeIn, show, fadeOut);
-                Packets.sendPacket(player, lengthPacket);
-
-                Object titleSerialized = serializer.invoke(null, "{\"text\":\"" + title + "\"}");
-                Object titlePacket = chatConstructor.newInstance(titleEnum, titleSerialized);
-                Packets.sendPacket(player, titlePacket);
-
-                if (subTitle != "") {
-                    Object subSerialized = serializer.invoke(null, "{\"text\":\"" + subTitle + "\"}");
-                    Object subPacket = chatConstructor.newInstance(subEnum, subSerialized);
-                    Packets.sendPacket(player, subPacket);
-                }
-
-            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * Reset.
-         *
-         * @param player the player
-         */
-        public static void reset(Player player) {
-            try {
-                if (resetEnum == null)
-                    sendTitle(player, "", "", 0, 0, 0);
-                else {
-                    Object titlePacket = chatConstructor.newInstance(resetEnum, null);
-                    Packets.sendPacket(player, titlePacket);
-                }
-            } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
 }

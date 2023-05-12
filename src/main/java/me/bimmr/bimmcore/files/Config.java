@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -39,8 +40,8 @@ public class Config {
         return (new File(fileManager.getPlugin().getDataFolder(), this.name)).exists();
     }
 
-    public void removeFile() {
-        this.file.delete();
+    public boolean removeFile() {
+        return this.file.delete();
     }
 
     public YamlConfiguration get() {
@@ -70,12 +71,12 @@ public class Config {
             this.file = new File(fileManager.getPlugin().getDataFolder(), this.name);
         this.config = YamlConfiguration.loadConfiguration(this.file);
         try {
-            Reader defConfigStream = new InputStreamReader(this.resourcePlugin.getResource(this.name), "UTF8");
+            Reader defConfigStream = new InputStreamReader(this.resourcePlugin.getResource(this.name), StandardCharsets.UTF_8);
             if (defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
                 this.config.setDefaults((Configuration) defConfig);
             }
-        } catch (UnsupportedEncodingException | NullPointerException unsupportedEncodingException) {
+        } catch (NullPointerException ignored) {
         }
         return this;
     }
@@ -134,8 +135,7 @@ public class Config {
     public ArrayList<String> getKeys(String path, boolean deep) {
         ArrayList<String> list = new ArrayList<>();
         if (get(path) != null)
-            for (String name : get().getConfigurationSection(path).getKeys(deep))
-                list.add(name);
+            list.addAll(get().getConfigurationSection(path).getKeys(deep));
         return list;
     }
 

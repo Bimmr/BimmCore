@@ -60,18 +60,16 @@ public class Anvil {
         private static Constructor<?> conContainerAnvil;
 
         static {
-            if (BimmCore.supports(14)) {
                 nmsContainerAccess = Reflection.getNMSClass("ContainerAccess");
                 nmsContainers = Reflection.getNMSClass("Containers");
 
                 conContainerAnvil = Reflection.getConstructor(nmsContainerAnvil, int.class, nmsPlayerInventory, nmsContainerAccess);
-            }
+
         }
 
         public static Inventory getInventory(Player player) {
             Object playerHandler = Reflection.getHandle(player);
 
-            if (BimmCore.supports(14)) {
                 Method metContainerAt = Reflection.getMethod(nmsContainerAccess, "at", nmsWorld, nmsBlockPosition);
 
                 Object objInventory = Reflection.get("inventory", playerHandler);
@@ -86,25 +84,7 @@ public class Anvil {
 
                 Object objBukkitView = Reflection.invokeMethod("getBukkitView", objContainerAnvil);
                 return (Inventory) Reflection.invokeMethod("getTopInventory", objBukkitView);
-            } else return null;
-//
-//
-//                for(AnvilSlot AS : items.keySet()) inventory.setItem(AS.getSlot(), items.get(AS));
-//
-//                int ID = (Integer) NMSManager.invokeMethod("nextContainerCounter", P);
-//
-//                Object PC = NMSManager.getPlayerField(player, "playerConnection");
-//                Object PPOOW = PacketPlayOutOpenWindow.getConstructor(int.class, Containers, NMSManager.getNMSClass("IChatBaseComponent")).newInstance(ID, NMSManager.getField(Containers, "ANVIL").get(Containers), CM.newInstance(ChatColor.translateAlternateColorCodes(colorchar, Title), new Object[]{}));
-//
-//                Method SP = NMSManager.getMethod("sendPacket", PC.getClass(), PacketPlayOutOpenWindow);
-//                SP.invoke(PC, PPOOW);
-//
-//                Field AC = NMSManager.getField(EntityHuman, "activeContainer");
-//                if(AC != null) {
-//                    AC.set(P, CA);
-//                    NMSManager.getField(NMSManager.getNMSClass("Container"), "windowId").set(AC.get(P), ID);
-//                    NMSManager.getMethod("addSlotListener", AC.get(P).getClass(), P.getClass()).invoke(AC.get(P), P);
-//                }
+
         }
     }
 }

@@ -1,8 +1,8 @@
 package me.bimmr.bimmcore.messages.fancymessage;
 
-import me.bimmr.bimmcore.BimmCore;
 import me.bimmr.bimmcore.reflection.Reflection;
 import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -22,34 +22,6 @@ import java.util.List;
  * A Utilities/Builder class for the BaseComponents API
  */
 public class FancyMessage {
-
-    //Show Item
-    private static Class<?> classCraftItemStack;
-    private static Method methodAsNMSCopy;
-    private static Class<?> classNBTTagCompound;
-    private static Constructor<?> consNBTTagCompound;
-    private static Class<?> classNmsItemStack;
-    private static Method nmsItemStackSave;
-
-    //Append FancyMessage together
-    private static Class classComponentBuilder = Reflection.getClass("net.md_5.bungee.api.chat.ComponentBuilder");
-    private static Field fieldParts = Reflection.getField(classComponentBuilder, "parts");
-
-    static {
-        classCraftItemStack = Reflection.getCraftClass("inventory.CraftItemStack");
-        methodAsNMSCopy = Reflection.getMethod(classCraftItemStack, "asNMSCopy", ItemStack.class);
-
-        if(BimmCore.supports(17)) {
-            classNBTTagCompound = Reflection.getNBTClass("NBTTagCompound");
-            classNmsItemStack = Reflection.getNMWClass("item.ItemStack");
-        }
-        else{
-            classNBTTagCompound = Reflection.getNMSClass("NBTTagCompound");
-            classNmsItemStack = Reflection.getNMSClass("ItemStack");
-        }
-        consNBTTagCompound = Reflection.getConstructor(classNBTTagCompound);
-        nmsItemStackSave = Reflection.getMethod(classNmsItemStack, "save", classNBTTagCompound);
-    }
 
     private BaseComponent[] built;
     private ComponentBuilder builder;
@@ -91,15 +63,9 @@ public class FancyMessage {
 
     public FancyMessage then(FancyMessage fancyMessage) {
         if (fancyMessage != null) {
-            if (BimmCore.supports(12)) {
                 for (BaseComponent component : fancyMessage.getBaseComponents())
                     builder.append(component, ComponentBuilder.FormatRetention.NONE);
-            } else {
-                builder.append("");
-                Object parts = Reflection.get(fieldParts, builder);
-                for (BaseComponent component : fancyMessage.getBaseComponents())
-                    ((List<BaseComponent>) parts).add(component);
-            }
+
         }
         return this;
     }
@@ -113,45 +79,18 @@ public class FancyMessage {
     public FancyMessage tooltip(String... strings) {
 
         if (strings != null && strings.length >= 1 && strings[0] != null) {
-            if (BimmCore.supports(1.17)) {
                 List<Text> textList = new ArrayList<>();
                 for (String string : strings)
                     textList.add(new Text(string));
                 builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, textList.toArray(new Text[textList.size()])));
 
-            } else {
-                    ComponentBuilder component = new ComponentBuilder(strings[0]);
-                    for (int i = 1; i != strings.length; i++) {
-                        component.append("\n");
-                        component.append(strings[i]);
-                    }
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component.create()));
-            }
         }
         return this;
     }
 
     public FancyMessage showItem(ItemStack item) {
-
         if (item != null && item.getType() != Material.AIR) {
-
-//              net.minecraft.server.v1_15_R1.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(item);
-                Object asNMSCopy = Reflection.invokeMethod(methodAsNMSCopy, null, item);
-
-//        NBTTagCompound compound = new NBTTagCompound();
-                Object compound = Reflection.newInstance(consNBTTagCompound);
-
-//        nmsItemStack.save(compound);
-                if (nmsItemStackSave != null && asNMSCopy != null && compound != null) {
-                    Reflection.invokeMethod(nmsItemStackSave, asNMSCopy, compound);
-
-                    String json = compound.toString();
-                    BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                            new TextComponent(json)
-                    };
-
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents));
-                }
+            //TODO: Find a way to do this with NMS
         }
         return this;
     }

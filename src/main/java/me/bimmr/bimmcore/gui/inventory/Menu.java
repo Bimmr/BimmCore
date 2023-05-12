@@ -38,13 +38,9 @@ public class Menu {
     public static ItemStack NEXTPAGEITEM;
 
     static {
-        if (BimmCore.supports(13)) {
             NEXTPAGEITEM = (new Items(new ItemStack(Material.PLAYER_HEAD))).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTdiMDNiNzFkM2Y4NjIyMGVmMTIyZjk4MzFhNzI2ZWIyYjI4MzMxOWM3YjYyZTdkY2QyZDY0ZDk2ODIifX19").getItem();
             PREVIOUSPAGEITEM = (new Items(new ItemStack(Material.PLAYER_HEAD))).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("ewogICJ0aW1lc3RhbXAiIDogMTU4OTg5NTU1NjczNiwKICAicHJvZmlsZUlkIiA6ICI3NTE0NDQ4MTkxZTY0NTQ2OGM5NzM5YTZlMzk1N2JlYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGFua3NNb2phbmciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGRjNDVmN2RmNTc4OTlhZTZiYzUzNzQ1MDk2OTc1MWJlYzgxZTQ5Mjk2Y2IwMTI0OWQ4MzQ2MDc2ZTNkMjllOCIKICAgIH0KICB9Cn0=").getItem();
-        } else {
-            NEXTPAGEITEM = (new Items(new ItemStack(Material.valueOf("SKULL_ITEM")))).setDamage(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "->").setSkullOwner("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTdiMDNiNzFkM2Y4NjIyMGVmMTIyZjk4MzFhNzI2ZWIyYjI4MzMxOWM3YjYyZTdkY2QyZDY0ZDk2ODIifX19").getItem();
-            PREVIOUSPAGEITEM = (new Items(new ItemStack(Material.valueOf("SKULL_ITEM")))).setDamage(3).setDisplayName("" + ChatColor.YELLOW + ChatColor.BOLD + "<-").setSkullOwner("ewogICJ0aW1lc3RhbXAiIDogMTU4OTg5NTU1NjczNiwKICAicHJvZmlsZUlkIiA6ICI3NTE0NDQ4MTkxZTY0NTQ2OGM5NzM5YTZlMzk1N2JlYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGFua3NNb2phbmciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGRjNDVmN2RmNTc4OTlhZTZiYzUzNzQ1MDk2OTc1MWJlYzgxZTQ5Mjk2Y2IwMTI0OWQ4MzQ2MDc2ZTNkMjllOCIKICAgIH0KICB9Cn0=").getItem();
-        }
+
     }
 
     private String name;
@@ -448,17 +444,10 @@ public class Menu {
 
         if (clickEvent != null) {
             clickEvent.menuObject = this;
-            if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
                 itemStack = SingleClickEventUtil.addUUIDTag(id, itemStack);
                 this.clickEvents.put(id, clickEvent);
-            } else {
-                Items items = new Items(itemStack);
-                while (this.oldClickEvent.containsKey(items.toString()))
-                    items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
-                this.oldClickEvent.put(items.toString(), clickEvent);
-                itemStack = items.getItem();
-            }
+
         }
         while (page < this.pages.size() && ((this.bordered && (this.pages.get(page)).size() >= 28) || (!this.bordered && (this.pages.get(page)).size() >= 45)))
             page++;
@@ -636,22 +625,10 @@ public class Menu {
 
         if (clickEvent != null) {
             clickEvent.menuObject = this;
-            if (BimmCore.supports(13)) {
                 UUID id = UUID.randomUUID();
                 item = SingleClickEventUtil.addUUIDTag(id, item);
                 this.clickEvents.put(id, clickEvent);
-            } else {
-                Items items = new Items(item);
-                int i = 0;
-                while (this.oldClickEvent.containsKey(items.toString())) {
-                    i++;
-                    if (i > 16)
-                        break;
-                    items.setDisplayName(ChatColor.RESET + items.getItem().getItemMeta().getDisplayName());
-                }
-                this.oldClickEvent.put(items.toString(), clickEvent);
-                item = items.getItem();
-            }
+
         }
         this.toSetItems.put(new Integer[]{page, slot}, item);
         return this;
@@ -1052,13 +1029,10 @@ public class Menu {
      * @return Get the ClickEvent for an item
      */
     public ClickEvent getClickEvent(ItemStack itemStack) {
-        if (BimmCore.supports(13)) {
             UUID id = SingleClickEventUtil.getUUIDFromTag(itemStack);
             if (id != null)
                 return this.clickEvents.get(id);
-        }
-        if (this.oldClickEvent.containsKey(new Items(itemStack).toString()))
-            return this.oldClickEvent.get(new Items(itemStack).toString());
+
 
         return null;
     }
