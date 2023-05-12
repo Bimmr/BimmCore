@@ -5,16 +5,15 @@ import org.bukkit.ChatColor;
 import java.util.Random;
 
 /**
- * Utilities class to get a random color/format
+ * The type Random chat color.
  */
 public class RandomChatColor {
 
     /**
-     * Gets a random ChatColor from the given ChatColors
-     * (Black is not a possible outcome because black is hard to read)
+     * Gets color.
      *
      * @param validChatcolors the valid chatcolors
-     * @return color
+     * @return the color
      */
     public static ChatColor getColor(ChatColor... validChatcolors) {
         Random r = new Random(System.nanoTime());
@@ -32,10 +31,10 @@ public class RandomChatColor {
     }
 
     /**
-     * Get a random ChatColor(Format) from the given ChatColor(Format)s
+     * Gets format.
      *
      * @param chatFormats the chat formats
-     * @return format
+     * @return the format
      */
     public static ChatColor getFormat(ChatColor... chatFormats) {
         Random r = new Random(System.nanoTime());

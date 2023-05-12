@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.UUID;
 
 /**
- * A FancyMessage's ClickEvent
+ * The type Fancy click event.
  */
 public abstract class FancyClickEvent {
     private UUID uuid;
@@ -17,17 +17,16 @@ public abstract class FancyClickEvent {
     private BukkitTask removal;
 
     /**
-     * Default Constructor
-     * By default will self delete after 5 minutes from first message. Resets if clicked again within the time
+     * Instantiates a new Fancy click event.
      */
     public FancyClickEvent() {
         this(true);
     }
 
     /**
-     * Constructor to remove the "removeAfter5Min"
+     * Instantiates a new Fancy click event.
      *
-     * @param removeAfter5Min If the FancyClick is auto removed after 5 minutes
+     * @param removeAfter5Min the remove after 5 min
      */
     public FancyClickEvent(boolean removeAfter5Min) {
         this.uuid = UUID.randomUUID();
@@ -35,38 +34,40 @@ public abstract class FancyClickEvent {
     }
 
     /**
-     * @return Get the Player
+     * Gets player.
+     *
+     * @return the player
      */
     public Player getPlayer() {
         return player;
     }
 
     /**
-     * Set the player
+     * Sets player.
      *
-     * @param player The Player
+     * @param player the player
      */
     public void setPlayer(Player player) {
         this.player = player;
     }
 
     /**
+     * Gets uuid.
      *
-     *
-     * @return Get the UUID
+     * @return the uuid
      */
     public UUID getUUID() {
         return uuid;
     }
 
     /**
-     * Abstract CallBack
+     * On click.
      */
     public abstract void onClick();
 
 
     /**
-     * Remove the Event
+     * Start removal.
      */
     public void startRemoval() {
         if (removeAfter5Min) {

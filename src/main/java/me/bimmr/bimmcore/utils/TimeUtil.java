@@ -1,9 +1,8 @@
 package me.bimmr.bimmcore.utils;
 
 
-
 /**
- * A Utilities class to manage time
+ * The type Time util.
  */
 public class TimeUtil {
 
@@ -14,6 +13,16 @@ public class TimeUtil {
     private static Interval minute = new Interval("Minute", "Minutes", "m");
     private static Interval second = new Interval("Second", "Seconds", "s");
 
+    /**
+     * Sets interval strings.
+     *
+     * @param year   the year
+     * @param month  the month
+     * @param day    the day
+     * @param hour   the hour
+     * @param minute the minute
+     * @param second the second
+     */
     public static void setIntervalStrings(Interval year, Interval month, Interval day, Interval hour, Interval minute, Interval second) {
         TimeUtil.year = year;
         TimeUtil.month = month;
@@ -23,6 +32,13 @@ public class TimeUtil {
         TimeUtil.second = second;
     }
 
+    /**
+     * Gets interval.
+     *
+     * @param timeInterval the time interval
+     * @param time         the time
+     * @return the interval
+     */
     public static long getInterval(TimeInterval timeInterval, long time) {
 
         long minutes = time / 60;
@@ -67,6 +83,13 @@ public class TimeUtil {
         return value;
     }
 
+    /**
+     * Gets exact time.
+     *
+     * @param timeFormat the time format
+     * @param time       the time
+     * @return the exact time
+     */
     public static String getExactTime(TimeFormat timeFormat, long time) {
         long minutes = time / 60;
         time %= 60;
@@ -98,6 +121,13 @@ public class TimeUtil {
         return exactTime;
     }
 
+    /**
+     * Gets time.
+     *
+     * @param timeFormat the time format
+     * @param time       the time
+     * @return the time
+     */
     public static String getTime(TimeFormat timeFormat, long time) {
 
         long minutes = time / 60;
@@ -124,21 +154,65 @@ public class TimeUtil {
         return timeString;
     }
 
-    public static enum TimeFormat {SHORT, LONG}
+    /**
+     * The enum Time format.
+     */
+    public static enum TimeFormat {
+        /**
+         * Short time format.
+         */
+        SHORT,
+        /**
+         * Long time format.
+         */
+        LONG}
 
 
     /**
-     * A single type of time
+     * The enum Time interval.
      */
     public static enum TimeInterval {
-        YEAR, MONTH, DAY, HOUR, MINUTE, SECOND
+        /**
+         * Year time interval.
+         */
+        YEAR,
+        /**
+         * Month time interval.
+         */
+        MONTH,
+        /**
+         * Day time interval.
+         */
+        DAY,
+        /**
+         * Hour time interval.
+         */
+        HOUR,
+        /**
+         * Minute time interval.
+         */
+        MINUTE,
+        /**
+         * Second time interval.
+         */
+        SECOND
     }
 
+    /**
+     * The type Interval.
+     */
     public static class Interval {
         private String single, plural;
         private String small;
 
 
+        /**
+         * Instantiates a new Interval.
+         *
+         * @param single the single
+         * @param plural the plural
+         * @param small  the small
+         */
         public Interval(String single, String plural, String small) {
             this.single = single;
             this.plural = plural;

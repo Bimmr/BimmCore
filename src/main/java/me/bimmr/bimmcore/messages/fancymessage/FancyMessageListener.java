@@ -8,15 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Listener for the FancyMessage Click Callbacks
+ * The type Fancy message listener.
  */
 public class FancyMessageListener implements Listener {
+    /**
+     * The constant chats.
+     */
     public static List<FancyClickEvent> chats = new ArrayList<>();
 
     /**
-     * The FancyMessage OnClick Callback Listener
+     * Chat click.
      *
-     * @param event The PlayercommandPreprocessEvent
+     * @param event the event
      */
     @EventHandler
     public void chatClick(PlayerCommandPreprocessEvent event) {

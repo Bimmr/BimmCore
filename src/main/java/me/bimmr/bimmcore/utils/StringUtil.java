@@ -13,19 +13,16 @@ import java.util.regex.Pattern;
 
 
 /**
- * A Utilities class to manage strings
+ * The type String util.
  */
 public class StringUtil {
     private final static int CENTER_PX = 154;
 
     /**
-     * Adds colour to the string
-     * <br> - Supports &1 Old Colour code
-     * <br> - Supports &123456 Hex Colour code
-     * <br - Supports <&#123456>Gradient Colours</&#654321>
+     * Add color string.
      *
      * @param string the string
-     * @return string
+     * @return the string
      */
     public static String addColor(String string) {
 
@@ -58,6 +55,14 @@ public class StringUtil {
         return msg;
     }
 
+    /**
+     * Add gradient string.
+     *
+     * @param string   the string
+     * @param startHex the start hex
+     * @param endHex   the end hex
+     * @return the string
+     */
     public static String addGradient(String string, String startHex, String endHex){
         String msg = addGradients(string, startHex, endHex);
         msg = StringUtil.addColor(msg);
@@ -95,8 +100,8 @@ public class StringUtil {
     /**
      * Add color list.
      *
-     * @param strings List of Strings
-     * @return Get the list of strings with colours added
+     * @param strings the strings
+     * @return the list
      */
     public static List<String> addColor(List<String> strings) {
         for (int i = 0; i < strings.size(); i++)
@@ -105,23 +110,23 @@ public class StringUtil {
     }
 
     /**
-     * Gets a String with ChatColor#COLOUR_CHAR converted to '&amp;'
+     * Replace to yaml friendly colors string.
      *
      * @param string the string
-     * @return string
+     * @return the string
      */
     public static String replaceToYAMLFriendlyColors(String string) {
         return string.replaceAll("" + ChatColor.COLOR_CHAR, "&");
     }
 
     /**
-     * Combine args between startAt and endAt to a single string joined by ' '
+     * Combine args string.
      *
      * @param args     the args
      * @param startAt  the start at
      * @param endAt    the end at
      * @param useComma the use comma
-     * @return string
+     * @return the string
      */
     public static String combineArgs(String[] args, int startAt, int endAt, boolean useComma) {
         endAt++;
@@ -133,10 +138,10 @@ public class StringUtil {
     }
 
     /**
-     * Change every individual word in a string to proper case
+     * Gets propercase.
      *
      * @param line the line
-     * @return propercase
+     * @return the propercase
      */
     public static String getPropercase(String line) {
         try {
@@ -157,10 +162,10 @@ public class StringUtil {
     }
 
     /**
-     * Get a string splitting at '|' to make a List of type String
+     * Gets lines from string.
      *
      * @param line the line
-     * @return lines from string
+     * @return the lines from string
      */
     public static List<String> getLinesFromString(String line) {
         List<String> lines = new ArrayList<String>();
@@ -171,10 +176,10 @@ public class StringUtil {
     }
 
     /**
-     * Get a string with every char having a different color
+     * Rainbow chat color string.
      *
-     * @param string the message
-     * @return the message with each letter as a different colour
+     * @param string the string
+     * @return the string
      */
     public static String rainbowChatColor(String string) {
         int lastColor = 0;
@@ -216,11 +221,11 @@ public class StringUtil {
     }
 
     /**
-     * Make a string a specific length, filling with white spaces
+     * Fixed length string string.
      *
      * @param string the string
      * @param length the length
-     * @return the string as the length
+     * @return the string
      */
     public static String fixedLengthString(String string, int length) {
         if (length <= string.length())
@@ -230,12 +235,12 @@ public class StringUtil {
     }
 
     /**
-     * Check if the string is in the list of strings
+     * Equals strings boolean.
      *
-     * @param caseSensitive is it case sensitive
-     * @param string        the string to check
-     * @param strings       all the possible matches
-     * @return if the string matches
+     * @param caseSensitive the case sensitive
+     * @param string        the string
+     * @param strings       the strings
+     * @return the boolean
      */
     public static boolean equalsStrings(boolean caseSensitive, String string, String... strings) {
         for (String item : strings)

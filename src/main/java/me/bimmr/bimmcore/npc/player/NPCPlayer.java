@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 /**
- * The type Npc.
+ * The type Npc player.
  */
 public class NPCPlayer extends NPCBase {
 
@@ -37,10 +37,23 @@ public class NPCPlayer extends NPCBase {
     private Viewer viewer;
 
 
+    /**
+     * Instantiates a new Npc player.
+     *
+     * @param name     the name
+     * @param location the location
+     */
     public NPCPlayer(String name, Location location) {
         this(name, location, name);
     }
 
+    /**
+     * Instantiates a new Npc player.
+     *
+     * @param name     the name
+     * @param location the location
+     * @param skin     the skin
+     */
     public NPCPlayer(String name, Location location, String skin) {
         super(NPCType.PLAYER, name, location);
 
@@ -71,7 +84,7 @@ public class NPCPlayer extends NPCBase {
     /**
      * Gets skin.
      *
-     * @return The Property from the GameProfile
+     * @return the skin
      */
     public Property getSkin() {
         if (this.gameProfile.getProperties().isEmpty())
@@ -79,23 +92,38 @@ public class NPCPlayer extends NPCBase {
         return (Property) this.gameProfile.getProperties().get("textures").toArray()[0];
     }
 
+    /**
+     * Sets skin.
+     *
+     * @param nameOrUUID the name or uuid
+     */
     public void setSkin(String nameOrUUID) {
         setSkin(nameOrUUID, true);
     }
 
+    /**
+     * Gets skin texture.
+     *
+     * @return the skin texture
+     */
     public String getSkinTexture() {
         return getSkin().getValue();
     }
 
+    /**
+     * Gets skin signature.
+     *
+     * @return the skin signature
+     */
     public String getSkinSignature() {
         return getSkin().getSignature();
     }
 
     /**
-     * Set the skin
+     * Sets skin.
      *
-     * @param nameOrUUID the name of uuid
-     * @param refresh    to refresh the npc's skin right away
+     * @param nameOrUUID the name or uuid
+     * @param refresh    the refresh
      */
     public void setSkin(String nameOrUUID, boolean refresh) {
         if (skins.containsKey(nameOrUUID)) {
@@ -130,24 +158,40 @@ public class NPCPlayer extends NPCBase {
     }
 
     /**
-     * Show the NPC to the player
+     * Show.
      *
-     * @param player The Player
+     * @param player the player
      */
     public void show(Player player) {
         this.viewer.addPlayer(player.getName());
         this.viewer.update(player);
     }
 
+    /**
+     * Refresh.
+     */
     public void refresh() {
         destroy();
         create();
     }
 
+    /**
+     * Sets skin.
+     *
+     * @param texture   the texture
+     * @param signature the signature
+     */
     public void setSkin(String texture, String signature) {
         setSkin(texture, signature, true);
     }
 
+    /**
+     * Sets skin.
+     *
+     * @param texture   the texture
+     * @param signature the signature
+     * @param refresh   the refresh
+     */
     public void setSkin(String texture, String signature, boolean refresh) {
         this.gameProfile.getProperties().removeAll("textures");
         this.gameProfile.getProperties().put("textures", new Property("textures", texture, signature));
@@ -169,17 +213,14 @@ public class NPCPlayer extends NPCBase {
     }
 
     /**
-     * Hide the NPC from the player
+     * Hide.
      *
-     * @param player The Player
+     * @param player the player
      */
     public void hide(Player player) {
         this.viewer.removePlayer(player.getName());
     }
 
-    /**
-     * Destroy the NPC for all players
-     */
     protected void destroyed() {
         if (this.entityPlayer != null && this.viewer != null)
             for (String p : this.viewer.getPlayers())
@@ -214,25 +255,26 @@ public class NPCPlayer extends NPCBase {
     }
 
     /**
-     * Get the NPC's GameProfile
+     * Gets game profile.
      *
-     * @return game profile
+     * @return the game profile
      */
     public GameProfile getGameProfile() {
         return this.gameProfile;
     }
 
 
-    /**
-     * Gets id.
-     *
-     * @return Get The NPC's Id
-     */
     public int getId() {
         return NPCAPI.getEntityID(this.entityPlayer);
     }
 
 
+    /**
+     * Is shown boolean.
+     *
+     * @param player the player
+     * @return the boolean
+     */
     public boolean isShown(Player player) {
         return this.entityPlayer != null && this.viewer.isViewing(player.getName());
     }
@@ -318,11 +360,11 @@ public class NPCPlayer extends NPCBase {
         }
 
         /**
-         * Set the Entity's Yaw Rotation then send to player
+         * Sets rotation.
          *
-         * @param entity The Entity
-         * @param player The Player
-         * @param yaw    The Yaw
+         * @param entity the entity
+         * @param player the player
+         * @param yaw    the yaw
          */
         public static void setRotation(Object entity, Player player, float yaw) {
             Object packetPlayOutEntityHeadRotation = Reflection.newInstance(packetPlayOutEntityHeadRotationConstructor, entity, (byte) ((yaw * 256.0F) / 360.0F));
@@ -330,20 +372,20 @@ public class NPCPlayer extends NPCBase {
         }
 
         /**
-         * Set Entity's Location
+         * Sets location.
          *
-         * @param entity   The Entity
-         * @param location The Location
+         * @param entity   the entity
+         * @param location the location
          */
         public static void setLocation(Object entity, Location location) {
             Reflection.invokeMethod(setLocation, entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
 
         /**
-         * Show the Entity to the player
+         * Show.
          *
-         * @param entity The Entity
-         * @param player The Player
+         * @param entity the entity
+         * @param player the player
          */
         public static void show(Object entity, Player player) {
             if (entity instanceof NPCPlayer)
@@ -367,21 +409,17 @@ public class NPCPlayer extends NPCBase {
                     Packets.sendPacket(player, packetPlayOutPlayerInfoRemove), 20);
         }
 
-        /**
-         * @param itemStack The ItemStack
-         * @return Get the Itemstack as a CraftItemStack
-         */
         private static Object getCraftItemStack(ItemStack itemStack) {
             return Reflection.invokeMethod(asNMSCopy, craftItemStackClass, itemStack);
         }
 
         /**
-         * Equip the Entity for the Player
+         * Equip.
          *
-         * @param entity The Entity
-         * @param player The Player
-         * @param slot   The Slot
-         * @param item   The Item
+         * @param entity the entity
+         * @param player the player
+         * @param slot   the slot
+         * @param item   the item
          */
         public static void equip(Object entity, Player player, ItemSlots slot, ItemStack item) {
             Object oSlot = itemSlotEnumMainHand;
@@ -414,8 +452,8 @@ public class NPCPlayer extends NPCBase {
         /**
          * Create object.
          *
-         * @param npcPlayer The NPC
-         * @return Get the Created Entity
+         * @param npcPlayer the npc player
+         * @return the object
          */
         public static Object create(NPCPlayer npcPlayer) {
 //            MinecraftServer minecraftServer = ((CraftServer) Bukkit.getServer()).getServer();
@@ -434,10 +472,10 @@ public class NPCPlayer extends NPCBase {
         }
 
         /**
-         * Destroy the NPC for the Player
+         * Destroy.
          *
-         * @param npcPlayer The NPC
-         * @param player    The Player
+         * @param npcPlayer the npc player
+         * @param player    the player
          */
         public static void destroy(NPCPlayer npcPlayer, Player player) {
             Object[] entities = (Object[]) Array.newInstance(entityPlayerClass, 1);
@@ -450,6 +488,12 @@ public class NPCPlayer extends NPCBase {
             Packets.sendPacket(player, packetPlayOutPlayerInfoRemove, playOutEntityDestroyPacket);
         }
 
+        /**
+         * Gets entity id.
+         *
+         * @param entityPlayer the entity player
+         * @return the entity id
+         */
         public static int getEntityID(Object entityPlayer) {
             int id = (int) Reflection.invokeMethod(entityPlayerClass, "getId", entityPlayer);
             return id;

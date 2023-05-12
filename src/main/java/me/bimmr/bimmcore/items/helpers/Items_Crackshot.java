@@ -5,15 +5,27 @@ import me.bimmr.bimmcore.items.Items;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * CrackShot support for {@link Items}
+ * The type Items crackshot.
  */
 public class Items_Crackshot {
 
+    /**
+     * Gets gun item stack.
+     *
+     * @param code the code
+     * @return the gun item stack
+     */
     public static ItemStack getGunItemStack(String code) {
         CSUtility cs = new CSUtility();
         return cs.generateWeapon(code.replaceAll("_", " "));
     }
 
+    /**
+     * Gets gun name.
+     *
+     * @param itemStack the item stack
+     * @return the gun name
+     */
     public static String getGunName(ItemStack itemStack) {
         CSUtility cs = new CSUtility();
         if (cs.getWeaponTitle(itemStack) != null)

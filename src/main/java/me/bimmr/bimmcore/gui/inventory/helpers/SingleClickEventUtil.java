@@ -9,18 +9,18 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.UUID;
 
 /**
- * A Utilities class for adding a persistent uuid to the itemstack
+ * The type Single click event util.
  */
 public class SingleClickEventUtil {
 
     private static final NamespacedKey key = new NamespacedKey(BimmCore.getInstance(), "bimmcore");
 
     /**
-     * Add UUIDTag to itemstack
+     * Add uuid tag item stack.
      *
-     * @param id   The UUID
-     * @param item The ItemStack
-     * @return The adjusted ItemStack
+     * @param id   the id
+     * @param item the item
+     * @return the item stack
      */
     public static ItemStack addUUIDTag(UUID id, ItemStack item) {
         if (item.hasItemMeta()) {
@@ -32,8 +32,10 @@ public class SingleClickEventUtil {
     }
 
     /**
-     * @param itemStack The ItemStack
-     * @return Get the UUID From the ItemStack
+     * Gets uuid from tag.
+     *
+     * @param itemStack the item stack
+     * @return the uuid from tag
      */
     public static UUID getUUIDFromTag(ItemStack itemStack) {
         if (itemStack.hasItemMeta()) {

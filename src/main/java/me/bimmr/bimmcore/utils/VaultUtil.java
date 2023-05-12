@@ -7,24 +7,29 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 
 /**
- * An easy way to handle vault api
+ * The type Vault util.
  */
 public class VaultUtil {
-
-    /**
-     * @param use
-     * the hasVault to set
-     */
 
     private static Economy    economy;
     private static Permission permission;
 
+    /**
+     * Gets economy.
+     *
+     * @return the economy
+     */
     public static Economy getEconomy() {
         if (economy == null)
             setupEconomy();
         return economy;
     }
 
+    /**
+     * Gets permission.
+     *
+     * @return the permission
+     */
     public static Permission getPermission() {
         if (permission == null)
             setupPermission();
@@ -32,20 +37,15 @@ public class VaultUtil {
     }
 
     /**
-     * Does the server have vault and did everything for vault show okay
+     * Has vault on server boolean.
      *
-     * @return true/false
+     * @return the boolean
      */
     public static boolean hasVaultOnServer() {
         return Bukkit.getPluginManager().getPlugin("Vault") != null;
 
     }
 
-    /**
-     * Load Permissions
-     *
-     * @return
-     */
     private static boolean setupPermission() {
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
@@ -54,11 +54,6 @@ public class VaultUtil {
         return (permission != null);
     }
 
-    /**
-     * Load Economy
-     *
-     * @return if it loaded
-     */
     private static boolean setupEconomy() {
         try {
             RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);

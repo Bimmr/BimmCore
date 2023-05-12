@@ -8,66 +8,65 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+
 /**
- * An utility class that simplifies reflection in Bukkit plugins.
- *
- * @author Kristian
+ * The type Tiny protocol reflection.
  */
 public final class TinyProtocolReflection {
     /**
-     * An interface for invoking a specific constructor.
+     * The interface Constructor invoker.
      */
     public interface ConstructorInvoker {
         /**
-         * Invoke a constructor for a specific class.
+         * Invoke object.
          *
-         * @param arguments - the arguments to pass to the constructor.
-         * @return The constructed object.
+         * @param arguments the arguments
+         * @return the object
          */
         public Object invoke(Object... arguments);
     }
 
     /**
-     * An interface for invoking a specific method.
+     * The interface Method invoker.
      */
     public interface MethodInvoker {
         /**
-         * Invoke a method on a specific target object.
+         * Invoke object.
          *
-         * @param target - the target object, or NULL for a static method.
-         * @param arguments - the arguments to pass to the method.
-         * @return The return value, or NULL if is void.
+         * @param target    the target
+         * @param arguments the arguments
+         * @return the object
          */
         public Object invoke(Object target, Object... arguments);
     }
 
     /**
-     * An interface for retrieving the field content.
+     * The interface Field accessor.
      *
-     * @param <T> - field type.
+     * @param <T> the type parameter
      */
     public interface FieldAccessor<T> {
         /**
-         * Retrieve the content of a field.
+         * Get t.
          *
-         * @param target - the target object, or NULL for a static field.
-         * @return The value of the field.
+         * @param target the target
+         * @return the t
          */
         public T get(Object target);
 
         /**
-         * Set the content of a field.
+         * Set.
          *
-         * @param target - the target object, or NULL for a static field.
-         * @param value - the new value of the field.
+         * @param target the target
+         * @param value  the value
          */
         public void set(Object target, Object value);
 
         /**
-         * Determine if the given object has this field.
+         * Has field boolean.
          *
-         * @param target - the object to test.
-         * @return TRUE if it does, FALSE otherwise.
+         * @param target the target
+         * @return the boolean
          */
         public boolean hasField(Object target);
     }
@@ -85,48 +84,52 @@ public final class TinyProtocolReflection {
     }
 
     /**
-     * Retrieve a field accessor for a specific field type and name.
+     * Gets field.
      *
-     * @param target - the target type.
-     * @param name - the name of the field, or NULL to ignore.
-     * @param fieldType - a compatible field type.
-     * @return The field accessor.
+     * @param <T>       the type parameter
+     * @param target    the target
+     * @param name      the name
+     * @param fieldType the field type
+     * @return the field
      */
     public static <T> FieldAccessor<T> getField(Class<?> target, String name, Class<T> fieldType) {
         return getField(target, name, fieldType, 0);
     }
 
     /**
-     * Retrieve a field accessor for a specific field type and name.
+     * Gets field.
      *
-     * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param name - the name of the field, or NULL to ignore.
-     * @param fieldType - a compatible field type.
-     * @return The field accessor.
+     * @param <T>       the type parameter
+     * @param className the class name
+     * @param name      the name
+     * @param fieldType the field type
+     * @return the field
      */
     public static <T> FieldAccessor<T> getField(String className, String name, Class<T> fieldType) {
         return getField(getClass(className), name, fieldType, 0);
     }
 
     /**
-     * Retrieve a field accessor for a specific field type and name.
+     * Gets field.
      *
-     * @param target - the target type.
-     * @param fieldType - a compatible field type.
-     * @param index - the number of compatible fields to skip.
-     * @return The field accessor.
+     * @param <T>       the type parameter
+     * @param target    the target
+     * @param fieldType the field type
+     * @param index     the index
+     * @return the field
      */
     public static <T> FieldAccessor<T> getField(Class<?> target, Class<T> fieldType, int index) {
         return getField(target, null, fieldType, index);
     }
 
     /**
-     * Retrieve a field accessor for a specific field type and name.
+     * Gets field.
      *
-     * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param fieldType - a compatible field type.
-     * @param index - the number of compatible fields to skip.
-     * @return The field accessor.
+     * @param <T>       the type parameter
+     * @param className the class name
+     * @param fieldType the field type
+     * @param index     the index
+     * @return the field
      */
     public static <T> FieldAccessor<T> getField(String className, Class<T> fieldType, int index) {
         return getField(getClass(className), fieldType, index);
@@ -177,40 +180,37 @@ public final class TinyProtocolReflection {
     }
 
     /**
-     * Search for the first publicly and privately defined method of the given name and parameter count.
+     * Gets method.
      *
-     * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param methodName - the method name, or NULL to skip.
-     * @param params - the expected parameters.
-     * @return An object that invokes this specific method.
-     * @throws IllegalStateException If we cannot find this method.
+     * @param className  the class name
+     * @param methodName the method name
+     * @param params     the params
+     * @return the method
      */
     public static MethodInvoker getMethod(String className, String methodName, Class<?>... params) {
         return getTypedMethod(getClass(className), methodName, null, params);
     }
 
     /**
-     * Search for the first publicly and privately defined method of the given name and parameter count.
+     * Gets method.
      *
-     * @param clazz - a class to start with.
-     * @param methodName - the method name, or NULL to skip.
-     * @param params - the expected parameters.
-     * @return An object that invokes this specific method.
-     * @throws IllegalStateException If we cannot find this method.
+     * @param clazz      the clazz
+     * @param methodName the method name
+     * @param params     the params
+     * @return the method
      */
     public static MethodInvoker getMethod(Class<?> clazz, String methodName, Class<?>... params) {
         return getTypedMethod(clazz, methodName, null, params);
     }
 
     /**
-     * Search for the first publicly and privately defined method of the given name and parameter count.
+     * Gets typed method.
      *
-     * @param clazz - a class to start with.
-     * @param methodName - the method name, or NULL to skip.
-     * @param returnType - the expected return type, or NULL to ignore.
-     * @param params - the expected parameters.
-     * @return An object that invokes this specific method.
-     * @throws IllegalStateException If we cannot find this method.
+     * @param clazz      the clazz
+     * @param methodName the method name
+     * @param returnType the return type
+     * @param params     the params
+     * @return the typed method
      */
     public static MethodInvoker getTypedMethod(Class<?> clazz, String methodName, Class<?> returnType, Class<?>... params) {
         for (final Method method : clazz.getDeclaredMethods()) {
@@ -242,24 +242,22 @@ public final class TinyProtocolReflection {
     }
 
     /**
-     * Search for the first publically and privately defined constructor of the given name and parameter count.
+     * Gets constructor.
      *
-     * @param className - lookup name of the class, see {@link #getClass(String)}.
-     * @param params - the expected parameters.
-     * @return An object that invokes this constructor.
-     * @throws IllegalStateException If we cannot find this method.
+     * @param className the class name
+     * @param params    the params
+     * @return the constructor
      */
     public static ConstructorInvoker getConstructor(String className, Class<?>... params) {
         return getConstructor(getClass(className), params);
     }
 
     /**
-     * Search for the first publically and privately defined constructor of the given name and parameter count.
+     * Gets constructor.
      *
-     * @param clazz - a class to start with.
-     * @param params - the expected parameters.
-     * @return An object that invokes this constructor.
-     * @throws IllegalStateException If we cannot find this method.
+     * @param clazz  the clazz
+     * @param params the params
+     * @return the constructor
      */
     public static ConstructorInvoker getConstructor(Class<?> clazz, Class<?>... params) {
         for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
@@ -285,14 +283,10 @@ public final class TinyProtocolReflection {
     }
 
     /**
-     * Retrieve a class from its full name, without knowing its type on compile time.
-     * <p>
-     * This is useful when looking up fields by a NMS or OBC type.
-     * <p>
+     * Gets untyped class.
      *
-     * @see {@link #getClass()} for more information.
-     * @param lookupName - the class name with variables.
-     * @return The class.
+     * @param lookupName the lookup name
+     * @return the untyped class
      */
     public static Class<Object> getUntypedClass(String lookupName) {
         @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -301,63 +295,35 @@ public final class TinyProtocolReflection {
     }
 
     /**
-     * Retrieve a class from its full name.
-     * <p>
-     * Strings enclosed with curly brackets - such as {TEXT} - will be replaced according to the following table:
-     * <p>
-     * <table border="1">
-     * <tr>
-     * <th>Variable</th>
-     * <th>Content</th>
-     * </tr>
-     * <tr>
-     * <td>{nms}</td>
-     * <td>Actual package name of net.minecraft.server.VERSION</td>
-     * </tr>
-     * <tr>
-     * <td>{obc}</td>
-     * <td>Actual pacakge name of org.bukkit.craftbukkit.VERSION</td>
-     * </tr>
-     * <tr>
-     * <td>{version}</td>
-     * <td>The current Minecraft package VERSION, if any.</td>
-     * </tr>
-     * </table>
+     * Gets class.
      *
-     * @param lookupName - the class name with variables.
-     * @return The looked up class.
-     * @throws IllegalArgumentException If a variable or class could not be found.
+     * @param lookupName the lookup name
+     * @return the class
      */
     public static Class<?> getClass(String lookupName) {
         return getCanonicalClass(expandVariables(lookupName));
     }
 
     /**
-     * Retrieve a class in the net.minecraft.server.VERSION.* package.
+     * Gets minecraft class.
      *
-     * @param name - the name of the class, excluding the package.
-     * @throws IllegalArgumentException If the class doesn't exist.
+     * @param name the name
+     * @return the minecraft class
      */
     public static Class<?> getMinecraftClass(String name) {
         return getCanonicalClass(NMS_PREFIX + "." + name);
     }
 
     /**
-     * Retrieve a class in the org.bukkit.craftbukkit.VERSION.* package.
+     * Gets craft bukkit class.
      *
-     * @param name - the name of the class, excluding the package.
-     * @throws IllegalArgumentException If the class doesn't exist.
+     * @param name the name
+     * @return the craft bukkit class
      */
     public static Class<?> getCraftBukkitClass(String name) {
         return getCanonicalClass(OBC_PREFIX + "." + name);
     }
 
-    /**
-     * Retrieve a class by its canonical name.
-     *
-     * @param canonicalName - the canonical name.
-     * @return The class.
-     */
     private static Class<?> getCanonicalClass(String canonicalName) {
         try {
             return Class.forName(canonicalName);
@@ -366,12 +332,6 @@ public final class TinyProtocolReflection {
         }
     }
 
-    /**
-     * Expand variables such as "{nms}" and "{obc}" to their corresponding packages.
-     *
-     * @param name - the full name of the class.
-     * @return The expanded string.
-     */
     private static String expandVariables(String name) {
         StringBuffer output = new StringBuffer();
         Matcher matcher = MATCH_VARIABLE.matcher(name);

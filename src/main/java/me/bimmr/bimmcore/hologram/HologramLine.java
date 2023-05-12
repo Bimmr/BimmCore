@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * HologramLine Class - Should only be used by Holograms
+ * The type Hologram line.
  */
 public class HologramLine extends TimedObject {
     private int id;
@@ -26,26 +26,24 @@ public class HologramLine extends TimedObject {
 
 
     /**
-     * Create a HologramLine - Should only be used by Holograms
-     * TimedEvent is null
+     * Instantiates a new Hologram line.
      *
-     * @param hologram  The Hologram
-     * @param location  The location for the hologram line
-     * @param text      The text for the hologram line
+     * @param hologram the hologram
+     * @param location the location
+     * @param text     the text
      */
     public HologramLine(Hologram hologram, Location location, String text) {
         this(hologram,  location, text, null, false);
     }
 
     /**
-     * Create a HologramLine - Should only be used by Holograms
-     * Doesn't start TimedEvent right away
+     * Instantiates a new Hologram line.
      *
-     * @param hologram  The Hologram
-     * @param location   The location for the hologram line
-     * @param text       The text for the hologram line
-     * @param timed The timed event to run
-     * @param time  the time
+     * @param hologram the hologram
+     * @param location the location
+     * @param text     the text
+     * @param timed    the timed
+     * @param time     the time
      */
     public HologramLine(Hologram hologram,  Location location, String text, Timed timed, int time) {
         this(hologram, location, text, new TimedEvent(time) {
@@ -55,28 +53,28 @@ public class HologramLine extends TimedObject {
             }
         }, false);
     }
+
     /**
-     * Create a HologramLine - Should only be used by Holograms
-     * Doesn't start TimedEvent right away
+     * Instantiates a new Hologram line.
      *
-     * @param hologram  The Hologram
-     * @param location   The location for the hologram line
-     * @param text       The text for the hologram line
-     * @param timedEvent The timed event to run
+     * @param hologram   the hologram
+     * @param location   the location
+     * @param text       the text
+     * @param timedEvent the timed event
      */
     public HologramLine(Hologram hologram,  Location location, String text, TimedEvent timedEvent) {
         this(hologram, location, text, timedEvent, false);
     }
 
     /**
-     * Create a HologramLine - Should only be used by Holograms
+     * Instantiates a new Hologram line.
      *
-     * @param hologram  The Hologram
-     * @param location        The location for the hologram line
-     * @param text            The text for the hologram line
-     * @param timed      The timed event to run
-     * @param time the time
-     * @param startTimedEvent If timed even is starting right away
+     * @param hologram        the hologram
+     * @param location        the location
+     * @param text            the text
+     * @param timed           the timed
+     * @param time            the time
+     * @param startTimedEvent the start timed event
      */
     public HologramLine(Hologram hologram, Location location, String text, Timed timed, int time, boolean startTimedEvent) {
         this(hologram, location, text, new TimedEvent(time) {
@@ -86,14 +84,15 @@ public class HologramLine extends TimedObject {
             }
         }, startTimedEvent);
     }
+
     /**
-     * Create a HologramLine - Should only be used by Holograms
+     * Instantiates a new Hologram line.
      *
-     * @param hologram  The Hologram
-     * @param location        The location for the hologram line
-     * @param text            The text for the hologram line
-     * @param timedEvent      The timed event to run
-     * @param startTimedEvent If timed even is starting right away
+     * @param hologram        the hologram
+     * @param location        the location
+     * @param text            the text
+     * @param timedEvent      the timed event
+     * @param startTimedEvent the start timed event
      */
     public HologramLine(Hologram hologram, Location location, String text, TimedEvent timedEvent, boolean startTimedEvent) {
         this.hologram = hologram;
@@ -107,37 +106,45 @@ public class HologramLine extends TimedObject {
     }
 
     /**
-     * @return Get Bukiit Entity's ID
+     * Gets id.
+     *
+     * @return the id
      */
     public int getId() {
         return this.id;
     }
 
     /**
-     * @return Get the HologramAPI Object
+     * Gets hologram object.
+     *
+     * @return the hologram object
      */
     public Object getHologramObject() {
         return this.hologramObject;
     }
 
     /**
-     * @return Get the HologramLine's Location
+     * Gets location.
+     *
+     * @return the location
      */
     public Location getLocation() {
         return this.location;
     }
 
     /**
-     * @return Get the HologramLine's Text
+     * Gets text.
+     *
+     * @return the text
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * Set the HologramLine's text
+     * Sets text.
      *
-     * @param text The Text to set
+     * @param text the text
      */
     public void setText(String text) {
         this.text = text;
@@ -146,19 +153,18 @@ public class HologramLine extends TimedObject {
     }
 
     /**
-     * Show the HologramLine to the player
-     * Calls {@link #showPlayer(Player)}
+     * Show player.
      *
-     * @param player Player's Name
+     * @param player the player
      */
     public void showPlayer(String player) {
         showPlayer(Bukkit.getPlayer(player));
     }
 
     /**
-     * Show the HologramLine to the player
+     * Show player.
      *
-     * @param player The player
+     * @param player the player
      */
     public void showPlayer(Player player) {
         HologramAPI.deleteHologram(this.id, player);
@@ -166,35 +172,31 @@ public class HologramLine extends TimedObject {
     }
 
     /**
-     * Remove the HologramLine from every player
+     * Remove.
      */
     public void remove() {
         HologramAPI.deleteHologram(this.id);
     }
 
     /**
-     * Remove the HologramLine from a specific player
-     * Calls {@link #removePlayer(Player)}
+     * Remove player.
      *
-     * @param player The player's name
+     * @param player the player
      */
     public void removePlayer(String player) {
         removePlayer(Bukkit.getPlayer(player));
     }
 
     /**
-     * Remove the HologramLine from a specific player
+     * Remove player.
      *
-     * @param player The player
+     * @param player the player
      */
     public void removePlayer(Player player) {
         HologramAPI.deleteHologram(this.id, player);
     }
 
 
-    /**
-     * HologramAPI Class
-     */
     private static class HologramAPI {
         private static Class<?> chatComponentText = Reflection.getNMSClass("ChatComponentText");
         private static Class<?> chatBaseComponent = Reflection.getNMSClass("IChatBaseComponent");
@@ -234,12 +236,6 @@ public class HologramLine extends TimedObject {
 
         }
 
-        /**
-         * Set the ArmorStand's Custom Name
-         *
-         * @param entityArmorStand The ArmorStand
-         * @param text             The name
-         */
         private static void setText(Object entityArmorStand, String text) {
             Object iText;
                 iText = Reflection.newInstance(chatComponentTextConstructor, text);
@@ -247,12 +243,6 @@ public class HologramLine extends TimedObject {
             Reflection.invokeMethod(setCustomNameMethod, entityArmorStand, iText);
         }
 
-        /**
-         * Create the ArmorStand Object
-         *
-         * @param location The location
-         * @return Array with [EntityID, NMS ArmorStandObject]
-         */
         private static Object[] createHologram(Location location) {
 
             Object entityArmorStand;
@@ -270,14 +260,22 @@ public class HologramLine extends TimedObject {
             Object id = getEntityID(entityArmorStand);
             return new Object[]{id, entityArmorStand};
         }
+
+        /**
+         * Gets entity id.
+         *
+         * @param entityPlayer the entity player
+         * @return the entity id
+         */
         public static int getEntityID(Object entityPlayer) {
             return (int) Reflection.invokeMethod(nmsArmorStandClass, "getId", entityPlayer);
         }
+
         /**
-         * Show the ArmorStand to the player
+         * Show to player.
          *
-         * @param entityArmorStand The ArmorStand object
-         * @param p                The player
+         * @param entityArmorStand the entity armor stand
+         * @param p                the p
          */
         public static void showToPlayer(Object entityArmorStand, Player p) {
             Object packetPlayOutSpawnEntityLiving = Reflection.newInstance(packetPlayOutSpawnEntityLivingConstructor, entityArmorStand);
@@ -287,10 +285,10 @@ public class HologramLine extends TimedObject {
         }
 
         /**
-         * Show the ArmorStand's MetaData to the player
+         * Show meta data to player.
          *
-         * @param entityArmorStand The ArmorStand object
-         * @param p                The player
+         * @param entityArmorStand the entity armor stand
+         * @param p                the p
          */
         public static void showMetaDataToPlayer(Object entityArmorStand, Player p) {
                 Object id = getEntityID(entityArmorStand);
@@ -301,9 +299,9 @@ public class HologramLine extends TimedObject {
         }
 
         /**
-         * Send DestroyPacket's for the ArmorStandObject
+         * Delete hologram.
          *
-         * @param id The ID of the ArmorStand
+         * @param id the id
          */
         public static void deleteHologram(int id) {
             for (Player p : Bukkit.getOnlinePlayers())
@@ -311,9 +309,9 @@ public class HologramLine extends TimedObject {
         }
 
         /**
-         * Send DestroyPacket's for the ArmorStandObject
+         * Delete hologram.
          *
-         * @param entityArmorStand The ArmorStand
+         * @param entityArmorStand the entity armor stand
          */
         public static void deleteHologram(Object entityArmorStand) {
             int id = getEntityID(entityArmorStand);
@@ -322,21 +320,20 @@ public class HologramLine extends TimedObject {
         }
 
         /**
-         * Send DestroyPacket's for the ArmorStandObject to a player
-         * Calls {@link #deleteHologram(int, Player)}
+         * Delete hologram.
          *
-         * @param entityArmorStand The ArmorStand object
-         * @param p                The player
+         * @param entityArmorStand the entity armor stand
+         * @param p                the p
          */
         public static void deleteHologram(Object entityArmorStand, Player p) {
             deleteHologram(getEntityID(entityArmorStand), p);
         }
 
         /**
-         * Send DestroyPacket's for the ArmorStandObject to a player
+         * Delete hologram.
          *
-         * @param id The ArmorStand's ID
-         * @param p  The player
+         * @param id the id
+         * @param p  the p
          */
         public static void deleteHologram(int id, Player p) {
             Object packetPlayOutEntityDestroy = Reflection.newInstance(packetPlayOutEntityDestroyConstructor, new int[]{id});

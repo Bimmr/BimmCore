@@ -12,7 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * The start of an AnvilGUI
+ * The type Anvil.
  */
 @Deprecated
 public class Anvil {
@@ -20,11 +20,23 @@ public class Anvil {
     private String title, defaultText;
     private AnvilFinishEvent anvilFinishEvent;
 
+    /**
+     * Instantiates a new Anvil.
+     *
+     * @param title       the title
+     * @param defaultText the default text
+     * @param finishEvent the finish event
+     */
     public Anvil(String title, String defaultText, AnvilFinishEvent finishEvent) {
         this.title = title;
         this.anvilFinishEvent = finishEvent;
     }
 
+    /**
+     * Open.
+     *
+     * @param player the player
+     */
     public void open(Player player) {
         Inventory inv = AnvilAPI.getInventory(player);
         ItemStack paper = new ItemStack(Material.PAPER);
@@ -35,11 +47,19 @@ public class Anvil {
         player.openInventory(inv);
     }
 
+    /**
+     * Gets title.
+     *
+     * @return the title
+     */
     public String getTitle() {
         return this.title;
     }
 
 
+    /**
+     * The type Anvil api.
+     */
     public static class AnvilAPI {
 
         private static Class<?> nmsBlockPosition = Reflection.getNMSClass("BlockPosition");
@@ -67,6 +87,12 @@ public class Anvil {
 
         }
 
+        /**
+         * Gets inventory.
+         *
+         * @param player the player
+         * @return the inventory
+         */
         public static Inventory getInventory(Player player) {
             Object playerHandler = Reflection.getHandle(player);
 

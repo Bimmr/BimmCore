@@ -12,7 +12,7 @@ import java.util.List;
 
 
 /**
- * The command class - Used for commands such as /McInfected Admin
+ * The type Super command.
  */
 public abstract class SuperCommand extends SubCommand {
 
@@ -116,10 +116,10 @@ public abstract class SuperCommand extends SubCommand {
     }
 
     /**
-     * Get the SubCommand that matches the command
+     * Gets sub command.
      *
      * @param command the command
-     * @return sub command
+     * @return the sub command
      */
     public SubCommand getSubCommand(String command) {
         for (SubCommand subCommand : subCommands)
@@ -129,7 +129,7 @@ public abstract class SuperCommand extends SubCommand {
     }
 
     /**
-     * Add a subcommand
+     * Add sub command.
      *
      * @param subCommand the sub command
      */
@@ -138,7 +138,7 @@ public abstract class SuperCommand extends SubCommand {
     }
 
     /**
-     * Remove a subcommand
+     * Remove sub command.
      *
      * @param subCommand the sub command
      */

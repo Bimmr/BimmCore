@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Utilities class to create a scrolling message
+ * The type Scroller.
  */
 public class Scroller {
 
@@ -72,9 +72,9 @@ public class Scroller {
     }
 
     /**
-     * Get the next originalMessage
+     * Next string.
      *
-     * @return string
+     * @return the string
      */
     public String next() {
         StringBuilder line = new StringBuilder(getNext());
@@ -104,11 +104,6 @@ public class Scroller {
         return last = chatColor + line.toString();
     }
 
-    /**
-     * Get the next position
-     *
-     * @return
-     */
     private String getNext() {
         position++;
         if (position == originalMessage.length() / 2)

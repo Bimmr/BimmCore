@@ -1,7 +1,9 @@
 package me.bimmr.bimmcore.utils.timed;
 
 /**
- * Created by Randy on 05/23/16.
+ * The type Timed event.
+ *
+ * @param <T> the type parameter
  */
 public abstract class TimedEvent<T> implements Cloneable {
 
@@ -30,16 +32,16 @@ public abstract class TimedEvent<T> implements Cloneable {
     }
 
     /**
-     * Get the object this TimedEvent is attached to
+     * Gets attached object.
      *
-     * @return attached object
+     * @return the attached object
      */
     public T getAttachedObject() {
         return this.attachedObject;
     }
 
     /**
-     * Set the attached object
+     * Sets attached object.
      *
      * @param attachedObject the attached object
      */
@@ -48,16 +50,16 @@ public abstract class TimedEvent<T> implements Cloneable {
     }
 
     /**
-     * Get the ticks
+     * Gets ticks.
      *
-     * @return ticks
+     * @return the ticks
      */
     public int getTicks() {
         return this.ticks;
     }
 
     /**
-     * Set the ticks
+     * Sets ticks.
      *
      * @param ticks the ticks
      */

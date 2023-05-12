@@ -24,9 +24,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * bStats collects some data for plugin authors.
- * <p>
- * Check out https://bStats.org/ to learn more about bStats!
+ * The type Metrics lite.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class MetricsLite {
@@ -45,7 +43,10 @@ public class MetricsLite {
         }
     }
 
-    // The version of this bStats class
+    /**
+     * The constant B_STATS_VERSION.
+     */
+// The version of this bStats class
     public static final int B_STATS_VERSION = 1;
 
     // The url to which the data is sent
@@ -73,11 +74,10 @@ public class MetricsLite {
     private final int pluginId;
 
     /**
-     * Class constructor.
+     * Instantiates a new Metrics lite.
      *
-     * @param plugin The plugin which stats should be submitted.
-     * @param pluginId The id of the plugin.
-     *                 It can be found at <a href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
+     * @param plugin   the plugin
+     * @param pluginId the plugin id
      */
     public MetricsLite(Plugin plugin, int pluginId) {
         if (plugin == null) {
@@ -143,17 +143,14 @@ public class MetricsLite {
     }
 
     /**
-     * Checks if bStats is enabled.
+     * Is enabled boolean.
      *
-     * @return Whether bStats is enabled or not.
+     * @return the boolean
      */
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * Starts the Scheduler which submits our data every 30 minutes.
-     */
     private void startSubmitting() {
         final Timer timer = new Timer(true); // We use a timer cause the Bukkit scheduler is affected by server lags
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -174,10 +171,9 @@ public class MetricsLite {
     }
 
     /**
-     * Gets the plugin specific data.
-     * This method is called using Reflection.
+     * Gets plugin data.
      *
-     * @return The plugin specific data.
+     * @return the plugin data
      */
     public JsonObject getPluginData() {
         JsonObject data = new JsonObject();
@@ -193,11 +189,6 @@ public class MetricsLite {
         return data;
     }
 
-    /**
-     * Gets the server specific data.
-     *
-     * @return The server specific data.
-     */
     private JsonObject getServerData() {
         // Minecraft specific data
         int playerAmount;
@@ -240,9 +231,6 @@ public class MetricsLite {
         return data;
     }
 
-    /**
-     * Collects the data and sends it afterwards.
-     */
     private void submitData() {
         final JsonObject data = getServerData();
 
@@ -296,13 +284,6 @@ public class MetricsLite {
         }).start();
     }
 
-    /**
-     * Sends the data to the bStats server.
-     *
-     * @param plugin Any plugin. It's just used to get a logger instance.
-     * @param data The data to send.
-     * @throws Exception If the request failed.
-     */
     private static void sendData(Plugin plugin, JsonObject data) throws Exception {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null!");
@@ -346,13 +327,6 @@ public class MetricsLite {
         }
     }
 
-    /**
-     * Gzips the given String.
-     *
-     * @param str The string to gzip.
-     * @return The gzipped String.
-     * @throws IOException If the compression failed.
-     */
     private static byte[] compress(final String str) throws IOException {
         if (str == null) {
             return null;

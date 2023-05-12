@@ -14,31 +14,65 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 /**
- * A Utilities class to handle viewers
+ * The type Viewer.
  */
 public abstract class Viewer implements Listener {
     private List<String> players;
 
     private boolean autoUpdate;
 
+    /**
+     * Update.
+     *
+     * @param paramPlayer the param player
+     */
     public abstract void update(Player paramPlayer);
 
+    /**
+     * On add to view.
+     *
+     * @param paramPlayer the param player
+     */
     public abstract void onAddToView(Player paramPlayer);
 
+    /**
+     * On remove from view.
+     *
+     * @param paramPlayer the param player
+     */
     public abstract void onRemoveFromView(Player paramPlayer);
 
+    /**
+     * Instantiates a new Viewer.
+     */
     public Viewer() {
         this(true);
     }
 
+    /**
+     * Instantiates a new Viewer.
+     *
+     * @param autoUpdate the auto update
+     */
     public Viewer(boolean autoUpdate) {
         this(autoUpdate, new ArrayList<>());
     }
 
+    /**
+     * Instantiates a new Viewer.
+     *
+     * @param players the players
+     */
     public Viewer(List<String> players) {
         this(true, players);
     }
 
+    /**
+     * Instantiates a new Viewer.
+     *
+     * @param autoUpdate the auto update
+     * @param players    the players
+     */
     public Viewer(boolean autoUpdate, List<String> players) {
         this.autoUpdate = autoUpdate;
         this.players = players;
@@ -50,15 +84,26 @@ public abstract class Viewer implements Listener {
             }
     }
 
+    /**
+     * Destroy.
+     */
     public void destroy() {
         HandlerList.unregisterAll(this);
     }
 
+    /**
+     * Update.
+     */
     public void update() {
         for (String player : this.players)
             update(Bukkit.getPlayer(player));
     }
 
+    /**
+     * On join.
+     *
+     * @param pje the pje
+     */
     @EventHandler
     public void onJoin(PlayerJoinEvent pje) {
         String name = pje.getPlayer().getName();
@@ -69,6 +114,11 @@ public abstract class Viewer implements Listener {
         }
     }
 
+    /**
+     * On leave.
+     *
+     * @param pqe the pqe
+     */
     @EventHandler
     public void onLeave(PlayerQuitEvent pqe) {
         String name = pqe.getPlayer().getName();
@@ -76,28 +126,59 @@ public abstract class Viewer implements Listener {
             removePlayer(pqe.getPlayer().getName());
     }
 
+    /**
+     * Gets players.
+     *
+     * @return the players
+     */
     public List<String> getPlayers() {
         return this.players;
     }
 
+    /**
+     * Is auto update boolean.
+     *
+     * @return the boolean
+     */
     public boolean isAutoUpdate() {
         return this.autoUpdate;
     }
 
+    /**
+     * Sets auto update.
+     *
+     * @param autoUpdate the auto update
+     */
     public void setAutoUpdate(boolean autoUpdate) {
         this.autoUpdate = autoUpdate;
     }
 
+    /**
+     * Add player.
+     *
+     * @param player the player
+     */
     public void addPlayer(String player) {
         getPlayers().add(player);
         onAddToView(Bukkit.getPlayer(player));
     }
 
+    /**
+     * Remove player.
+     *
+     * @param player the player
+     */
     public void removePlayer(String player) {
         getPlayers().remove(player);
         onRemoveFromView(Bukkit.getPlayer(player));
     }
 
+    /**
+     * Is viewing boolean.
+     *
+     * @param player the player
+     * @return the boolean
+     */
     public boolean isViewing(String player){
         return getPlayers().contains(player);
     }

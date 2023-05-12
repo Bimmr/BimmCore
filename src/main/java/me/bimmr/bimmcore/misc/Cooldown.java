@@ -3,7 +3,9 @@ package me.bimmr.bimmcore.misc;
 import java.util.HashMap;
 
 /**
- * An easy to use Cooldown class
+ * The type Cooldown.
+ *
+ * @param <T> the type parameter
  */
 public class Cooldown<T> {
 
@@ -14,14 +16,14 @@ public class Cooldown<T> {
     /**
      * Instantiates a new Cooldown.
      *
-     * @param time the time in milliseconds
+     * @param time the time
      */
     public Cooldown(long time) {
         this.time = time;
     }
 
     /**
-     * Add the player to the cooldown
+     * Add to cooldown.
      *
      * @param player the player
      */
@@ -30,30 +32,30 @@ public class Cooldown<T> {
     }
 
     /**
-     * Get the remaining time
+     * Gets time remaining.
      *
      * @param player the player
-     * @return time remaining
+     * @return the time remaining
      */
     public long getTimeRemaining(T player) {
         return time - ((System.currentTimeMillis() - cooldowns.get(player)));
     }
 
     /**
-     * Get the remaining seconds
+     * Gets seconds remaining.
      *
      * @param player the player
-     * @return time remaining
+     * @return the seconds remaining
      */
     public long getSecondsRemaining(T player) {
         return time - ((System.currentTimeMillis() - cooldowns.get(player)) / 1000);
     }
 
     /**
-     * Gets if the player's cooldown is over
+     * Is cooled down boolean.
      *
      * @param player the player
-     * @return boolean
+     * @return the boolean
      */
     public boolean isCooledDown(T player) {
         if (!cooldowns.containsKey(player) || (((System.currentTimeMillis() - cooldowns.get(player))) >= time)) {

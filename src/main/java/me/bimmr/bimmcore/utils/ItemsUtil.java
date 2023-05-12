@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utilities class for {@link Items}
+ * The type Items util.
  */
 public class ItemsUtil {
 
     /**
-     * Get ArrayList of String from a List of ItemStack
+     * Gets item stacks to string.
      *
-     * @param list List of ItemStacks
-     * @return ArrayList of Strings
+     * @param list the list
+     * @return the item stacks to string
      */
     public static ArrayList<String> getItemStacksToString(List<ItemStack> list) {
         ArrayList<String> items = new ArrayList<>();
@@ -26,10 +26,10 @@ public class ItemsUtil {
     }
 
     /**
-     * Get ArrayList of String from a List of {@link Items}
+     * Gets items to string.
      *
-     * @param list List of Items
-     * @return ArrayList of Strings
+     * @param list the list
+     * @return the items to string
      */
     public static ArrayList<String> getItemsToString(List<Items> list) {
         ArrayList<String> items = new ArrayList<>();
@@ -40,10 +40,10 @@ public class ItemsUtil {
     }
 
     /**
-     * Get ArrayList of ItemStack from a List of Strings
+     * Gets item stacks.
      *
-     * @param list List of Strings
-     * @return ArrayList of ItemStacks
+     * @param list the list
+     * @return the item stacks
      */
     public static ArrayList<ItemStack> getItemStacks(List<String> list) {
         ArrayList<ItemStack> items = new ArrayList<>();
@@ -54,10 +54,10 @@ public class ItemsUtil {
     }
 
     /**
-     * Get ArrayList of {@link Items} from a List of Strings
+     * Gets items.
      *
-     * @param list List of Strings
-     * @return ArrayList of Items
+     * @param list the list
+     * @return the items
      */
     public static ArrayList<Items> getItems(List<String> list) {
         ArrayList<Items> items = new ArrayList<>();

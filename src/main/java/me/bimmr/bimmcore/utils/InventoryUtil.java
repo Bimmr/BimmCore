@@ -6,18 +6,18 @@ import org.bukkit.inventory.ItemStack;
 
 
 /**
- * Collection of methods relating to Inventory management
+ * The type Inventory util.
  */
 public class InventoryUtil {
 
 
     /**
-     * Checks if the inventory contains the number of items given
+     * Contains item boolean.
      *
      * @param inventory the inventory
-     * @param itemStack the itemstack
-     * @param quantity the amount
-     * @return if the inventory contains the quantity of itemstack
+     * @param itemStack the item stack
+     * @param quantity  the quantity
+     * @return the boolean
      */
     public static boolean containsItem(Inventory inventory, ItemStack itemStack, int quantity) {
         int found = 0;
@@ -36,15 +36,12 @@ public class InventoryUtil {
     }
 
     /**
-     * Remove items in the inventory up to the amount given.
-     * Starts at the bottom of the inventory and works it's way up
-     * <p>
-     * Will return a true or false depending on if all the items were removed
+     * Remove item boolean.
      *
      * @param inventory the inventory
-     * @param itemStack the itemstack
-     * @param quantity the quantity
-     * @return if able to remove all the items
+     * @param itemStack the item stack
+     * @param quantity  the quantity
+     * @return the boolean
      */
     public static boolean removeItem(Inventory inventory, ItemStack itemStack, int quantity) {
 

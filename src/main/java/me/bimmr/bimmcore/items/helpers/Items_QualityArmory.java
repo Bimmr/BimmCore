@@ -6,14 +6,26 @@ import me.zombie_striker.qg.guns.Gun;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * QualityArmory support for {@link Items}
+ * The type Items quality armory.
  */
 public class Items_QualityArmory {
 
+    /**
+     * Gets gun item stack.
+     *
+     * @param code the code
+     * @return the gun item stack
+     */
     public static ItemStack getGunItemStack(String code) {
         return QualityArmory.getGunByName(code.replaceAll("_", " ")).getItemStack();
     }
 
+    /**
+     * Gets gun name.
+     *
+     * @param itemStack the item stack
+     * @return the gun name
+     */
     public static String getGunName(ItemStack itemStack) {
         Gun gun;
         if ((gun = QualityArmory.getGun(itemStack)) != null)

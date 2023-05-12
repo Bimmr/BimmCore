@@ -8,12 +8,21 @@ import java.util.List;
 
 
 /**
- * The command class - Used for commands such as /McInfected Admin Start
+ * The type Super sub command.
  */
 public abstract class SuperSubCommand extends SubCommand {
 
+    /**
+     * The Super command.
+     */
     public SuperCommand superCommand;
 
+    /**
+     * Instantiates a new Super sub command.
+     *
+     * @param superCommand the super command
+     * @param name         the name
+     */
     public SuperSubCommand(SuperCommand superCommand, String name) {
         super(name);
         this.superCommand = superCommand;

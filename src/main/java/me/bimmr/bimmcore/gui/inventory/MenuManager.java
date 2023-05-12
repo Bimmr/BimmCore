@@ -15,33 +15,38 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * The Manager for {@link Menu} classes
+ * The type Menu manager.
  */
 public class MenuManager implements Listener {
+    /**
+     * The constant menus.
+     */
     public static ArrayList<Menu> menus = new ArrayList<Menu>();
     private static Cooldown<UUID> cooldown = new Cooldown<>(1);
 
     /**
-     * Unregister the Menu
+     * Unregister.
      *
-     * @param menu The Menu to unRegister
+     * @param menu the menu
      */
     public static void unregister(Menu menu) {
         menus.remove(menu);
     }
 
     /**
-     * Register the Menu
+     * Register.
      *
-     * @param menu the Menu to register
+     * @param menu the menu
      */
     public static void register(Menu menu) {
         menus.add(menu);
     }
 
     /**
-     * @param name The MenuGUI's name
-     * @return The MenuGUI
+     * Gets menu gui.
+     *
+     * @param name the name
+     * @return the menu gui
      */
     public static Menu getMenuGUI(String name) {
         for (Menu menu : menus)
@@ -51,8 +56,10 @@ public class MenuManager implements Listener {
     }
 
     /**
-     * @param inventory The Inventory
-     * @return The MenuGUI
+     * Gets menu gui.
+     *
+     * @param inventory the inventory
+     * @return the menu gui
      */
     public static Menu getMenuGUI(Inventory inventory) {
         for (Menu menu : menus) {
@@ -63,6 +70,11 @@ public class MenuManager implements Listener {
         return null;
     }
 
+    /**
+     * On inventory close.
+     *
+     * @param event the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         Menu menu = getMenuGUI(event.getInventory());
@@ -75,9 +87,9 @@ public class MenuManager implements Listener {
     }
 
     /**
-     * Event Handler for MenuGUIs
+     * On inventory click.
      *
-     * @param event The InventoryClickEvent
+     * @param event the event
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {

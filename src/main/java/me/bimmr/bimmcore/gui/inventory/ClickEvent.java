@@ -4,8 +4,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
 /**
- * The ClickEvent that gets called when an inventory item gets clicked
+ * The type Click event.
  */
 public abstract class ClickEvent {
 
@@ -15,18 +16,24 @@ public abstract class ClickEvent {
     private ItemStack item;
     private InventoryClickEvent event;
 
+    /**
+     * The Do nothing.
+     */
     protected boolean doNothing = false;
 
+    /**
+     * The Menu object.
+     */
     protected Menu menuObject;
 
     /**
-     * Setup the ClickEvent
+     * Sets .
      *
-     * @param player   The player
-     * @param page     The page clicked
-     * @param position The position clicked
-     * @param item     The item clicked
-     * @param event    The InventoryClickEvent
+     * @param player   the player
+     * @param page     the page
+     * @param position the position
+     * @param item     the item
+     * @param event    the event
      */
     protected void setup(Player player, int page, int position, ItemStack item, InventoryClickEvent event) {
         this.player = player;
@@ -35,36 +42,54 @@ public abstract class ClickEvent {
         this.item = item;
         this.event = event;
     }
+
+    /**
+     * Set close.
+     *
+     * @param close the close
+     */
     public void setClose(boolean close){
         this.menuObject.setClose(close);
     }
+
+    /**
+     * Set destroy.
+     *
+     * @param close the close
+     */
     public void setDestroy(boolean close){
         this.menuObject.setDestroy(close);
     }
 
     /**
-     * @return Get Player who clicked
+     * Gets player.
+     *
+     * @return the player
      */
     public Player getPlayer() {
         return player;
     }
 
     /**
-     * @return Get Position clicked
+     * Gets position.
+     *
+     * @return the position
      */
     public int getPosition() {
         return position;
     }
 
     /**
-     * @return get ItemStack clicked
+     * Gets item.
+     *
+     * @return the item
      */
     public ItemStack getItem() {
         return item;
     }
 
     /**
-     * Gets the InventoryClickEvent involved in the GUI message.
+     * Gets event.
      *
      * @return the event
      */
@@ -73,24 +98,31 @@ public abstract class ClickEvent {
     }
 
     /**
-     * @return Get the item clicked's name
+     * Gets clicked name.
+     *
+     * @return the clicked name
      */
     public String getClickedName() {
         return ChatColor.stripColor(getItem().getItemMeta().hasDisplayName() ? getItem().getItemMeta().getDisplayName() : getItem().getType().name());
     }
 
     /**
-     * Abstract Click
+     * Click.
      */
     public abstract void click();
 
     /**
-     * @return Get the page clicked
+     * Gets page.
+     *
+     * @return the page
      */
     public int getPage() {
         return page;
     }
 
+    /**
+     * Do nothing.
+     */
     public void doNothing() {
         this.doNothing = true;
     }

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Utilities/Builder class for the BaseComponents API
+ * The type Fancy message.
  */
 public class FancyMessage {
 
@@ -27,21 +27,26 @@ public class FancyMessage {
     private ComponentBuilder builder;
 
     /**
-     * Default Constructor
+     * Instantiates a new Fancy message.
      */
     public FancyMessage() {
         this("");
     }
 
     /**
-     * Constructor with first text
+     * Instantiates a new Fancy message.
      *
-     * @param string the String to start with
+     * @param string the string
      */
     public FancyMessage(String string) {
         builder = new ComponentBuilder(ChatColor.RESET + string);
     }
 
+    /**
+     * Instantiates a new Fancy message.
+     *
+     * @param fancyMessage the fancy message
+     */
     public FancyMessage(FancyMessage fancyMessage) {
         this("");
         then(fancyMessage);
@@ -49,11 +54,10 @@ public class FancyMessage {
 
 
     /**
-     * Adds a new string section to the messages, this allows new tooltips, and
-     * events.
+     * Then fancy message.
      *
-     * @param string The String to add
-     * @return The FancyMessage
+     * @param string the string
+     * @return the fancy message
      */
     public FancyMessage then(String string) {
         builder.append(ChatColor.RESET + string, ComponentBuilder.FormatRetention.NONE);
@@ -61,6 +65,12 @@ public class FancyMessage {
     }
 
 
+    /**
+     * Then fancy message.
+     *
+     * @param fancyMessage the fancy message
+     * @return the fancy message
+     */
     public FancyMessage then(FancyMessage fancyMessage) {
         if (fancyMessage != null) {
                 for (BaseComponent component : fancyMessage.getBaseComponents())
@@ -71,10 +81,10 @@ public class FancyMessage {
     }
 
     /**
-     * Tooltips are what appear when you hover over the messages
+     * Tooltip fancy message.
      *
-     * @param strings The tooltips to add
-     * @return The FancyMessage
+     * @param strings the strings
+     * @return the fancy message
      */
     public FancyMessage tooltip(String... strings) {
 
@@ -88,6 +98,12 @@ public class FancyMessage {
         return this;
     }
 
+    /**
+     * Show item fancy message.
+     *
+     * @param item the item
+     * @return the fancy message
+     */
     public FancyMessage showItem(ItemStack item) {
         if (item != null && item.getType() != Material.AIR) {
             //TODO: Find a way to do this with NMS
@@ -96,10 +112,10 @@ public class FancyMessage {
     }
 
     /**
-     * The command the player will use/say when they message the messages
+     * Command fancy message.
      *
-     * @param string The command to run
-     * @return The FancyMessage
+     * @param string the string
+     * @return the fancy message
      */
     public FancyMessage command(String string) {
         if (!string.startsWith("/"))
@@ -109,10 +125,10 @@ public class FancyMessage {
     }
 
     /**
-     * The message the player will use/say when they message the messages
+     * Say fancy message.
      *
-     * @param string The command to run
-     * @return The FancyMessage
+     * @param string the string
+     * @return the fancy message
      */
     public FancyMessage say(String string) {
         builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, string));
@@ -120,10 +136,10 @@ public class FancyMessage {
     }
 
     /**
-     * Change the page in a book
+     * Change page fancy message.
      *
-     * @param page The page to change to
-     * @return The FancyMessage
+     * @param page the page
+     * @return the fancy message
      */
     public FancyMessage changePage(String page) {
         builder.event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, page));
@@ -132,12 +148,10 @@ public class FancyMessage {
     }
 
     /**
-     * CAN NOT BE USED WITH COMMAND
-     * Add a callback for an onClick
-     * CallBack self deletes after 5 minutes from first message, unless told otherwise
+     * On click fancy message.
      *
-     * @param fce The FancyClickEvent
-     * @return The FancyMessage
+     * @param fce the fce
+     * @return the fancy message
      */
     public FancyMessage onClick(FancyClick fce) {
         FancyClickEvent fancyClickEvent = new FancyClickEvent() {
@@ -149,16 +163,22 @@ public class FancyMessage {
         return onClick(fancyClickEvent);
     }
 
+    /**
+     * On click fancy message.
+     *
+     * @param fce the fce
+     * @return the fancy message
+     */
     public FancyMessage onClick(FancyClickEvent fce) {
         FancyMessageListener.chats.add(fce);
         return command("/BimmCore " + fce.getUUID());
     }
 
     /**
-     * Autotypes a messages into their chatbar when they message the messages
+     * Suggest fancy message.
      *
-     * @param string The String to type
-     * @return The FancyMessage
+     * @param string the string
+     * @return the fancy message
      */
     public FancyMessage suggest(String string) {
         builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string));
@@ -166,10 +186,10 @@ public class FancyMessage {
     }
 
     /**
-     * Opens the link for the player when they message the messages
+     * Link fancy message.
      *
-     * @param string The link
-     * @return The FancyMessage
+     * @param string the string
+     * @return the fancy message
      */
     public FancyMessage link(String string) {
         builder.event(new ClickEvent(ClickEvent.Action.OPEN_URL, string));
@@ -177,9 +197,9 @@ public class FancyMessage {
     }
 
     /**
-     * Sends the messages to a player
+     * Send.
      *
-     * @param player The player
+     * @param player the player
      */
     public void send(Player player) {
         if (built == null)
@@ -189,9 +209,9 @@ public class FancyMessage {
     }
 
     /**
-     * Sends the messages to an array of players
+     * Send.
      *
-     * @param players The players
+     * @param players the players
      */
     public void send(Player[] players) {
         if (built == null)
@@ -202,7 +222,9 @@ public class FancyMessage {
     }
 
     /**
-     * @return Get all the BaseComponents
+     * Get base components base component [ ].
+     *
+     * @return the base component [ ]
      */
     public BaseComponent[] getBaseComponents() {
         if (built == null)
@@ -212,7 +234,9 @@ public class FancyMessage {
     }
 
     /**
-     * @return Get the FancyMessage as JSON
+     * To json string.
+     *
+     * @return the string
      */
     public String toJSON() {
         return ComponentSerializer.toString(getBaseComponents());
@@ -220,16 +244,18 @@ public class FancyMessage {
 
 
     /**
-     * Sends the fancy messages in the form of plain text to the console
+     * Send to console.
      *
-     * @param sender The console sender
+     * @param sender the sender
      */
     public void sendToConsole(CommandSender sender) {
         Bukkit.getConsoleSender().sendMessage(toPlainText());
     }
 
     /**
-     * @return Get the Fancy Message as just plain text
+     * To plain text string.
+     *
+     * @return the string
      */
     public String toPlainText() {
         if (built == null)

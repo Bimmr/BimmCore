@@ -8,7 +8,7 @@ import java.util.*;
 
 
 /**
- * A Utilities class to handle MySQL connections
+ * The type My sql manager.
  */
 public class MySQLManager {
 
@@ -42,7 +42,7 @@ public class MySQLManager {
     }
 
     /**
-     * Set if MySQL should debug or not
+     * Sets debug.
      *
      * @param debug the debug
      */
@@ -51,14 +51,14 @@ public class MySQLManager {
     }
 
     /**
-     * Close the connection
+     * Unload.
      */
     public void unload() {
         hikari.close();
     }
 
     /**
-     * Create the table if it doesn't exist
+     * Load table.
      *
      * @param table   the table
      * @param columns the columns
@@ -86,12 +86,12 @@ public class MySQLManager {
     }
 
     /**
-     * Get the top UUID's with values from the table
+     * Gets top.
      *
      * @param table     the table
      * @param column    the column
      * @param positions the positions
-     * @return top
+     * @return the top
      */
     public TreeMap<UUID, Integer> getTop(String table, String column, int positions) {
         if (debug)
@@ -112,12 +112,12 @@ public class MySQLManager {
     }
 
     /**
-     * Get a value from the table
+     * Get object.
      *
      * @param table  the table
      * @param column the column
      * @param uuid   the uuid
-     * @return object
+     * @return the object
      */
     public Object get(String table, final String column, UUID uuid) {
         if (debug)
@@ -135,11 +135,11 @@ public class MySQLManager {
     }
 
     /**
-     * Check if a UUID is in a table
+     * Is in table boolean.
      *
      * @param table the table
      * @param uuid  the uuid
-     * @return boolean
+     * @return the boolean
      */
     public boolean isInTable(String table, UUID uuid) {
         if (debug)
@@ -149,7 +149,7 @@ public class MySQLManager {
     }
 
     /**
-     * Put a value into the table using the uuid as a key
+     * Set.
      *
      * @param table  the table
      * @param column the column
@@ -167,7 +167,7 @@ public class MySQLManager {
     }
 
     /**
-     * Add multiple columns to the table at a single time
+     * Add columns.
      *
      * @param table the table
      * @param uuid  the uuid
@@ -195,7 +195,7 @@ public class MySQLManager {
     }
 
     /**
-     * Alter the table to add a column
+     * Add column.
      *
      * @param table  the table
      * @param column the column
@@ -209,13 +209,6 @@ public class MySQLManager {
         }
     }
 
-    /**
-     * Handles executing either an update or a query statement
-     *
-     * @param update
-     * @param query
-     * @return
-     */
     private List<HashMap<String, Object>> handleSQL(final boolean update, final String query, final Object... values) throws SQLException {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -256,21 +249,10 @@ public class MySQLManager {
         return result;
     }
 
-    /**
-     * Execute an update statement
-     *
-     * @param query
-     */
     private void updateSQL(String query, Object... values) throws SQLException {
         handleSQL(true, query, values);
     }
 
-    /**
-     * Execute a query statement
-     *
-     * @param query
-     * @return
-     */
     private List<HashMap<String, Object>> querySQL(String query, Object... values) {
         try {
             return handleSQL(false, query, values);
@@ -280,13 +262,6 @@ public class MySQLManager {
         return null;
     }
 
-    /**
-     * Convert a ResultSet to a List<Map> So you can use it after the ResultSet is closed
-     *
-     * @param resultSet
-     * @return
-     * @throws SQLException
-     */
     private List<HashMap<String, Object>> convertResultSetToList(ResultSet resultSet) {
 
         List<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();

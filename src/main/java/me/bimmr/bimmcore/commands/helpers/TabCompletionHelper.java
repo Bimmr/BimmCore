@@ -7,14 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to help with the TabCompletion for Bukkit.
- * <p>
- * Can be used by anybody, as long as you provide credit for it.
- *
- * @author D4rKDeagle
+ * The type Tab completion helper.
  */
 public class TabCompletionHelper {
 
+    /**
+     * Get online player names string [ ].
+     *
+     * @return the string [ ]
+     */
     public static String[] getOnlinePlayerNames() {
         Player[] onlinePlayers = Reflection.getOnlinePlayers();
         String[] onlinePlayerNames = new String[onlinePlayers.length];
@@ -25,6 +26,11 @@ public class TabCompletionHelper {
         return onlinePlayerNames;
     }
 
+    /**
+     * Gets online players.
+     *
+     * @return the online players
+     */
     public static List<String> getOnlinePlayers() {
         Player[] onlinePlayers = Reflection.getOnlinePlayers();
         List<String> onlinePlayerNames = new ArrayList<String>();
@@ -34,6 +40,13 @@ public class TabCompletionHelper {
         return onlinePlayerNames;
     }
 
+    /**
+     * Gets possible completions for given args.
+     *
+     * @param args                      the args
+     * @param possibilitiesOfCompletion the possibilities of completion
+     * @return the possible completions for given args
+     */
     public static List<String> getPossibleCompletionsForGivenArgs(String[] args, List<String> possibilitiesOfCompletion) {
         String argumentToFindCompletionFor = args[args.length - 1];
 

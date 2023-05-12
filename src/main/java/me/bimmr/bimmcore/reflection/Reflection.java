@@ -10,15 +10,15 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * A Utilities class to handle reflection
+ * The type Reflection.
  */
 public class Reflection {
 
 
     /**
-     * Get the server's version
+     * Gets version.
      *
-     * @return version
+     * @return the version
      */
     public static String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
@@ -27,11 +27,10 @@ public class Reflection {
     }
 
     /**
-     * Get a craft class
-     * (net.minecraft.server)
+     * Gets nms class.
      *
      * @param name the name
-     * @return nms class
+     * @return the nms class
      */
     public static Class<?> getNMSClass(String name) {
         try {
@@ -41,12 +40,12 @@ public class Reflection {
         }
         return null;
     }
+
     /**
-     * Get a craft class
-     * (net.minecraft)
+     * Gets nm class.
      *
      * @param name the name
-     * @return nms class
+     * @return the nm class
      */
     public static Class<?> getNMClass(String name) {
         try {
@@ -56,12 +55,12 @@ public class Reflection {
         }
         return null;
     }
+
     /**
-     * Get a craft class
-     * (net.minecraft)
+     * Gets nmw class.
      *
      * @param name the name
-     * @return nms class
+     * @return the nmw class
      */
     public static Class<?> getNMWClass(String name) {
         try {
@@ -71,12 +70,12 @@ public class Reflection {
         }
         return null;
     }
+
     /**
-     * Get a craft class
-     * (net.minecraft.nbt)
+     * Gets nbt class.
      *
      * @param name the name
-     * @return nms class
+     * @return the nbt class
      */
     public static Class<?> getNBTClass(String name) {
         try {
@@ -89,11 +88,10 @@ public class Reflection {
 
 
     /**
-     * Get a bukkit class
-     * (org.bukkit.craftbukkit)
+     * Gets craft class.
      *
      * @param name the name
-     * @return craft class
+     * @return the craft class
      */
     public static Class<?> getCraftClass(String name) {
         try {
@@ -105,10 +103,10 @@ public class Reflection {
     }
 
     /**
-     * Get a class
+     * Gets class.
      *
      * @param name the name
-     * @return craft class
+     * @return the class
      */
     public static Class<?> getClass(String name) {
         try {
@@ -120,10 +118,10 @@ public class Reflection {
     }
 
     /**
-     * Get the handle of the passed object
+     * Gets handle.
      *
      * @param object the object
-     * @return handle
+     * @return the handle
      */
     public static Object getHandle(Object object) {
         try {
@@ -136,11 +134,11 @@ public class Reflection {
     }
 
     /**
-     * Get Constructor from class
+     * Gets constructor.
      *
      * @param c     the c
      * @param types the types
-     * @return constructor
+     * @return the constructor
      */
     public static Constructor getConstructor(Class<?> c, Class<?>... types) {
         try {
@@ -152,11 +150,11 @@ public class Reflection {
     }
 
     /**
-     * Get a method from the class
+     * Gets method.
      *
      * @param c          the c
      * @param methodName the method name
-     * @return method
+     * @return the method
      */
     public static Method getMethod(Class<?> c, String methodName) {
         for (Method method : c.getMethods())
@@ -166,12 +164,12 @@ public class Reflection {
     }
 
     /**
-     * Get a method from a class with specific parameter types
+     * Gets method.
      *
      * @param c              the c
      * @param methodName     the method name
      * @param parameterTypes the parameter types
-     * @return method
+     * @return the method
      */
     public static Method getMethod(Class<?> c, String methodName, Class<?>... parameterTypes) {
         try {
@@ -183,7 +181,7 @@ public class Reflection {
     }
 
     /**
-     * Invoke a method
+     * Invoke method object.
      *
      * @param c              the c
      * @param methodName     the method name
@@ -196,7 +194,7 @@ public class Reflection {
     }
 
     /**
-     * Invoke a method on an object
+     * Invoke method object.
      *
      * @param c          the c
      * @param methodName the method name
@@ -208,7 +206,7 @@ public class Reflection {
     }
 
     /**
-     * Invoke a method on an object
+     * Invoke method object.
      *
      * @param methodName the method name
      * @param object     the object
@@ -221,12 +219,12 @@ public class Reflection {
     /**
      * Invoke method object.
      *
-     * @param c              The Class
-     * @param methodName     The MethodName
-     * @param object         The Object
-     * @param parameterTypes The ParameterTypess
-     * @param parameter      The Parameters
-     * @return The Object from the Invoked Method
+     * @param c              the c
+     * @param methodName     the method name
+     * @param object         the object
+     * @param parameterTypes the parameter types
+     * @param parameter      the parameter
+     * @return the object
      */
     public static Object invokeMethod(Class<?> c, String methodName, Object object, Class<?>[] parameterTypes, Object[] parameter) {
         Method m = getMethod(c, methodName, parameterTypes);
@@ -241,10 +239,10 @@ public class Reflection {
     /**
      * Invoke method object.
      *
-     * @param method The Method
-     * @param object The Object
-     * @param args   The Args
-     * @return The object from the Invoked Method
+     * @param method the method
+     * @param object the object
+     * @param args   the args
+     * @return the object
      */
     public static Object invokeMethod(Method method, Object object, Object... args) {
         try {
@@ -259,9 +257,9 @@ public class Reflection {
     /**
      * New instance object.
      *
-     * @param constructor The Constructor
-     * @param args        The args
-     * @return Get a new instance from a constructor
+     * @param constructor the constructor
+     * @param args        the args
+     * @return the object
      */
     public static Object newInstance(Constructor constructor, Object... args) {
         try {
@@ -273,12 +271,12 @@ public class Reflection {
     }
 
     /**
-     * Set a Field
+     * Sets field.
      *
-     * @param c         The Class
-     * @param fieldName The FieldName
-     * @param obj       The Object
-     * @param value     The Value
+     * @param c         the c
+     * @param fieldName the field name
+     * @param obj       the obj
+     * @param value     the value
      */
     public static void setField(Class<?> c, String fieldName, Object obj, Object value) {
         try {
@@ -291,11 +289,11 @@ public class Reflection {
     }
 
     /**
-     * Set a Field
+     * Sets field.
      *
-     * @param field The field
-     * @param obj   The Object
-     * @param value The Value
+     * @param field the field
+     * @param obj   the obj
+     * @param value the value
      */
     public static void setField(Field field, Object obj, Object value) {
         try {
@@ -309,9 +307,9 @@ public class Reflection {
     /**
      * Gets field.
      *
-     * @param c         The Class
-     * @param fieldName The FieldName
-     * @return Get the field from the class
+     * @param c         the c
+     * @param fieldName the field name
+     * @return the field
      */
     public static Field getField(Class<?> c, String fieldName) {
         try {
@@ -328,9 +326,9 @@ public class Reflection {
     /**
      * Get object.
      *
-     * @param field  The field
-     * @param object The Object
-     * @return Get the Object from the Field
+     * @param field  the field
+     * @param object the object
+     * @return the object
      */
     public static Object get(Field field, Object object) {
         try {
@@ -343,11 +341,11 @@ public class Reflection {
     }
 
     /**
-     * Assumes field isn't private
+     * Get object.
      *
-     * @param fieldName The field
-     * @param object    The Object
-     * @return Get the Object from the Field
+     * @param fieldName the field name
+     * @param object    the object
+     * @return the object
      */
     public static Object get(String fieldName, Object object) {
         try {
@@ -359,12 +357,12 @@ public class Reflection {
     }
 
     /**
-     * Assumes field isn't private
+     * Get object.
      *
-     * @param c         The Class
-     * @param fieldName The field
-     * @param object    The Object
-     * @return Get the Object from the Field
+     * @param c         the c
+     * @param fieldName the field name
+     * @param object    the object
+     * @return the object
      */
     public static Object get(Class<?> c, String fieldName, Object object) {
         try {
@@ -377,7 +375,7 @@ public class Reflection {
     /**
      * Get online players player [ ].
      *
-     * @return Get Array of online players regardless of Mc Version
+     * @return the player [ ]
      */
     public static Player[] getOnlinePlayers() {
         try {

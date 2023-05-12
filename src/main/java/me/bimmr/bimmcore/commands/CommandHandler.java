@@ -11,8 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- * The Manager for the commands
+ * The type Command handler.
  */
 public class CommandHandler implements TabCompleter, CommandExecutor {
 
@@ -22,6 +23,14 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
     private FancyMessage          information;
     private String                unknownCommand;
 
+    /**
+     * Instantiates a new Command handler.
+     *
+     * @param plugin         the plugin
+     * @param command        the command
+     * @param information    the information
+     * @param unknownCommand the unknown command
+     */
     public CommandHandler(JavaPlugin plugin, String command, FancyMessage information, String unknownCommand) {
         this.commands = new ArrayList<SubCommand>();
         this.plugin = plugin;
@@ -34,22 +43,45 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
         plugin.getCommand(command).setTabCompleter(this);
     }
 
+    /**
+     * Gets subcommand.
+     *
+     * @param command the command
+     * @return the subcommand
+     */
     public SubCommand getSubcommand(String command) {
         for (SubCommand sc : commands)
             if (sc.getName().equalsIgnoreCase(command)) return sc;
         return null;
     }
 
+    /**
+     * Gets sub command.
+     *
+     * @param cmdName the cmd name
+     * @return the sub command
+     */
     public SubCommand getSubCommand(String cmdName) {
         for (SubCommand cmd : this.commands)
             if (cmd.getName().equalsIgnoreCase(cmdName)) return cmd;
         return null;
     }
 
+    /**
+     * Gets sub commands.
+     *
+     * @return the sub commands
+     */
     public ArrayList<SubCommand> getSubCommands() {
         return this.commands;
     }
 
+    /**
+     * Is sub command boolean.
+     *
+     * @param command the command
+     * @return the boolean
+     */
     public boolean isSubCommand(String command) {
         return getSubCommand(command) != null;
     }
@@ -100,10 +132,20 @@ public class CommandHandler implements TabCompleter, CommandExecutor {
         }
     }
 
+    /**
+     * Register sub command.
+     *
+     * @param subCommand the sub command
+     */
     public void registerSubCommand(SubCommand subCommand) {
         if (!isSubCommand(subCommand.getName())) this.commands.add(subCommand);
     }
 
+    /**
+     * Un register sub command.
+     *
+     * @param subCommand the sub command
+     */
     public void unRegisterSubCommand(SubCommand subCommand) {
         this.commands.remove(subCommand);
     }

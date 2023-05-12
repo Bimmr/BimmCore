@@ -11,15 +11,31 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.logging.Level;
 
+/**
+ * The type Npc mob.
+ */
 public class NPCMob extends NPCBase {
 
     private EntityType entityType;
     private LivingEntity entity;
 
+    /**
+     * Instantiates a new Npc mob.
+     *
+     * @param name     the name
+     * @param location the location
+     */
     public NPCMob(String name, Location location) {
         this(name, location, EntityType.ZOMBIE);
     }
 
+    /**
+     * Instantiates a new Npc mob.
+     *
+     * @param name       the name
+     * @param location   the location
+     * @param entityType the entity type
+     */
     public NPCMob(String name, Location location, EntityType entityType) {
         super(NPCType.MOB, name, location);
 
@@ -27,6 +43,11 @@ public class NPCMob extends NPCBase {
         create();
     }
 
+    /**
+     * Sets type.
+     *
+     * @param type the type
+     */
     public void setType(EntityType type) {
         this.entityType = type;
         destroy();

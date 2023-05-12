@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * A wrapper for easy to serialize location data
+ * The type Coords.
  */
 public class Coords {
 

@@ -12,6 +12,9 @@ import me.bimmr.bimmcore.npc.NPCBase;
 import me.bimmr.bimmcore.npc.NPCManager;
 import org.bukkit.Bukkit;
 
+/**
+ * The type Protocol lib player listener.
+ */
 public class ProtocolLibPlayerListener implements NPCPlayerListener {
 
     @Override

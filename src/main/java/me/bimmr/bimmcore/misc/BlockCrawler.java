@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 
 /**
- * Collects all adjacent blocks of the same material
+ * The type Block crawler.
  */
 public class BlockCrawler {
 
@@ -45,10 +45,10 @@ public class BlockCrawler {
     }
 
     /**
-     * Will return a list of the location of all blocks that match the block's type and are adjacent to it
+     * Start array list.
      *
      * @param origBlock the orig block
-     * @return array list
+     * @return the array list
      */
     public ArrayList<Location> start(Block origBlock) {
         this.mOrigBlock = origBlock;

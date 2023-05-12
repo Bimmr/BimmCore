@@ -45,19 +45,29 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
+/**
+ * The type Bimm core.
+ */
 public class BimmCore extends JavaPlugin implements Listener {
 
     private static BimmCore instance;
     private NPCManager npcManager;
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public static BimmCore getInstance() {
         return instance;
     }
 
     /**
-     * @param plugin        The Plugin's Insance
-     * @param versionNeeded The version needed
-     * @return If the BimmCore version is equal or newer
+     * Check bimm core version boolean.
+     *
+     * @param plugin        the plugin
+     * @param versionNeeded the version needed
+     * @return the boolean
      */
     public static boolean checkBimmCoreVersion(final Plugin plugin, int versionNeeded) {
         int bcVersion = Integer.parseInt(instance.getDescription().getVersion().replaceAll("\\.", ""));
@@ -117,6 +127,11 @@ public class BimmCore extends JavaPlugin implements Listener {
         Bukkit.getScheduler().cancelTasks(this);
     }
 
+    /**
+     * Command.
+     *
+     * @param e the e
+     */
     @EventHandler
     public void command(PlayerCommandPreprocessEvent e) {
         if (true && e.getMessage().startsWith("/BTest")) {

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 /**
- * A Utilities class for creating a FancyMessage Chat Menu
+ * The type Chat menu.
  */
 public class ChatMenu {
     private final int MAX_CHAT = 18;
@@ -30,6 +30,11 @@ public class ChatMenu {
         this((FancyMessage) null, (FancyMessage) null, ChatColor.DARK_GRAY, -1, HeightControl.MAX);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param lineColor the line color
+     */
     public ChatMenu(ChatColor lineColor) {
         this((FancyMessage) null, (FancyMessage) null, lineColor, -1, HeightControl.MAX);
     }
@@ -94,6 +99,14 @@ public class ChatMenu {
         this(new FancyMessage(title), (FancyMessage) null, lineColor, height, HeightControl.MAX);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title         the title
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
+     */
     public ChatMenu(String title, ChatColor lineColor, int height, HeightControl heightControl) {
         this(new FancyMessage(title), (FancyMessage) null, lineColor, height, heightControl);
     }
@@ -218,6 +231,14 @@ public class ChatMenu {
         this(title, (FancyMessage) null, lineColor, height, HeightControl.MANUAL);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title         the title
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
+     */
     public ChatMenu(FancyMessage title, ChatColor lineColor, int height, HeightControl heightControl) {
         this(title, (FancyMessage) null, lineColor, height, heightControl);
     }
@@ -257,6 +278,15 @@ public class ChatMenu {
         this(new FancyMessage(title), new FancyMessage(footer), lineColor, height, HeightControl.MANUAL);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title         the title
+     * @param footer        the footer
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
+     */
     public ChatMenu(String title, String footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this(new FancyMessage(title), new FancyMessage(footer), lineColor, height, heightControl);
     }
@@ -273,6 +303,15 @@ public class ChatMenu {
         this(new FancyMessage(title), footer, lineColor, height, HeightControl.MANUAL);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title         the title
+     * @param footer        the footer
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
+     */
     public ChatMenu(String title, FancyMessage footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this(new FancyMessage(title), footer, lineColor, height, heightControl);
     }
@@ -289,6 +328,15 @@ public class ChatMenu {
         this(title, new FancyMessage(footer), lineColor, height, HeightControl.MANUAL);
     }
 
+    /**
+     * Instantiates a new Chat menu.
+     *
+     * @param title         the title
+     * @param footer        the footer
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
+     */
     public ChatMenu(FancyMessage title, String footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this(title, new FancyMessage(footer), lineColor, height, heightControl);
     }
@@ -308,11 +356,11 @@ public class ChatMenu {
     /**
      * Instantiates a new Chat menu.
      *
-     * @param title     the title
-     * @param footer    the footer
-     * @param lineColor the line color
-     * @param height    the height
-     * @param heightControl the heightcontroller
+     * @param title         the title
+     * @param footer        the footer
+     * @param lineColor     the line color
+     * @param height        the height
+     * @param heightControl the height control
      */
     public ChatMenu(FancyMessage title, FancyMessage footer, ChatColor lineColor, int height, HeightControl heightControl) {
         this.title = title;
@@ -349,6 +397,9 @@ public class ChatMenu {
         return getLines().get(page);
     }
 
+    /**
+     * Clear.
+     */
     public void clear() {
         this.lines = new ArrayList<>();
         nextPage();
@@ -394,10 +445,20 @@ public class ChatMenu {
         return title;
     }
 
+    /**
+     * Sets title.
+     *
+     * @param title the title
+     */
     public void setTitle(FancyMessage title) {
         this.title = title;
     }
 
+    /**
+     * Sets title.
+     *
+     * @param title the title
+     */
     public void setTitle(String title) {
         setTitle(new FancyMessage(title));
     }
@@ -411,10 +472,20 @@ public class ChatMenu {
         return footer;
     }
 
+    /**
+     * Sets footer.
+     *
+     * @param footer the footer
+     */
     public void setFooter(FancyMessage footer) {
         this.footer = footer;
     }
 
+    /**
+     * Sets footer.
+     *
+     * @param footer the footer
+     */
     public void setFooter(String footer) {
         setFooter(new FancyMessage(footer));
     }
@@ -428,10 +499,20 @@ public class ChatMenu {
         return lineColor;
     }
 
+    /**
+     * Sets line color.
+     *
+     * @param lineColor the line color
+     */
     public void setLineColor(ChatColor lineColor) {
         this.lineColor = lineColor;
     }
 
+    /**
+     * Gets max height.
+     *
+     * @return the max height
+     */
     public int getMaxHeight() {
         int h = -1;
         if (this.heightControl.isManual())
@@ -461,10 +542,25 @@ public class ChatMenu {
         return addLine(getCurrentPage(), new FancyMessage(message));
     }
 
+    /**
+     * Add line chat menu.
+     *
+     * @param page            the page
+     * @param message         the message
+     * @param fancyClickEvent the fancy click event
+     * @return the chat menu
+     */
     public ChatMenu addLine(int page, String message, FancyClickEvent fancyClickEvent) {
         return addLine(page, new FancyMessage(message).onClick(fancyClickEvent));
     }
 
+    /**
+     * Add line chat menu.
+     *
+     * @param message         the message
+     * @param fancyClickEvent the fancy click event
+     * @return the chat menu
+     */
     public ChatMenu addLine(String message, FancyClickEvent fancyClickEvent) {
         return addLine(getCurrentPage(), message, fancyClickEvent);
     }
@@ -524,10 +620,27 @@ public class ChatMenu {
         return setLine(getCurrentPage(), line, new FancyMessage(message));
     }
 
+    /**
+     * Sets line.
+     *
+     * @param page            the page
+     * @param line            the line
+     * @param message         the message
+     * @param fancyClickEvent the fancy click event
+     * @return the line
+     */
     public ChatMenu setLine(int page, int line, String message, FancyClickEvent fancyClickEvent) {
         return setLine(page, line, new FancyMessage(message).onClick(fancyClickEvent));
     }
 
+    /**
+     * Sets line.
+     *
+     * @param line            the line
+     * @param message         the message
+     * @param fancyClickEvent the fancy click event
+     * @return the line
+     */
     public ChatMenu setLine(int line, String message, FancyClickEvent fancyClickEvent) {
         return setLine(getCurrentPage(), line, message, fancyClickEvent);
     }
@@ -598,7 +711,6 @@ public class ChatMenu {
      * Add blank line chat menu.
      *
      * @param page the page
-     *
      * @return the chat menu
      */
     public ChatMenu addBlankLine(int page) {
@@ -614,6 +726,11 @@ public class ChatMenu {
         show(0, player);
     }
 
+    /**
+     * Gets height control.
+     *
+     * @return the height control
+     */
     public HeightControl getHeightControl() {
         return heightControl;
     }
@@ -718,10 +835,21 @@ public class ChatMenu {
         return setLine(getCurrentPage(), line, "");
     }
 
+    /**
+     * Is spaced format boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSpacedFormat() {
         return spacedFormat;
     }
 
+    /**
+     * Sets spaced format.
+     *
+     * @param spacedFormat the spaced format
+     * @return the spaced format
+     */
     public ChatMenu setSpacedFormat(boolean spacedFormat) {
         this.spacedFormat = spacedFormat;
         return this;
@@ -732,59 +860,89 @@ public class ChatMenu {
      */
     public enum HeightControl {
         /**
-         * Inner fills top to max height
+         * Max height control.
          */
         MAX,
         /**
-         * Fills inner to set height
+         * Manual height control.
          */
         MANUAL,
         /**
-         * No auto fill at all
+         * Auto height control.
          */
         AUTO,
         /**
-         * No inner filling, fill top till max height
+         * Auto external height control.
          */
         AUTO_EXTERNAL,
         /**
-         * No inner filling, fill top and bottom till max height
+         * Auto center height control.
          */
         AUTO_CENTER,
         /**
-         * Fills inner till set height,  fill top till max height
+         * Manual external height control.
          */
         MANUAL_EXTERNAL,
         /**
-         * Fills inner till set height, fill top and bottom till max height
+         * Manual center height control.
          */
         MANUAL_CENTER;
 
+        /**
+         * Is filling top boolean.
+         *
+         * @return the boolean
+         */
         public boolean isFillingTop() {
             return this == HeightControl.MANUAL_EXTERNAL ||
                     this == HeightControl.AUTO_EXTERNAL;
         }
 
+        /**
+         * Is filling top and bottom boolean.
+         *
+         * @return the boolean
+         */
         public boolean isFillingTopAndBottom() {
             return this == HeightControl.MANUAL_CENTER ||
                     this == HeightControl.AUTO_CENTER;
         }
 
+        /**
+         * Is filling inner boolean.
+         *
+         * @return the boolean
+         */
         public boolean isFillingInner() {
             return this == HeightControl.MAX || isManual();
         }
 
+        /**
+         * Is not filling boolean.
+         *
+         * @return the boolean
+         */
         public boolean isNotFilling() {
             return this == HeightControl.MANUAL ||
                     this == HeightControl.AUTO;
         }
 
+        /**
+         * Is auto boolean.
+         *
+         * @return the boolean
+         */
         public boolean isAuto() {
             return this == HeightControl.AUTO ||
                     this == HeightControl.AUTO_CENTER ||
                     this == HeightControl.AUTO_EXTERNAL;
         }
 
+        /**
+         * Is manual boolean.
+         *
+         * @return the boolean
+         */
         public boolean isManual() {
             return this == HeightControl.MANUAL ||
                     this == HeightControl.MANUAL_CENTER ||

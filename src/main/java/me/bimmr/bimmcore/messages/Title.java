@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 /**
- * A utilities class to create a title
+ * The type Title.
  */
 public class Title extends MessageDisplay {
     private static HashMap<String, BukkitTask> tasks = new HashMap<>();
@@ -24,7 +24,7 @@ public class Title extends MessageDisplay {
     private int fadeOut = 0;
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title the title
      */
@@ -33,7 +33,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title the title
      * @param show  the show
@@ -43,7 +43,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title    the title
      * @param subTitle the sub title
@@ -53,7 +53,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title    the title
      * @param subTitle the sub title
@@ -64,7 +64,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title         the title
      * @param subTitle      the sub title
@@ -76,7 +76,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title    the title
      * @param subTitle the sub title
@@ -89,7 +89,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title      the title
      * @param timedEvent the timed event
@@ -99,7 +99,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title      the title
      * @param show       the show
@@ -110,7 +110,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title      the title
      * @param subTitle   the sub title
@@ -121,7 +121,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title      the title
      * @param subTitle   the sub title
@@ -133,7 +133,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title         the title
      * @param subTitle      the sub title
@@ -146,7 +146,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Create a title
+     * Instantiates a new Title.
      *
      * @param title      the title
      * @param subTitle   the sub title
@@ -164,27 +164,21 @@ public class Title extends MessageDisplay {
         setTimedEvent(timedEvent);
     }
 
-    /**
-     * Check if a Title is being sent to the player
-     *
-     * @param player
-     * @return
-     */
     private static boolean isRunning(Player player) {
         return titles.containsKey(player.getName());
     }
 
     /**
-     * Get the SubTitle text
+     * Gets sub title.
      *
-     * @return sub title
+     * @return the sub title
      */
     public String getSubTitle() {
         return this.subTitle;
     }
 
     /**
-     * Set the SubTitle text
+     * Sets sub title.
      *
      * @param text the text
      */
@@ -192,37 +186,27 @@ public class Title extends MessageDisplay {
         this.subTitle = text;
     }
 
-    /**
-     * Get the Title text
-     *
-     * @return the text
-     */
     @Override
     public String getText() {
         return this.text;
     }
 
-    /**
-     * Set the Title text
-     *
-     * @param text the text
-     */
     @Override
     public void setText(String text) {
         this.text = text;
     }
 
     /**
-     * Get the FadeIn time
+     * Gets fade in.
      *
-     * @return fade in
+     * @return the fade in
      */
     public int getFadeIn() {
         return this.fadeIn;
     }
 
     /**
-     * Set the FadeIn time
+     * Sets fade in.
      *
      * @param fadeIn the fade in
      */
@@ -231,16 +215,16 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Get the FadeOut time
+     * Gets fade out.
      *
-     * @return fade out
+     * @return the fade out
      */
     public int getFadeOut() {
         return this.fadeOut;
     }
 
     /**
-     * Set the FadeOut time
+     * Sets fade out.
      *
      * @param fadeOut the fade out
      */
@@ -248,21 +232,11 @@ public class Title extends MessageDisplay {
         this.fadeOut = fadeOut;
     }
 
-    /**
-     * Get the Show time
-     *
-     * @return the time
-     */
     @Override
     public int getTime() {
         return this.time;
     }
 
-    /**
-     * Send the Title to the player
-     *
-     * @param player the player
-     */
     @Override
     public void send(final Player player) {
         clear(player);
@@ -291,31 +265,16 @@ public class Title extends MessageDisplay {
         }
     }
 
-    /**
-     * Stop sending the title to the player
-     *
-     * @param player the player
-     */
     @Override
     public void stop(Player player) {
         clear(player);
     }
 
-    /**
-     * Get the TimedEvent
-     *
-     * @return timed event
-     */
     @Override
     public TimedEvent getTimedEvent() {
         return timedEvent;
     }
 
-    /**
-     * Set the TimedEvent
-     *
-     * @param timedEvent the timed event
-     */
     @Override
     public void setTimedEvent(TimedEvent timedEvent) {
         if (timedEvent != null) {
@@ -325,7 +284,7 @@ public class Title extends MessageDisplay {
     }
 
     /**
-     * Clear the title off the player's screen
+     * Clear.
      *
      * @param player the player
      */

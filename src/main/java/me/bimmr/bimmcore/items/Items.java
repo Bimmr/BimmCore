@@ -32,10 +32,13 @@ import java.util.*;
 //}
 
 /**
- * A Utilities class for easy to manage Items
+ * The type Items.
  */
 public class Items {
 
+    /**
+     * The constant INVALID_ITEM.
+     */
     public static final String INVALID_ITEM = "item:PLAYER_HEAD name:&eUnknown_Item owner:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmMyNzEwNTI3MTllZjY0MDc5ZWU4YzE0OTg5NTEyMzhhNzRkYWM0YzI3Yjk1NjQwZGI2ZmJkZGMyZDZiNWI2ZSJ9fX0=";
 
     private ItemStack item = new ItemStack(Material.AIR);
@@ -78,34 +81,10 @@ public class Items {
     }
 
     /**
-     * Load the item from a string
-     * <p>
-     * item:TYPE | gun:GUNNAME<br>
-     * amount:AMOUNT<br>
-     * damage:DAMAGE<br>
-     * name:NAME<br>
-     * lore:LORE<br>
-     * enchantment:ENCHANTMENT,VALUE<br>
-     * flag:FLAG<br>
-     * display:DISPLAY<br>
-     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION<br>
-     * potion:POTION,[DURATION|EXTENDED],[STRENGTH|UPGRADED]<br>
-     * leather-colour:RRR,GGG,BBB<br>
-     * book-author:BOOK_AUTHOR<br>
-     * book-title:BOOK_TITLE<br>
-     * book-page:BOOK_PAGE<br>
-     * banner:PATTERN,COLOR<br>
-     * firework:FIREWORK,TRAIL,FLICKER<br>
-     * firework-color:RRR,GGG,BBB<br>
-     * firework-fade-color:RRR,GGG,BBB<br>
-     * owner:[OWNER|UUID|URL]<br>
-     * stored-enchantment:STORED_ENCHANTMENT,VALUE<br>
-     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR<br>
-     * unbreakable<br>
-     * glow
+     * From string items.
      *
-     * @param string The Item Code
-     * @return Items items
+     * @param string the string
+     * @return the items
      */
     public Items fromString(String string) {
 
@@ -318,10 +297,10 @@ public class Items {
     }
 
     /**
-     * Set the material
+     * Sets material.
      *
-     * @param material The Material
-     * @return The Item
+     * @param material the material
+     * @return the material
      */
     public Items setMaterial(Material material) {
         this.item = new ItemStack(material);
@@ -334,7 +313,7 @@ public class Items {
     /**
      * Gets item.
      *
-     * @return Get the item
+     * @return the item
      */
     public ItemStack getItem() {
         if (this.itemMeta != null)
@@ -345,7 +324,7 @@ public class Items {
     /**
      * Gets item meta.
      *
-     * @return Get the item meta
+     * @return the item meta
      */
     public ItemMeta getItemMeta() {
         if (this.itemMeta == null)
@@ -354,9 +333,9 @@ public class Items {
     }
 
     /**
-     * Set the Item Meta
+     * Sets item meta.
      *
-     * @param itemMeta The ItemMeta
+     * @param itemMeta the item meta
      */
     public void setItemMeta(ItemMeta itemMeta) {
         this.itemMeta = itemMeta;
@@ -365,17 +344,17 @@ public class Items {
     /**
      * Has item meta boolean.
      *
-     * @return Get if ItemMeta is valid
+     * @return the boolean
      */
     public boolean hasItemMeta() {
         return this.getItemMeta() != null;
     }
 
     /**
-     * Add FireworkEffect
+     * Add firework effect items.
      *
-     * @param fireworkEffect FireworkEffect
-     * @return Items items
+     * @param fireworkEffect the firework effect
+     * @return the items
      */
     public Items addFireworkEffect(FireworkEffect fireworkEffect) {
         if (!hasItemMeta())
@@ -392,10 +371,10 @@ public class Items {
     }
 
     /**
-     * Add Banner Pattern
+     * Add banner pattern items.
      *
-     * @param pattern Pattern
-     * @return Items items
+     * @param pattern the pattern
+     * @return the items
      */
     public Items addBannerPattern(Pattern pattern) {
         if (!hasItemMeta())
@@ -411,10 +390,10 @@ public class Items {
     }
 
     /**
-     * Add Item to Pages
+     * Add page items.
      *
-     * @param value Page as a string
-     * @return Items items
+     * @param value the value
+     * @return the items
      */
     public Items addPage(String value) {
         if (!hasItemMeta())
@@ -431,10 +410,10 @@ public class Items {
     }
 
     /**
-     * Set Item Pages
+     * Sets pages.
      *
-     * @param value Pages as a list
-     * @return Items pages
+     * @param value the value
+     * @return the pages
      */
     public Items setPages(List<String> value) {
         if (!hasItemMeta())
@@ -450,21 +429,20 @@ public class Items {
     }
 
     /**
-     * Set Item Pages
-     * Calls {@link #setPages(List)}
+     * Sets pages.
      *
-     * @param value Pages as an array
-     * @return Items pages
+     * @param value the value
+     * @return the pages
      */
     public Items setPages(String... value) {
         return setPages(Arrays.asList(value));
     }
 
     /**
-     * Set Book Title
+     * Sets book title.
      *
-     * @param value The book's title
-     * @return Items book title
+     * @param value the value
+     * @return the book title
      */
     public Items setBookTitle(String value) {
         if (!hasItemMeta())
@@ -480,10 +458,10 @@ public class Items {
     }
 
     /**
-     * Set Book Author
+     * Sets book author.
      *
-     * @param value The book's author
-     * @return Items book author
+     * @param value the value
+     * @return the book author
      */
     public Items setBookAuthor(String value) {
         if (!hasItemMeta())
@@ -499,11 +477,10 @@ public class Items {
     }
 
     /**
-     * Set Item unbreakable
-     * Only supports versions since MC 1.12
+     * Sets unbreakable.
      *
-     * @param value Boolean
-     * @return Items unbreakable
+     * @param value the value
+     * @return the unbreakable
      */
     public Items setUnbreakable(boolean value) {
         if (!hasItemMeta())
@@ -516,12 +493,12 @@ public class Items {
     }
 
     /**
-     * Set Leather Color
+     * Sets leather color.
      *
-     * @param red   The red
-     * @param green The green
-     * @param blue  The blue
-     * @return Items leather color
+     * @param red   the red
+     * @param green the green
+     * @param blue  the blue
+     * @return the leather color
      */
     public Items setLeatherColor(int red, int green, int blue) {
         if (!hasItemMeta())
@@ -537,10 +514,10 @@ public class Items {
     }
 
     /**
-     * Set Leather Color
+     * Sets leather color.
      *
-     * @param value The RGB Color
-     * @return Items leather color
+     * @param value the value
+     * @return the leather color
      */
     public Items setLeatherColor(int value) {
         if (!hasItemMeta())
@@ -556,10 +533,10 @@ public class Items {
     }
 
     /**
-     * Set Amount
+     * Sets amount.
      *
-     * @param value The amount
-     * @return Items amount
+     * @param value the value
+     * @return the amount
      */
     public Items setAmount(int value) {
         getItem().setAmount(value);
@@ -567,11 +544,11 @@ public class Items {
     }
 
     /**
-     * Add Enchantment
+     * Add enchantment items.
      *
-     * @param value Enchantment
-     * @param level The level
-     * @return Items items
+     * @param value the value
+     * @param level the level
+     * @return the items
      */
     public Items addEnchantment(Enchantment value, int level) {
         if (!hasItemMeta())
@@ -584,10 +561,10 @@ public class Items {
     }
 
     /**
-     * Add PotionEffect
+     * Add potion effect items.
      *
-     * @param value PotionEffect
-     * @return Items items
+     * @param value the value
+     * @return the items
      */
     public Items addPotionEffect(PotionEffect value) {
         //TOOD: Something about either this or reading is broken
@@ -604,9 +581,9 @@ public class Items {
     }
 
     /**
-     * Add Item glow
+     * Add glow items.
      *
-     * @return Items items
+     * @return the items
      */
     public Items addGlow() {
         if (!hasItemMeta())
@@ -622,21 +599,20 @@ public class Items {
     }
 
     /**
-     * Add Item to Lore
-     * Calls {@link #addLore(String...)}
+     * Add lore items.
      *
-     * @param value Lore as a String
-     * @return Items items
+     * @param value the value
+     * @return the items
      */
     public Items addLore(String value) {
         return addLore(new String[]{value});
     }
 
     /**
-     * Add Item to Lore
+     * Add lore items.
      *
-     * @param value Lore as an Array
-     * @return Items items
+     * @param value the value
+     * @return the items
      */
     public Items addLore(String... value) {
         if (!hasItemMeta())
@@ -651,10 +627,10 @@ public class Items {
     }
 
     /**
-     * Set Item Lore
+     * Sets lore.
      *
-     * @param value Lore as a list
-     * @return Items lore
+     * @param value the value
+     * @return the lore
      */
     public Items setLore(List<String> value) {
         if (!hasItemMeta())
@@ -667,24 +643,23 @@ public class Items {
     }
 
     /**
-     * Ste Item Lore
-     * Calls {@link #setLore(List)}
+     * Sets lore.
      *
-     * @param value Lore as an array
-     * @return Items lore
+     * @param value the value
+     * @return the lore
      */
     public Items setLore(String... value) {
         return setLore(value != null ? Arrays.asList(value) : new ArrayList<String>());
     }
 
     /**
-     * Add Item Attribute
+     * Add attribute items.
      *
-     * @param attribute Attribute's Name
-     * @param slot      Attribute's Slot
-     * @param level     Attribute's Level
-     * @param operation Attribute's Operation
-     * @return Items items
+     * @param attribute the attribute
+     * @param slot      the slot
+     * @param level     the level
+     * @param operation the operation
+     * @return the items
      */
     public Items addAttribute(String attribute, String slot, double level, String operation) {
 
@@ -699,9 +674,9 @@ public class Items {
     }
 
     /**
-     * Sets the item to be a splash potion
+     * Sets splash potion.
      *
-     * @return Items
+     * @return the splash potion
      */
     public Items setSplashPotion() {
 
@@ -713,13 +688,13 @@ public class Items {
 
 
     /**
-     * Add Item Attribute using Bukkit
+     * Add attribute items.
      *
-     * @param attribute Attribute
-     * @param slot      Attribute's EquipmentSlot
-     * @param level     Attribute's level
-     * @param operation Attribute's Operation
-     * @return Items items
+     * @param attribute the attribute
+     * @param slot      the slot
+     * @param level     the level
+     * @param operation the operation
+     * @return the items
      */
     public Items addAttribute(Attribute attribute, EquipmentSlot slot, double level, AttributeModifier.Operation operation) {
         if (!hasItemMeta())
@@ -732,10 +707,10 @@ public class Items {
     }
 
     /**
-     * Set Skull Owner (Supports UUID and Names)
+     * Sets skull owner.
      *
-     * @param value The Owner's name or UUID
-     * @return Items skull owner
+     * @param value the value
+     * @return the skull owner
      */
     public Items setSkullOwner(String value) {
         if (!hasItemMeta())
@@ -758,22 +733,15 @@ public class Items {
     }
 
     /**
-     * Set Skull Owner
-     * Calls {@link #setSkullOwner(String)}
+     * Sets skull owner.
      *
-     * @param value Owner's UUID
-     * @return Items skull owner
+     * @param value the value
+     * @return the skull owner
      */
     public Items setSkullOwner(UUID value) {
         return setSkullOwner(value.toString());
     }
 
-    /**
-     * Set Skull Owner to a Custom URL
-     *
-     * @param value The URL
-     * @return Items skull skin
-     */
     private Items setSkullSkin(String value) {
 
         SkullMeta meta = (SkullMeta) getItemMeta();
@@ -793,11 +761,10 @@ public class Items {
     }
 
     /**
-     * Set Item Durability
-     * Use {@link #setDamage(int)} instead
+     * Sets durability.
      *
-     * @param value durability
-     * @return Items durability
+     * @param value the value
+     * @return the durability
      */
     @Deprecated
     public Items setDurability(int value) {
@@ -805,10 +772,10 @@ public class Items {
     }
 
     /**
-     * Set Damage
+     * Sets damage.
      *
-     * @param value damage
-     * @return Items damage
+     * @param value the value
+     * @return the damage
      */
     public Items setDamage(int value) {
         if (!hasItemMeta())
@@ -825,10 +792,10 @@ public class Items {
     }
 
     /**
-     * Set Item Display Name
+     * Sets display name.
      *
-     * @param value Name
-     * @return Items display name
+     * @param value the value
+     * @return the display name
      */
     public Items setDisplayName(String value) {
         if (!hasItemMeta())
@@ -841,10 +808,10 @@ public class Items {
     }
 
     /**
-     * Add a Flag to an Item
+     * Add flag items.
      *
-     * @param flag ItemFlag to add
-     * @return Items items
+     * @param flag the flag
+     * @return the items
      */
     public Items addFlag(ItemFlag flag) {
         if (!hasItemMeta())
@@ -857,11 +824,11 @@ public class Items {
     }
 
     /**
-     * Check if 2 items are equal
+     * Equals boolean.
      *
-     * @param item    Items to check against
-     * @param useLore check using item's lore
-     * @return If the items match
+     * @param item    the item
+     * @param useLore the use lore
+     * @return the boolean
      */
     public boolean equals(Items item, boolean useLore) {
         if (useLore)
@@ -882,35 +849,6 @@ public class Items {
         return equals(item);
     }
 
-    /**
-     * Get the item as a string
-     * <p>
-     * item:TYPE | gun:GUNNAME<br>
-     * amount:AMOUNT<br>
-     * damage:DAMAGE<br>
-     * name:NAME<br>
-     * lore:LORE<br>
-     * enchantment:ENCHANTMENT,VALUE<br>
-     * flag:FLAG<br>
-     * display:DISPLAY<br>
-     * attribute:ATTRIBUTE,SLOT,VALUE,OPERATION<br>
-     * potion:POTION,[DURATION|EXTENDED],[STRENGTH|UPGRADED]<br>
-     * leather-colour:RRR,GGG,BBB<br>
-     * book-author:BOOK_AUTHOR<br>
-     * book-title:BOOK_TITLE<br>
-     * book-page:BOOK_PAGE<br>
-     * banner:PATTERN,COLOR<br>
-     * firework:FIREWORK,TRAIL,FLICKER<br>
-     * firework-color:RRR,GGG,BBB<br>
-     * firework-fade-color:RRR,GGG,BBB<br>
-     * owner:[OWNER|UUID|URL]<br>
-     * stored-enchantment:STORED_ENCHANTMENT,VALUE<br>
-     * tropical-fish:COLOR,PATTERN,PATTERN_COLOR<br>
-     * unbreakable<br>
-     * glow<br>
-     *
-     * @return Get the item as a string
-     */
     public String toString() {
         StringBuilder string = new StringBuilder("item:AIR");
 
@@ -1076,6 +1014,11 @@ public class Items {
         return string.toString();
     }
 
+    /**
+     * Gets texture.
+     *
+     * @return the texture
+     */
     public String getTexture() {
         try {
             SkullMeta meta = (SkullMeta) getItemMeta();

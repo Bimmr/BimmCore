@@ -11,6 +11,9 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 
+/**
+ * The type Tiny player listener.
+ */
 public class TinyPlayerListener implements NPCPlayerListener {
     // Classes:
     private final Class<?> packetPlayInUseEntityClazz = Reflection.getNMSClass("PacketPlayInUseEntity");

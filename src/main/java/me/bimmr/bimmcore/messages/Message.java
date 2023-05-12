@@ -5,12 +5,12 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 
 /**
- * A Manager class to use different types of message systems
+ * The type Message.
  */
 public class Message {
 
     /**
-     * Send a Message using the messagetype
+     * Send message.
      *
      * @param messageType the message type
      * @param player      the player
@@ -41,7 +41,7 @@ public class Message {
     }
 
     /**
-     * Send a Title and a subTitle
+     * Send title and sub title.
      *
      * @param player   the player
      * @param title    the title
@@ -52,7 +52,7 @@ public class Message {
     }
 
     /**
-     * Send a title
+     * Send title.
      *
      * @param player  the player
      * @param message the message
@@ -62,7 +62,7 @@ public class Message {
     }
 
     /**
-     * Send a subtitle
+     * Send sub title.
      *
      * @param player  the player
      * @param message the message
@@ -72,7 +72,7 @@ public class Message {
     }
 
     /**
-     * Send an actionbar
+     * Send action bar.
      *
      * @param player  the player
      * @param message the message
@@ -82,7 +82,7 @@ public class Message {
     }
 
     /**
-     * Send a regular chat message
+     * Send chat message.
      *
      * @param player  the player
      * @param message the message
@@ -92,7 +92,7 @@ public class Message {
     }
 
     /**
-     * Send a BossBar
+     * Send boss bar.
      *
      * @param player   the player
      * @param text     the text

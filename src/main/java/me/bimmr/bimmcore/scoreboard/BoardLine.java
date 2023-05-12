@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.Iterator;
 
 /**
- * A Line on a Scoreboard
+ * The type Board line.
  */
 public class BoardLine extends TimedObject {
 
@@ -27,7 +27,7 @@ public class BoardLine extends TimedObject {
     private Board board;
 
     /**
-     * Create a BoardLine
+     * Instantiates a new Board line.
      *
      * @param text the text
      */
@@ -36,9 +36,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Create a BoardLine
-     * <p>
-     * value = -1
+     * Instantiates a new Board line.
      *
      * @param text  the text
      * @param value the value
@@ -48,9 +46,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Create a BoardLine
-     * <p>
-     * value = -1
+     * Instantiates a new Board line.
      *
      * @param text       the text
      * @param timedEvent the timed event
@@ -60,9 +56,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Create a BoardLine
-     * <p>
-     * value = -1
+     * Instantiates a new Board line.
      *
      * @param text                the text
      * @param timedEvent          the timed event
@@ -73,7 +67,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Create a BoardLine
+     * Instantiates a new Board line.
      *
      * @param text       the text
      * @param value      the value
@@ -84,7 +78,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Create a BoardLine
+     * Instantiates a new Board line.
      *
      * @param text                the text
      * @param value               the value
@@ -104,7 +98,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Set the board that this BoardLine belongs to
+     * Sets board.
      *
      * @param board the board
      */
@@ -119,16 +113,16 @@ public class BoardLine extends TimedObject {
 
 
     /**
-     * Get the text
+     * Gets text.
      *
-     * @return text
+     * @return the text
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * Set the text
+     * Sets text.
      *
      * @param text the text
      */
@@ -138,16 +132,16 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Get the value
+     * Gets value.
      *
-     * @return value
+     * @return the value
      */
     public int getValue() {
         return this.value;
     }
 
     /**
-     * Set the value
+     * Sets value.
      *
      * @param value the value
      */
@@ -158,7 +152,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Build the BoardLine
+     * Build.
      */
     public void build() {
 
@@ -178,6 +172,9 @@ public class BoardLine extends TimedObject {
             this.score.setScore(this.value);
     }
 
+    /**
+     * Update.
+     */
     public void update() {
         Iterator<String> iterator = Splitter.fixedLength(64).split(this.text).iterator();
         String prefix = iterator.next();
@@ -193,9 +190,9 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Get the team
+     * Gets team.
      *
-     * @return team
+     * @return the team
      */
     public Team getTeam() {
         return this.team;
@@ -203,7 +200,7 @@ public class BoardLine extends TimedObject {
 
 
     /**
-     * Set the Line's team
+     * Sets team.
      *
      * @param team the team
      */
@@ -211,6 +208,9 @@ public class BoardLine extends TimedObject {
         this.team = team;
     }
 
+    /**
+     * Clear.
+     */
     public void clear() {
         if (this.key != null)
             this.board.getScoreboard().resetScores(this.key);
@@ -219,7 +219,7 @@ public class BoardLine extends TimedObject {
     }
 
     /**
-     * Remove a line from a Board
+     * Reset.
      */
     public void reset() {
         clear();

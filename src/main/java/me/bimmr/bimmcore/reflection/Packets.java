@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 
 /**
- * A Utilities class to handle packets
+ * The type Packets.
  */
 public class Packets {
     private static Class<?> classPacket;
@@ -15,11 +15,12 @@ public class Packets {
 
             classPacket = Reflection.getNMClass("network.protocol.Packet");
 }
+
     /**
-     * Send a packet to a player
+     * Send packet.
      *
-     * @param player The Player
-     * @param packet The Packet
+     * @param player the player
+     * @param packet the packet
      */
     public static void sendPacket(Player player, Object packet) {
         Object handle = Reflection.getHandle(player);
@@ -30,11 +31,10 @@ public class Packets {
     }
 
     /**
-     * Send packets to player
+     * Send packet.
      *
-     * Calls {@link #sendPacket(Player, Object)}
-     * @param player The Player
-     * @param packets The packets
+     * @param player  the player
+     * @param packets the packets
      */
     public static void sendPacket(Player player, Object... packets) {
         for(Object packet : packets)

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Utilities class for creating a Book and opening it
+ * The type Book.
  */
 public class Book {
 
@@ -31,6 +31,9 @@ public class Book {
     private String author;
     private ArrayList<ArrayList<FancyMessage>> lines = new ArrayList<>();
 
+    /**
+     * Instantiates a new Book.
+     */
     public Book() {
         this.title = "BimmCore";
         this.author = "Bimmr";
@@ -57,20 +60,20 @@ public class Book {
     }
 
     /**
-     * Add line chat menu.
+     * Add line book.
      *
      * @param message the message
-     * @return the chat menu
+     * @return the book
      */
     public Book addLine(String message) {
         return addLine(getCurrentPage(), new FancyMessage(message));
     }
 
     /**
-     * Add line chat menu.
+     * Add line book.
      *
      * @param message the message
-     * @return the chat menu
+     * @return the book
      */
     public Book addLine(FancyMessage message) {
         return addLine(getCurrentPage(), message);
@@ -81,22 +84,22 @@ public class Book {
     }
 
     /**
-     * Add line chat menu.
+     * Add line book.
      *
      * @param page    the page
      * @param message the message
-     * @return the chat menu
+     * @return the book
      */
     public Book addLine(int page, String message) {
         return addLine(page, new FancyMessage(message));
     }
 
     /**
-     * Add line chat menu.
+     * Add line book.
      *
      * @param page    the page
      * @param message the message
-     * @return the chat menu
+     * @return the book
      */
     public Book addLine(int page, FancyMessage message) {
         if (lines.size() <= page)
@@ -162,9 +165,9 @@ public class Book {
     }
 
     /**
-     * Next page chat menu.
+     * Next page book.
      *
-     * @return the chat menu
+     * @return the book
      */
     public Book nextPage() {
         lines.add(new ArrayList());
@@ -173,30 +176,29 @@ public class Book {
     }
 
     /**
-     * Add blank line chat menu.
+     * Add blank line book.
      *
-     * @return the chat menu
+     * @return the book
      */
     public Book addBlankLine() {
         return addBlankLine(getCurrentPage());
     }
 
     /**
-     * Add blank line chat menu.
+     * Add blank line book.
      *
      * @param page the page
-     *
-     * @return the chat menu
+     * @return the book
      */
     public Book addBlankLine(int page) {
         return addLine(page, "");
     }
 
     /**
-     * To bottom chat menu.
+     * To bottom book.
      *
      * @param space the space
-     * @return the chat menu
+     * @return the book
      */
     public Book toBottom(int space) {
 
@@ -206,9 +208,9 @@ public class Book {
     }
 
     /**
-     * Open the book for a player
+     * Show.
      *
-     * @param player The player
+     * @param player the player
      */
     public void show(Player player) {
             player.openBook(getAsItem());
@@ -217,7 +219,9 @@ public class Book {
 
 
     /**
-     * @return Get the book as an ItemStack
+     * Gets as item.
+     *
+     * @return the as item
      */
     public ItemStack getAsItem() {
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
@@ -248,6 +252,9 @@ public class Book {
 
     }
 
+    /**
+     * The type Book api.
+     */
     public static class BookAPI {
         private static Class<?> chatSerializer = Reflection.getNMSClass("IChatBaseComponent$ChatSerializer");
         private static Class<?> packetDataSerializer = Reflection.getNMSClass("PacketDataSerializer");
@@ -277,10 +284,6 @@ public class Book {
 
         }
 
-        /**
-         * @param book The Book
-         * @return Get the Book as an ItemStack
-         */
         private static ItemStack getAsItemStack(Book book) {
             ItemStack iBook = new ItemStack(Material.WRITTEN_BOOK);
 
@@ -320,12 +323,6 @@ public class Book {
             return iBook;
         }
 
-        /**
-         * Open the book for the player
-         *
-         * @param book The Book
-         * @param p    The Player
-         */
         private static void openBook(ItemStack book, Player p) {
             int slot = p.getInventory().getHeldItemSlot();
             ItemStack iBook = book;
@@ -341,10 +338,10 @@ public class Book {
         }
 
         /**
-         * Open the Book for the player
+         * Open book.
          *
-         * @param book The Book
-         * @param p    The player
+         * @param book the book
+         * @param p    the p
          */
         public static void openBook(Book book, Player p) {
             openBook(getAsItemStack(book), p);
