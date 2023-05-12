@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "me.bimmr"
@@ -74,10 +75,13 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
-    register<Copy>("copyJar") {
-        dependsOn("build")
-        from(layout.buildDirectory.dir("libs"))
-        into(layout.buildDirectory.dir("../../../Outputs"))
+    shadowJar {
+        relocate("com.zaxxer.HikariCP", "")
     }
-
+    register<Copy>("copyJar") {
+        dependsOn("shadowJar")
+        from(layout.buildDirectory.dir("libs/${rootProject.name}-${version}-all.jar"))
+        into(layout.buildDirectory.dir("../../../Outputs"))
+        rename("(.+)-all(.+)", "$1$2")
+    }
 }
